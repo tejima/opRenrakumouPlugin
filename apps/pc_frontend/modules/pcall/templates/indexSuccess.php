@@ -30,30 +30,20 @@
   <div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-inner">
       <div class="container">
-        <a class="brand" href="#">Project name</a>
-        <ul class="nav">
+        <a class="brand" href="#">緊急連絡サービス pCall</a>
+        <ul class="nav pull-right">
           <li>
-            <a href="#">Home</a>
-          </li>
-          <li>
-            <a href="#">About</a>
-          </li>
-          <li>
-            <a href="#">Contact</a>
+            <a href="#">SNSへ戻る</a>
           </li>
         </ul>
       </div>
     </div>
   </div>
   <div class="container">
-    <div class="hero-unit" style="margin-top: 80px;">
+    <div class="hero-unit" style="margin-top: 80px; padding-top: 30px; padding-bottom: 30px;">
       <div>
-        <h1>Hello, world!</h1>
-        <p>
-          This is a template for a simple marketing or informational website. It
-            includes a large callout called the hero unit and three supporting pieces
-            of content. Use it as a starting point to create something more unique.
-        </p>
+        <h2>緊急連絡サービス pCall</h2>
+        <p>本サービスは、ネット画面から、文章を作成し、音声合成、一斉に方、、、緊急連絡を電話発信するシステムです。</p>
       </div>
     </div>
     <div class="row">
@@ -69,21 +59,23 @@
           <form>
             <fieldset>
               <label>件名</label>
-              <input class="input-block-level" type="text" placeholder="◯月◯日◯◯連絡">
-              <span class="help-block">あとで確認する件名を記入してください</span>
+              <input class="input-block-level tooltip-target" type="text" placeholder="◯月◯日◯◯連絡" rel="tooltip" title="後でわかりやすい日付を入力します。「◯月◯日 6年3組 大雪休みのお知らせ」などと、月日、クラス、内容を簡単に記載してください。" data-placement="left">
               <label>連絡本文</label>
-              <textarea class="input-block-level" rows="8" placeholder="舟渡小学校6年1組の連絡網です。大雪のため2月9日、舟渡小学校6年1組はお休みになりました。9日はお休みですが、翌10日は通常通り開校します。保護者のみなさま、ご対応、よろしくお願いたします。"></textarea>
+              <textarea data-placement="left" title="200文字以内で、伝えたい要件を記入してください。ここで書かれた文章は2回繰り返して発音されます。" class="input-block-level tooltip-target" rows="8" placeholder="舟渡小学校6年1組の連絡網です。大雪のため2月9日、舟渡小学校6年1組はお休みになりました。9日はお休みですが、翌10日は通常通り開校します。保護者のみなさま、ご対応、よろしくお願いたします。"></textarea>
 
               <label>連絡先選択</label>
               <ul class="nav nav-pills" id="myTab">
-                <li class="active"><a href="#group" data-toggle="tab">グループ連絡モード</a></li>
-                <li><a href="#direct" data-toggle="tab">ダイレクト電話モード</a></li>
+                <li class="active">
+                  <a href="#group" data-toggle="tab">グループ連絡モード</a>
+                </li>
+                <li>
+                  <a href="#direct" data-toggle="tab">ダイレクト電話モード</a>
+                </li>
               </ul>
-               
+
               <div class="tab-content">
                 <div class="tab-pane active" id="group">
                   <h4>6年1組グループ</h4>
-
                   <table class="table table-hover table-condensed" style="background: #fff;">
                     <thead>
                       <tr>
@@ -146,22 +138,20 @@
                     </tbody>
                   </table>
 
-
                 </div>
                 <div class="tab-pane" id="direct">
 
-              <textarea class="input-block-level" rows="20" placeholder="田中 08040600334
+                  <textarea class="input-block-level" rows="20" placeholder="田中 08040600334
                                                                 山田 08040600334
                                                                 大島 08040600334"></textarea>
-              <span class="help-block">名字[半角スペース]電話番号[改行]の形式で記入してください。※ハイフン無し</span>
-
+                  <span class="help-block">名字[半角スペース]電話番号[改行]の形式で記入してください。※ハイフン無し</span>
 
                 </div>
               </div>
 
-
-              <button class="btn btn-block">テスト送信</button>
-              <button class="btn btn-block btn-danger">※ 本送信 ※</button>
+              <!-- Button to trigger modal -->
+              <a href="#myModal" role="button" class="btn btn-block" data-toggle="modal">テスト送信</a>
+              <a href="#myModal" role="button" class="btn btn-danger btn-block" data-toggle="modal">* 本送信 *</a>
             </fieldset>
           </form>
         </div>
@@ -267,7 +257,7 @@
                     舟渡小学校6年1組の連絡網です。大雪のため2月9日、舟渡小学校6年1組はお休みになりました。9日はお休みですが、翌10日は通常通り開校します。保護者のみなさま、ご対応、よろしくお願いたします。
                   </p>
 
-                  <table class="table table-hover">
+                  <table class="table table-hover  table-condensed">
                     <thead>
                       <tr>
                         <th>#</th>
@@ -343,15 +333,42 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
     <hr>
-    <div>© Company 2012</div>
+    <div>© Tejimaya, Inc. 2002〜</div>
+  </div>
+
+  <!-- Modal -->
+  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">発信の最終確認</h3>
+    </div>
+    <div class="modal-body">
+      <p>確認画面、本送信時は特に入念にアラートする。テストしましたか？文章に間違いはありませんいか？など。</p>
+      <p>確認画面としての役割、本文、送信リストを表示する</p>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn pull-left" data-dismiss="modal" aria-hidden="true">キャンセル：編集をやり直す</button>
+      <button id="call-button" class="btn btn-danger">この条件で、(テスト)発信する</button>
+      <div id="post-progress" class="hide">
+        <p style="text-align: center; margin-top: 40px;">進行状況</p>
+        <div class="progress progress-striped active">
+          <div class="bar" style="width: 40%;"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <style></style>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>$('.tooltip-target').tooltip();
+  $("#call-button").click(function(){
+    $("#post-progress").show();
+  });
+  </script>
+
 </body>
 </html>
