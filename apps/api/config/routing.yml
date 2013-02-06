@@ -1,0 +1,14 @@
+call_call:
+  url: /call/call.json
+  param: { module: call, action: call, sf_format: json }
+  requirements: { sf_method: [post] }
+call_search:
+  url: /call/search.json
+  param: { module: call, action: search, sf_format: json }
+  requirements: { sf_method: [post] }
+call_reloadboundio:
+  url: /call/reloadboundio.json
+  param: { module: call, action: reloadboundio, sf_format: json }
+  requirements: { sf_method: [get] }
+
+
