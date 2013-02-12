@@ -17,9 +17,15 @@ class TejimayaNotify
 		foreach($community_member_list as $member){
 			$tel = $member->getProfile("tel");
 			error_log(date("c"). $member->id . ":" .$tel. ": \n", 3, "/tmp/php.log");
-			TejimayaNotify::pushcall($tel,$body);
+			TejimayaBoundioUtil::pushcall($tel,$body);
 		}
 	}
+	
+}
+
+
+class TejimayaBoundioUtil
+{
 	function pushcall($tel=null,$text=null){
 		Boundio::configure('userSerialId', $_SERVER['userSerialId']);
 		Boundio::configure('appId', $_SERVER['appId']);
