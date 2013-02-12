@@ -278,7 +278,6 @@
     success: function(data){
       console.log("loaded");
       console.log(data);
-      alert("RETURN");
       }
     });
   });
