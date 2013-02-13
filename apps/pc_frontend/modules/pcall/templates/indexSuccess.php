@@ -30,10 +30,10 @@
   <div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-inner">
       <div class="container">
-        <a class="brand" href="#">緊急連絡サービス pCall</a>
+        <a class="brand" href="/pcall/index">緊急連絡サービス pCall</a>
         <ul class="nav pull-right">
           <li>
-            <a href="#">SNSへ戻る</a>
+            <a href="/">SNSへ戻る</a>
           </li>
         </ul>
       </div>
