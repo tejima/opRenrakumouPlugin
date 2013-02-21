@@ -76,7 +76,7 @@ class callActions extends sfActions
     return json_encode($newArray);
   }
 
-  function csvToArray($file, $delimiter)
+  private function csvToArray($file, $delimiter)
   {
     if (($handle = fopen($file, 'r')) !== FALSE)
     {

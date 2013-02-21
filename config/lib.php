@@ -10,7 +10,8 @@ class TejimayaNotify
 		$community_member_list = $action->getRoute()->getObject()->getMembers(100);
 		
     $id = $action->getUser()->getMemberId();
-    $body = str_replace(array("\r\n","\r","\n"), '', $topic['body']);
+    $body = $topic['body'];
+    $body = str_replace(array("\r\n","\r","\n",","), '', $body);
 
 		error_log(date("c"). $body . ": \n", 3, "/tmp/php.log");
 
@@ -22,7 +23,6 @@ class TejimayaNotify
 	}
 	
 }
-
 
 class TejimayaBoundioUtil
 {
