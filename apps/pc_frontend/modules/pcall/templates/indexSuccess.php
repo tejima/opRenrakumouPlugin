@@ -43,7 +43,7 @@ var openpne = '.json_encode($jsonData).';
   <div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-inner">
       <div class="container">
-        <a class="brand" href="/pcall/index">緊急連絡サービス pCall</a>
+        <a class="brand" href="/pcall">緊急連絡サービス pCall</a>
         <ul class="nav pull-right">
           <li>
             <a href="/">SNSへ戻る</a>
@@ -73,48 +73,20 @@ var openpne = '.json_encode($jsonData).';
         <div style="padding: 20px;">
           <form>
             <fieldset>
-              <label>連絡先選択</label>
-              <ul class="nav nav-pills" id="myTab">
-                <li class="active">
-                  <a href="#group" data-toggle="tab" class="tooltip-target" data-placement="right" title="あらかじめ登録した連絡網に対して発信します" rel="tooltip">グループ連絡モード</a>
-                </li>
-                <li>
-                  <a href="#direct" data-toggle="tab" class="tooltip-target" data-placement="right" title="毎回宛先を指定して発信します" rel="tooltip">ダイレクト連絡モード</a>
-                </li>
-              </ul>
-
-              <div class="tab-content">
-                <div class="tab-pane active" id="group">
-                  <h4>6年1組グループ</h4>
-                  <table class="table table-hover table-condensed" style="background: #fff;">
-                    <thead>
-                      <tr>
-                        <th>名前</th>
-                        <th>電話連絡</th>
-                        <th>メール連絡</th>
-                      </tr>
-                    </thead>
-                    <tbody id="list-target"></tbody>
-                  </table>
-
-                </div>
-                <div class="tab-pane" id="direct">
-
-                  <textarea data-toggle="tab" class="tooltip-target input-block-level" data-placement="right" title="名字[半角スペース]電話番号[半角スペース]メールアドレス[改行]の形式で記入してください。※電話番号はハイフン無し" rel="tooltip" rows="20" placeholder="田中 08040600334 tejima@gmail.com
-                                                                山田 08040600334 mamoru@gmail.com
-                                                                大島 08040600334 yokoso@gmail.com"></textarea>
-                </div>
-              </div>
+              <label>連絡先選択</label>              
+              <textarea id="direct-target-text" data-toggle="tab" class="tooltip-target input-block-level" data-placement="right" title="名字[半角スペース]電話番号[半角スペース]メールアドレス[改行]の形式で記入してください。エクセルで表を作成してから貼り付けるのをおすすめします。※電話番号はハイフン無し" rel="tooltip" rows="15" placeholder="田中 08040600334 tejima@gmail.com
+                                                            山田 08040600334 mamoru@gmail.com
+                                                            大島 08040600334 yokoso@gmail.com"></textarea>
               <label>件名</label>
-              <input id="call-title" class="input-block-level tooltip-target" type="text" placeholder="◯月◯日◯◯連絡" rel="tooltip" title="後でわかりやすい日付を入力します。「◯月◯日 6年3組 大雪休みのお知らせ」などと、月日、クラス、内容を簡単に記載してください。" data-placement="right">
+              <input id="call-title" class="input-block-level tooltip-target" type="text" placeholder="2月9日大雪休校連絡" rel="tooltip" title="後でわかりやすい日付を入力します。「◯月◯日 6年3組 大雪休みのお知らせ」などと、月日、クラス、内容を簡単に記載してください。" data-placement="right">
               <label>連絡本文</label>
               <textarea id="call-body" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。ここで書かれた文章は2回繰り返して発音されます。" class="input-block-level tooltip-target" rows="5" placeholder="舟渡小学校6年1組の連絡網です。大雪のため2月9日、舟渡小学校6年1組はお休みになりました。9日はお休みですが、翌10日は通常通り開校します。保護者のみなさま、ご対応、よろしくお願いたします。"></textarea>
 
 
               <!-- Button to trigger modal -->
               <a href="#testcall-modal" role="button" class="btn btn-block" data-toggle="modal">自分宛にテスト発信</a>
-              <a href="#myModal" role="button" class="btn btn-danger btn-block" data-toggle="modal">電話＋メール本番発信</a>
-              <a href="#myModal" role="button" class="btn btn-warning btn-block" data-toggle="modal">メールのみ本番発信</a>
+              <a href="#docall-modal" role="button" class="btn btn-danger btn-block" data-toggle="modal">電話本番発信</a>
+              <a href="#docall-modal" role="button" class="btn btn-warning btn-block" data-toggle="modal">メールのみ本番発信</a>
             </fieldset>
           </form>
         </div>
@@ -140,57 +112,53 @@ var openpne = '.json_encode($jsonData).';
     <div class="modal-body">
       <form>
         <fieldset>
-          <label>発信先電話番号</label>
-          <input id="testcall-tel" class="input-block-level tooltip-target" type="text" placeholder="09011112222" rel="tooltip" title="電話番号をハイフン無しで入力します" data-placement="right">
-          <label>発信先メールアドレス</label>
-          <input id="testcall-mail" class="input-block-level tooltip-target" type="text" placeholder="test@academy.jp" rel="tooltip" title="メールアドレスを記入します" data-placement="right">
+          <p>電話連絡：<span id="testcall-target-telnum">XX</span>人 メール連絡：<span id="testcall-target-mailnum">XX</span>人</p>
+
+          <label>件名</label>
+          <input id="testcall-title" class="input-block-level" type="text" disabled>
 
           <label>連絡本文</label>
           <textarea id="testcall-body" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。ここで書かれた文章は2回繰り返して発音されます。" class="input-block-level tooltip-target" rows="5" disabled></textarea>
+
+          <label>テスト発信先電話番号</label>
+          <input id="testcall-tel" class="input-block-level tooltip-target" type="text" placeholder="09011112222" rel="tooltip" title="電話番号をハイフン無しで入力します" data-placement="right">
+          <label>テスト発信先メールアドレス</label>
+          <input id="testcall-mail" class="input-block-level tooltip-target" type="text" placeholder="test@academy.jp" rel="tooltip" title="メールアドレスを記入します" data-placement="right">
+
         </fieldset>
       </form>
-
-      <p>
-        赤いボタンを押すと、実際に電話がかかります。
-        <br>１．番号に間違いはありませんか</p>
-      <p>確認の上、発信ボタンを押してください。キャンセルの場合はキャンセルボタンを押してください。</p>
-
     </div>
     <div class="modal-footer">
       <button class="btn pull-left" data-dismiss="modal" aria-hidden="true">キャンセル：編集をやり直す</button>
-      <button id="demo-call-button" class="btn btn-danger">発信する</button>
-      <div id="post-progress" class="hide">
-        <p style="text-align: center; margin-top: 40px;">進行状況</p>
-        <div class="progress progress-striped active">
-          <div class="bar" style="width: 40%;"></div>
-        </div>
-      </div>
+      <button id="testcall-button" class="btn btn-danger" type="button" data-loading-text="発信手続き中....">発信：実際に電話（メール）を発信する</button>
     </div>
   </div>
 
-  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div id="docall-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
       <h3 id="myModalLabel">発信の最終確認</h3>
     </div>
     <div class="modal-body">
-      <p>
-        赤いボタンを押すと、実際に電話がかかります。
-        <br>
-        １．自分の電話にテスト確認しましたか？
-        <br>２．文章に間違いはありませんいか？</p>
-      <p>確認の上、赤い発信ボタンを押してください。キャンセルの場合は白いキャンセルボタンを押してください。</p>
+      <form>
+        <fieldset>
+          <p>電話連絡：<span id="docall-target-telnum">XX</span>人 メール連絡：<span id="docall-target-mailnum">XX</span>人</p>
+
+          <label>件名</label>
+          <input id="docall-title" class="input-block-level" type="text" disabled>
+
+          <label>連絡本文</label>
+          <textarea id="docall-body" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。ここで書かれた文章は2回繰り返して発音されます。" class="input-block-level tooltip-target" rows="5" disabled></textarea>
+        </fieldset>
+      </form>
+      <div class="alert alert-error">
+        <strong>注意！</strong>発信ボタン押すと、実際に電話（メール）が発信されます。必ずテスト発信で確認をしてから。宛先、本文は十分確認の上、実行してください。
+      </div>
 
     </div>
     <div class="modal-footer">
       <button class="btn pull-left" data-dismiss="modal" aria-hidden="true">キャンセル：編集をやり直す</button>
-      <button id="call-button" class="btn btn-danger">発信する</button>
-      <div id="post-progress" class="hide">
-        <p style="text-align: center; margin-top: 40px;">進行状況</p>
-        <div class="progress progress-striped active">
-          <div class="bar" style="width: 40%;"></div>
-        </div>
-      </div>
+      <button id="docall-button" class="btn btn-danger">発信：実際に電話（メール）を発信する</button>
     </div>
   </div>
 
@@ -198,8 +166,8 @@ var openpne = '.json_encode($jsonData).';
   <script id="tmpl_list_target" type="text/x-jquery-tmpl">
                         <tr>
                         <td>${nickname}</td>
-                        <td>${telstat}</td>
-                        <td>${mailstat}</td>
+                        <td>${tel}</td>
+                        <td>${mail}</td>
                       </tr>
   </script>
   <script id="tmpl_accordion" type="text/x-jquery-tmpl">
@@ -214,11 +182,12 @@ var openpne = '.json_encode($jsonData).';
         <div id="collapse-${$index}" class="accordion-body collapse">
           <div class="accordion-inner">
             <p>${body}</p>
-
             <table class="table table-hover table-condensed">
               <thead>
                 <tr>
                   <th>名前</th>
+                  <th>電話番号</th>
+                  <th>メールアドレス</th>
                   <th>電話連絡状況</th>
                   <th>メール連絡状況</th>
                 </tr>
@@ -227,12 +196,16 @@ var openpne = '.json_encode($jsonData).';
               {{each status_list}}
                 <tr class="${status}">
                   <td>${nickname}</td>
+                  <td>${tel}</td>
+                  <td>${mail}</td>
                   <td>${telstat}</td>
                   <td>${mailstat}</td>
                 </tr>
               {{/each}}
               </tbody>
             </table>
+            <p style="margin-bottom: 20px;"><a data-index="${$index}" class="duplicate-link btn pull-right">同じ内容でもう一度作成する</a>
+            </p>
           </div>
         </div>
       </div>
@@ -247,15 +220,9 @@ var openpne = '.json_encode($jsonData).';
       return str;
     };
   }
+  $(".tooltip-target").tooltip();
 
-  $('.tooltip-target').tooltip();
-  $("#call-button").click(function(){
-    $("#post-progress").show();
-  });
-  $.get("/api.php/call/search.json",{id: "4"},function(data){
-    $("#tmpl_list_target").tmpl(data).appendTo('#list-target');
-  },"json");
-
+  var status_list = null;
   $.ajax({
     type: "GET",
     url: "/api.php/snsconfig/search.json",
@@ -264,32 +231,95 @@ var openpne = '.json_encode($jsonData).';
     dataType: "json",
     success: function(json){
       console.log("snsconfig/search.json");
+      call_list = json.data.value;
       $("#tmpl_accordion").tmpl(json.data).appendTo('#accordion2');
     }
   });
-
-  $('#testcall-modal').on('show', function () {
-    if($("#call-body").val()){
-      $('#testcall-body').val($("#call-body").val());      
-    }else{
-      $('#testcall-body').val($("#call-body").attr("placeholder"));
+  $('#docall-modal').on('show', function () {
+    $('#docall-title').val($("#call-title").val());
+    $('#docall-body').val($("#call-body").val());
+  });
+  $('#docall-modal').on('shown', function () {
+    if(!$("#call-title").val() || !$("#call-body").val()){
+      alert("件名と本文が揃っていません。記入の上、テストからやり直してください。");
+      $('#docall-modal').modal('hide');
     }
-  })
+  });
 
-  $("#demo-call-button").click(function(){
+  $('#docall-modal').on('hide', function () {
+    $('#docall-button').button('reset');
+  });
+
+  $("#docall-button").click(function(){
+  $('#docall-button').button('loading');
+
     $.ajax({
-    type: "POST",
-    url: "/api.php/call/demo.json",
-    data: { tel: $("#testcall-tel").val(),
-            body: $("#testcall-body").val()},
-    async: false,
-    cache: false,
-    dataType: "json",
-    success: function(data){
-      console.log(data);
+      type: "POST",
+      url: "/api.php/call/queue.json",
+      data: { title: $("#call-title").val(),
+              body: $("#call-body").val(),
+              member_text: $("#direct-target-text").val()},
+      async: true,
+      cache: false,
+      dataType: "json",
+      //FIXME error: のカバー
+      success: function(data){
+        if(data['status'] == 'success'){
+          alert("発信手続きが完了しました");
+        }else{
+          alert("発信手続きができませんでした:" + data['message']);
+        }
+        $('#docall-button').button('reset');
       }
     });
   });
+
+
+  $('#testcall-modal').on('show', function () {
+    $('#testcall-title').val($("#call-title").val() ? $("#call-title").val() : $("#call-title").attr("placeholder"));
+    $('#testcall-body').val($("#call-body").val() ? $("#call-body").val() : $("#call-body").attr("placeholder"));      
+  });
+
+  $('#testcall-modal').on('hide', function () {
+    $('#testcall-button').button('reset');
+  });
+
+  $("#testcall-button").click(function(){
+    $('#testcall-button').button('loading');
+
+    $.ajax({
+      type: "POST",
+      url: "/api.php/call/demo.json",
+      data: { tel: $("#testcall-tel").val(),
+              body: $("#testcall-body").val()},
+      async: true,
+      cache: false,
+      dataType: "json",
+      //FIXME error: のカバー
+      success: function(data){
+        if(data['status'] == 'success'){
+          alert("発信手続きが完了しました");
+        }else{
+          alert("発信手続きができませんでした:" + data['message']);
+        }
+        $('#testcall-button').button('reset');
+      }
+    });
+  });
+
+  $('.duplicate-link').click(function(){
+    var index = $(this).attr("data-index");
+    var status_list = call_list[index].status_list;
+    var str = "";
+    for (var i = 0; i < status_list.length; i++) {
+      str += status_list[i]["nickname"] + " " + status_list[i]["tel"] + " " +status_list[i]["mail"] + "\n";
+    };
+    $('#direct-target-text').val(str);
+    $('#call-title').val(call_list[index].title);
+    $('#call-body').val(call_list[index].body);
+  });
+
+
   </script>
 </body>
 </html>
