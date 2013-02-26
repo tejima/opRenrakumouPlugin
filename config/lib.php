@@ -13,11 +13,9 @@ class TejimayaNotify
     $body = $topic['body'];
     $body = str_replace(array("\r\n","\r","\n",","), '', $body);
 
-		error_log(date("c"). $body . ": \n", 3, "/tmp/php.log");
-
 		foreach($community_member_list as $member){
 			$tel = $member->getProfile("tel");
-			error_log(date("c"). $member->id . ":" .$tel. ": \n", 3, "/tmp/php.log");
+			sfContext::getInstance()->getLogger()->info(date("c"). $member->id . ":" .$tel);
 			TejimayaBoundioUtil::pushcall($tel,$body);
 		}
 	}
@@ -26,12 +24,17 @@ class TejimayaNotify
 
 class TejimayaBoundioUtil
 {
-	function pushcall($tel=null,$text=null){
-		Boundio::configure('userSerialId', $_SERVER['userSerialId']);
-		Boundio::configure('appId', $_SERVER['appId']);
-		Boundio::configure('authKey', $_SERVER['authKey']);
+	static function pushcall($tel=null,$text=null,$userSerialId,$appId,$authKey){
+		Boundio::configure('userSerialId', $userSerialId);
+		Boundio::configure('appId', $appId);
+		Boundio::configure('authKey', $authKey);
 		$result = Boundio::call($tel, 'silent()%%silent()%%file_d('.$text.')%%silent()%%file_d('.$text.')%%silent()%%file_d(この件に了解であれば1を、不明な場合は0をプッシュしてください。)%%gather(20,1)%%file_d(連絡は以上です。)');
-		error_log(date("c"). print_r($result,true) . ": \n", 3, "/tmp/php.log");		
+		//FIXME Boundioのエラーパターン位基づいて、クライアントにエラーを通知する
+		if("true" == $result["success"]){
+			return $result["_id"];
+		}else{
+			return false;
+		}
 	}
 }
 
