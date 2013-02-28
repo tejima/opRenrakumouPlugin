@@ -40,7 +40,9 @@ class callActions extends sfActions
     $status['body'] = $body;
     $status['date'] = "2013/02/26"; //FIXME
     $status['community_id'] = $community_id;
+    $status['status'] = "ACTIVE";
     $status['status_list'] = array();
+
 
     if(!$data){
       $this->logMessage('if(!$data)',"err");
@@ -57,15 +59,14 @@ class callActions extends sfActions
       if(!$nickname){
         continue; //PASS EMPTY
       }
-      $single["status"] = "active";
       $single["boundio_id"] = "";
       $single["nickname"] = $nickname;
       $single["member_id"] = "";
       $single["tel"] = $tel;
-      $single["telstat"] = "WAIT_FOR_CALL";
+      $single["telstat"] = "CALLWAITING";
       $single["mail"] = $mail;
       if($mail){
-        $single["mailstat"] = "WAIT_FOR_CALL";
+        $single["mailstat"] = "CALLWAITING";
       }else{
         $single["mailstat"] = "UNSENT";        
       }

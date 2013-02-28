@@ -28,10 +28,26 @@ class TejimayaBoundioUtil
 		Boundio::configure('userSerialId', $userSerialId);
 		Boundio::configure('appId', $appId);
 		Boundio::configure('authKey', $authKey);
-		$result = Boundio::call($tel, 'silent()%%silent()%%file_d('.$text.')%%silent()%%file_d('.$text.')%%silent()%%file_d(この件に了解であれば1を、不明な場合は0をプッシュしてください。)%%gather(20,1)%%file_d(連絡は以上です。)');
+		//$str = 'silent()%%silent()%%file_d('.$text.')%%silent()%%file_d('.$text.')%%silent()%%file_d(この件に了解であれば1を、不明な場合は0をプッシュしてください。)%%gather(20,1)%%file_d(連絡は以上です。)';
+		$str = 'silent()%%silent()%%silent()%%file_d('.$text.')%%silent()%%file_d(この件に了解であれば1を、不明な場合は0をプッシュしてください。)%%gather(20,1)%%file_d(連絡は以上です。)';
+
+		$result = Boundio::call($tel, $str);
 		//FIXME Boundioのエラーパターン位基づいて、クライアントにエラーを通知する
+		print_r($result);
 		if("true" == $result["success"]){
 			return $result["_id"];
+		}else{
+			return false;
+		}
+	}
+	static function status_list($num=100,$userSerialId,$appId,$authKey){
+		Boundio::configure('userSerialId', $userSerialId);
+		Boundio::configure('appId', $appId);
+		Boundio::configure('authKey', $authKey);
+		
+		$result = Boundio::status(null, date("Ymd",strtotime("-2 days")), date("Ymd",strtotime("-1 days")), $num);
+		if("true" == $result[0]['success']){
+			return $result[0]['result'];
 		}else{
 			return false;
 		}
@@ -104,6 +120,7 @@ class Boundio {
 		
 		$params = array();
 		
+		$params['count'] = $count;
 		if($id !== '') {
 			$params['tel_id'] = $id;
 		} elseif($start !== '') {
