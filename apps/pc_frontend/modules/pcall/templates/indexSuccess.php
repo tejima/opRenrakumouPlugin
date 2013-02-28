@@ -270,19 +270,24 @@ var openpne = '.json_encode($jsonData).';
   }
   $(".tooltip-target").tooltip();
 
-  var status_list = null;
-  $.ajax({
-    type: "GET",
-    url: "/api.php/snsconfig/search.json",
-    data:  {format: 'json',apiKey: openpne.apiKey,key: 'public_pcall_status'},
-    async: false,
-    dataType: "json",
-    success: function(json){
-      console.log("snsconfig/search.json");
-      call_list = json.data.value;
-      $("#tmpl_accordion").tmpl(json.data).appendTo('#accordion2');
-    }
-  });
+  function update_call_status(){
+    $.ajax({
+      type: "GET",
+      url: "/api.php/snsconfig/search.json",
+      data:  {format: 'json',apiKey: openpne.apiKey,key: 'public_pcall_status'},
+      async: false,
+      dataType: "json",
+      success: function(json){
+        console.log("snsconfig/search.json");
+        call_list = json.data.value;
+        $('#accordion2 > *').remove();
+        $("#tmpl_accordion").tmpl(json.data).appendTo('#accordion2');
+      }
+    });
+  }
+
+  update_call_status();
+
   $('#docall-modal').on('show', function () {
     $('#docall-title').val($("#call-title").val());
     $('#docall-body').val($("#call-body").val());
@@ -314,6 +319,8 @@ var openpne = '.json_encode($jsonData).';
       success: function(data){
         if(data['status'] == 'success'){
           alert("発信手続きが完了しました");
+          $('#docall-modal').modal('hide');
+          update_call_status();
         }else{
           alert("発信手続きができませんでした:" + data['message']);
         }
@@ -347,6 +354,7 @@ var openpne = '.json_encode($jsonData).';
       success: function(data){
         if(data['status'] == 'success'){
           alert("発信手続きが完了しました");
+          $('#testcall-modal').modal('hide');
         }else{
           alert("発信手続きができませんでした:" + data['message']);
         }

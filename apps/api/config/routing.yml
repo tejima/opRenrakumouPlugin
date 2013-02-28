@@ -18,4 +18,8 @@ call_queue:
   url: /call/queue.json
   param: { module: call, action: queue, sf_format: json }
   requirements: { sf_method: [post] }
+call_cron:
+  url: /call/cron.json
+  param: { module: call, action: cron, sf_format: json }
+  requirements: { sf_method: [get] }
 

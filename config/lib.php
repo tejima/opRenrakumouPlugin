@@ -19,11 +19,107 @@ class TejimayaNotify
 			TejimayaBoundioUtil::pushcall($tel,$body);
 		}
 	}
-	
 }
 
 class TejimayaBoundioUtil
 {
+	static function update(){
+    $map = json_decode(Doctrine::getTable('SnsConfig')->get('boundio_status_map'),true);
+    $public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'),true);
+    if(null == $public_pcall_status){
+      $this->logMessage('public_pcall_status empty',"err");
+    }
+
+    foreach($public_pcall_status as &$ref_status){
+      /*
+      if('ACTIVE' != $status["status"]){ //FIXME Impl status field
+        continue; //SKIP
+      }
+      */
+      foreach($ref_status['status_list'] as &$ref_line){
+        if('CALLPROCESSING' != $ref_line['telstat']){
+          continue;
+        }
+        if(!$map[(string)$ref_line['boundio_id']]){
+          //echo "MAP_NOT_HIT\n";
+          continue;
+        }else{
+          //echo "MAP_HIT\n";
+        }
+        if("HUZAI1" == $ref_line['telstat'] && "HUZAI" == $map[$ref_line['boundio_id']]){
+          $ref_line['telstat'] = "HUZAI2";
+        }else{
+          $ref_line['telstat'] = $map[$ref_line['boundio_id']];
+        }
+      }
+    }
+    unset($ref_status);
+    unset($ref_line);
+    Doctrine::getTable('SnsConfig')->set('public_pcall_status',json_encode($public_pcall_status));
+	}
+	static function boundio(){
+		$boundio_list = TejimayaBoundioUtil::status_list(300,$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
+    if(!$boundio_list){
+      //echo "Boundio access error";
+    }
+    
+    $map = array();
+    foreach($boundio_list as $line){
+      $_status = "";
+      if("1" == (string)$line['_gather']){
+        $_status = "PUSH1";
+      }else{
+        switch ($line['_status']) {
+          case '架電完了':
+            $_status = "CALLED";
+            break;
+          case '不在':
+            $_status = "HUZAI";
+            break;
+        }
+      }
+      $map[(string)$line['_id']] = $_status;
+    }
+
+    Doctrine::getTable('SnsConfig')->set('boundio_status_raw',json_encode($boundio_list));
+    Doctrine::getTable('SnsConfig')->set('boundio_status_map',json_encode($map));
+	}
+	static function process(){
+    $public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'),true);
+    if(null == $public_pcall_status){
+      $this->logMessage('public_pcall_status empty',"err");
+    }
+
+    foreach($public_pcall_status as &$ref_status){
+    	/*
+    	if('ACTIVE' != $status["status"]){ //FIXME Impl status field
+    		continue; //SKIP
+    	}
+    	*/
+    	foreach($ref_status['status_list'] as &$ref_line){
+    		if('CALLWAITING' != $ref_line['telstat']){
+    			continue;
+    		}
+        //echo "\nbody:".$ref_status['body'];
+        //echo "\ntel:".$ref_line['tel'];
+
+    		$result = TejimayaBoundioUtil::pushcall($ref_line['tel'],$ref_status['body'],$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
+    		//echo "BOUNDIO CALL DONE status: " . $result. "\n";
+    		if($result){
+    			$ref_line['telstat'] = 'CALLPROCESSING';
+    			$ref_line['boundio_id'] = $result;
+    		}else{
+          $ref_line['telstat'] = 'FAIL';
+        }
+    	}
+    }
+    unset($ref_status);
+    unset($ref_line);
+    
+    sfContext::getInstance()->getLogger()->info('TASK DONE');
+   	//print_r($public_pcall_status);
+    Doctrine::getTable('SnsConfig')->set('public_pcall_status',json_encode($public_pcall_status));
+	}
 	static function pushcall($tel=null,$text=null,$userSerialId,$appId,$authKey){
 		Boundio::configure('userSerialId', $userSerialId);
 		Boundio::configure('appId', $appId);
@@ -33,7 +129,7 @@ class TejimayaBoundioUtil
 
 		$result = Boundio::call($tel, $str);
 		//FIXME Boundioのエラーパターン位基づいて、クライアントにエラーを通知する
-		print_r($result);
+		//print_r($result);
 		if("true" == $result["success"]){
 			return $result["_id"];
 		}else{

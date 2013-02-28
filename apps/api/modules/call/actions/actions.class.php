@@ -9,6 +9,34 @@
  */
 class callActions extends sfActions
 {
+  public function executeCron(sfWebRequest $request)
+  {
+    if(!$this->getUser()->getMemberId()){
+      return $this->renderText(json_encode(array("status" => "error","message"=> "ACL required")));
+      //FIXME root権限のみ実行に制限する
+    }
+    $mode = $request->getParameter("mode");
+    switch($mode){
+      case "update":
+        TejimayaBoundioUtil::update();
+        break;
+      case "process":
+        TejimayaBoundioUtil::process();
+        break;
+      case "boundio":
+        TejimayaBoundioUtil::boundio();
+        break;
+      case "test":
+        break;
+      case "all":
+        TejimayaBoundioUtil::process();
+        TejimayaBoundioUtil::boundio();
+        TejimayaBoundioUtil::update();
+        break;
+    }
+
+    return $this->renderText(json_encode(array("status" => "success","message"=> "$mode DONE")));
+  }
   public function executeDemo(sfWebRequest $request)
   {
   	$tel = $request->getParameter("tel");
