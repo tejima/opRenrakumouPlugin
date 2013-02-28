@@ -94,7 +94,7 @@ var openpne = '.json_encode($jsonData).';
       </div>
       <div class="span7">
         <div>
-          <h3>送信状況確認</h3>
+          <h3>送信状況確認 <a id="update-status" class="btn pull-right" href="#">更新</a> </h3>
           <div class="accordion" id="accordion2"></div>
         </div>
       </div>
@@ -252,7 +252,7 @@ var openpne = '.json_encode($jsonData).';
               {{/each}}
               </tbody>
             </table>
-            <p style="margin-bottom: 20px;"><a data-index="${$index}" class="duplicate-link btn pull-right">同じ内容でもう一度作成する</a>
+            <p><a style="margin-bottom: 10px;" data-index="${$index}" class="duplicate-link btn btn-small pull-right">同じ内容でもう一度作成する</a>
             </p>
           </div>
         </div>
@@ -282,11 +282,25 @@ var openpne = '.json_encode($jsonData).';
         call_list = json.data.value;
         $('#accordion2 > *').remove();
         $("#tmpl_accordion").tmpl(json.data).appendTo('#accordion2');
+        $("#collapse-0").collapse('show');
       }
     });
   }
 
   update_call_status();
+
+  $('#update-status').live('click',function(){
+    update_call_status();
+    $.ajax({
+      type: "GET",
+      url: "/api.php/call/cron.json",
+      data:  {format: 'json',apiKey: openpne.apiKey,mode: 'all'},
+      async: true,
+      dataType: "json",
+      success: function(json){
+      }
+    });
+  });
 
   $('#docall-modal').on('show', function () {
     $('#docall-title').val($("#call-title").val());
@@ -303,7 +317,7 @@ var openpne = '.json_encode($jsonData).';
     $('#docall-button').button('reset');
   });
 
-  $("#docall-button").click(function(){
+  $("#docall-button").live('click',function(){
   $('#docall-button').button('loading');
 
     $.ajax({
@@ -339,7 +353,7 @@ var openpne = '.json_encode($jsonData).';
     $('#testcall-button').button('reset');
   });
 
-  $("#testcall-button").click(function(){
+  $("#testcall-button").live('click',function(){
     $('#testcall-button').button('loading');
 
     $.ajax({
@@ -363,7 +377,7 @@ var openpne = '.json_encode($jsonData).';
     });
   });
 
-  $('.duplicate-link').click(function(){
+  $('.duplicate-link').live('click',function(){
     var index = $(this).attr("data-index");
     var status_list = call_list[index].status_list;
     var str = "";
