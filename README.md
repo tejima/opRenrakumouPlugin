@@ -6,3 +6,9 @@ opRenrakumouPlugin
 ・コミュニティトピックを立ち上げると参加メンバーの携帯電話に一斉配信する
 
 
+
+イメージ
+----
+
+<img src="http://p.pne.jp/d/201303011422.png">
+
