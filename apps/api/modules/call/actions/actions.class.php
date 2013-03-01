@@ -18,20 +18,20 @@ class callActions extends sfActions
     $mode = $request->getParameter("mode");
     switch($mode){
       case "update":
-        TejimayaBoundioUtil::update();
+        RenrakumouUtil::update();
         break;
       case "process":
-        TejimayaBoundioUtil::process();
+        RenrakumouUtil::process();
         break;
       case "boundio":
-        TejimayaBoundioUtil::boundio();
+        RenrakumouUtil::boundio();
         break;
       case "test":
         break;
       case "all":
-        TejimayaBoundioUtil::process();
-        TejimayaBoundioUtil::boundio();
-        TejimayaBoundioUtil::update();
+        RenrakumouUtil::process();
+        RenrakumouUtil::boundio();
+        RenrakumouUtil::update();
         break;
     }
 
@@ -42,7 +42,7 @@ class callActions extends sfActions
   	$tel = $request->getParameter("tel");
   	$body = $request->getParameter("body");
   	$body = str_replace(array("\r\n","\r","\n"), '', $body);
-		$result = TejimayaBoundioUtil::pushcall($tel,$body,$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
+		$result = RenrakumouUtil::pushcall($tel,$body,$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
     //FIXME クライアントのJS側に、エラーパターンを伝える、入力値がおかしいのか？文章が長すぎるのか？サーバがおかしいのか？
 		if($result){
       return $this->renderText(json_encode(array("status" => "success","tel" => $tel,"body" => $body, "result" => $result)));

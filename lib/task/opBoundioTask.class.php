@@ -25,7 +25,7 @@ EOF;
     new sfDatabaseManager($this->configuration);
   	sfContext::createInstance($this->configuration);
 
-    $boundio_list = TejimayaBoundioUtil::status_list(300,$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
+    $boundio_list = RenrakumouUtil::status_list(300,$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
     if(!$boundio_list){
       echo "Boundio access error";
     }

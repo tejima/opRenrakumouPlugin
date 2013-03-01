@@ -1,6 +1,6 @@
 <?php
 
-class TejimayaBoundioUtil
+class RenrakumouUtil
 {
 	static function update(){
     $map = json_decode(Doctrine::getTable('SnsConfig')->get('boundio_status_map'),true);
@@ -37,7 +37,7 @@ class TejimayaBoundioUtil
     Doctrine::getTable('SnsConfig')->set('public_pcall_status',json_encode($public_pcall_status));
 	}
 	static function boundio(){
-		$boundio_list = TejimayaBoundioUtil::status_list(300,$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
+		$boundio_list = RenrakumouUtil::status_list(300,$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
     if(!$boundio_list){
       //echo "Boundio access error";
     }
@@ -82,7 +82,7 @@ class TejimayaBoundioUtil
         //echo "\nbody:".$ref_status['body'];
         //echo "\ntel:".$ref_line['tel'];
 
-    		$result = TejimayaBoundioUtil::pushcall($ref_line['tel'],$ref_status['body'],$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
+    		$result = RenrakumouUtil::pushcall($ref_line['tel'],$ref_status['body'],$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
     		//echo "BOUNDIO CALL DONE status: " . $result. "\n";
     		if($result){
     			$ref_line['telstat'] = 'CALLPROCESSING';
