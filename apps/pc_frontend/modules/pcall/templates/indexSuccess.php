@@ -102,12 +102,19 @@ var openpne = '.json_encode($jsonData).';
     <hr>
     <div>© Tejimaya, Inc. 2002〜</div>
   </div>
-
-  <!-- Modal window list -->
+<!--
+■ ■ ■ ■       ■ ■ ■         ■ ■ ■   ■             ■ ■ ■       ■ ■ ■       ■ ■ ■ 
+■       ■       ■         ■     ■   ■           ■       ■   ■       ■   ■       ■
+■       ■       ■       ■       ■   ■           ■       ■   ■           ■       
+■       ■       ■       ■       ■   ■           ■       ■   ■             ■ ■ ■ 
+■       ■       ■       ■ ■ ■ ■ ■   ■           ■       ■   ■     ■ ■           ■
+■       ■       ■       ■       ■   ■           ■       ■   ■       ■   ■       ■
+■ ■ ■ ■       ■ ■ ■     ■       ■   ■ ■ ■ ■ ■     ■ ■ ■       ■ ■ ■       ■ ■ ■ 
+-->
   <div id="testcall-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="myModalLabel">自分にテスト発信</h3>
+      <h3>自分にテスト発信</h3>
     </div>
     <div class="modal-body">
       <form>
@@ -137,7 +144,7 @@ var openpne = '.json_encode($jsonData).';
   <div id="docall-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="myModalLabel">発信の最終確認</h3>
+      <h3>発信の最終確認</h3>
     </div>
     <div class="modal-body">
       <form>
@@ -161,8 +168,15 @@ var openpne = '.json_encode($jsonData).';
       <button id="docall-button" class="btn btn-danger">発信：実際に電話（メール）を発信する</button>
     </div>
   </div>
-
-  <!-- jQuery template list -->
+<!--
+■ ■ ■ ■ ■   ■ ■ ■ ■ ■   ■       ■   ■ ■ ■ ■     ■               ■ ■ ■   ■ ■ ■ ■ ■   ■ ■ ■ ■ ■     ■ ■ ■ 
+    ■       ■           ■ ■   ■ ■   ■       ■   ■             ■     ■       ■       ■           ■       ■
+    ■       ■           ■   ■   ■   ■       ■   ■           ■       ■       ■       ■           ■       
+    ■       ■ ■ ■ ■     ■   ■   ■   ■ ■ ■ ■     ■           ■       ■       ■       ■ ■ ■ ■       ■ ■ ■ 
+    ■       ■           ■       ■   ■           ■           ■ ■ ■ ■ ■       ■       ■                   ■
+    ■       ■           ■       ■   ■           ■           ■       ■       ■       ■           ■       ■
+    ■       ■ ■ ■ ■ ■   ■       ■   ■           ■ ■ ■ ■ ■   ■       ■       ■       ■ ■ ■ ■ ■     ■ ■ ■ 
+-->
   <script id="tmpl_list_target" type="text/x-jquery-tmpl">
                         <tr>
                         <td>${nickname}</td>
@@ -260,7 +274,16 @@ var openpne = '.json_encode($jsonData).';
     {{/each}}
   </script>
 
-  <!-- Script list -->
+<!--
+  ■ ■ ■       ■ ■ ■     ■ ■ ■ ■       ■ ■ ■     ■ ■ ■ ■     ■ ■ ■ ■ ■     ■ ■ ■ 
+■       ■   ■       ■   ■       ■       ■       ■       ■       ■       ■       ■
+■           ■           ■       ■       ■       ■       ■       ■       ■       
+  ■ ■ ■     ■           ■ ■ ■ ■         ■       ■ ■ ■ ■         ■         ■ ■ ■ 
+        ■   ■           ■   ■           ■       ■               ■               ■
+■       ■   ■       ■   ■     ■         ■       ■               ■       ■       ■
+  ■ ■ ■       ■ ■ ■     ■       ■     ■ ■ ■     ■               ■         ■ ■ ■ 
+-->
+
   <script>
   if (!('console' in window)) {
     window.console = {};
@@ -269,7 +292,13 @@ var openpne = '.json_encode($jsonData).';
     };
   }
   $(".tooltip-target").tooltip();
+  function validate_target(){
+    //各要素があるか？
+    //メール：無効文字が使われていないか？
+    //電話：無効文字が使われていないか？
+    //FIXME
 
+  }
   function update_call_status(){
     $.ajax({
       type: "GET",
@@ -286,9 +315,17 @@ var openpne = '.json_encode($jsonData).';
       }
     });
   }
-
   update_call_status();
 
+/*
+■ ■ ■ ■ ■   ■       ■   ■ ■ ■ ■ ■   ■       ■   ■ ■ ■ ■ ■     ■ ■ ■ 
+■           ■       ■   ■           ■       ■       ■       ■       ■
+■           ■       ■   ■           ■ ■     ■       ■       ■       
+■ ■ ■ ■     ■       ■   ■ ■ ■ ■     ■   ■   ■       ■         ■ ■ ■ 
+■           ■       ■   ■           ■     ■ ■       ■               ■
+■             ■   ■     ■           ■       ■       ■       ■       ■
+■ ■ ■ ■ ■       ■       ■ ■ ■ ■ ■   ■       ■       ■         ■ ■ ■ 
+*/
   $('#update-status').live('click',function(){
     update_call_status();
     $.ajax({
@@ -312,14 +349,11 @@ var openpne = '.json_encode($jsonData).';
       $('#docall-modal').modal('hide');
     }
   });
-
   $('#docall-modal').on('hide', function () {
     $('#docall-button').button('reset');
   });
-
   $("#docall-button").live('click',function(){
-  $('#docall-button').button('loading');
-
+    $('#docall-button').button('loading');
     $.ajax({
       type: "POST",
       url: "/api.php/call/queue.json",
@@ -342,7 +376,6 @@ var openpne = '.json_encode($jsonData).';
       }
     });
   });
-
 
   $('#testcall-modal').on('show', function () {
     $('#testcall-title').val($("#call-title").val() ? $("#call-title").val() : $("#call-title").attr("placeholder"));
@@ -387,6 +420,10 @@ var openpne = '.json_encode($jsonData).';
     $('#direct-target-text').val(str);
     $('#call-title').val(call_list[index].title);
     $('#call-body').val(call_list[index].body);
+  });
+
+  $('#direct-target-text').live('change',function(){
+    //console.log("CHANGE");
   });
 
 

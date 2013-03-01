@@ -1,25 +1,4 @@
 <?php
-class TejimayaNotify
-{
-	public function execute($event){
-		$action = $event['actionInstance'];
-    if(sfRequest::POST != $action->getRequest()->getMethod()){
-      return;
-    }
-		$topic = $action->getRequestParameter('community_topic');
-		$community_member_list = $action->getRoute()->getObject()->getMembers(100);
-		
-    $id = $action->getUser()->getMemberId();
-    $body = $topic['body'];
-    $body = str_replace(array("\r\n","\r","\n",","), '', $body);
-
-		foreach($community_member_list as $member){
-			$tel = $member->getProfile("tel");
-			sfContext::getInstance()->getLogger()->info(date("c"). $member->id . ":" .$tel);
-			TejimayaBoundioUtil::pushcall($tel,$body);
-		}
-	}
-}
 
 class TejimayaBoundioUtil
 {
