@@ -10,5 +10,5 @@ opRenrakumouPlugin
 イメージ
 ----
 
-<img src="http://p.pne.jp/d/201303011422.png">
+<img src="http://p.pne.jp/d/500/201303011422.png">
 
