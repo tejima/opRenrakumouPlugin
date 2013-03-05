@@ -203,14 +203,14 @@ var openpne = '.json_encode($jsonData).';
                   <th>電話番号</th>
                   <th>メールアドレス</th>
                   <th>電話連絡状況</th>
-                  <!--<th>メール連絡状況</th>-->
+                  <th>メール連絡状況</th>
                 </tr>
               </thead>
               <tbody>
               {{each status_list}}
-                {{if 'CALLED'==telstat || 'PUSH1'==telstat }}
+                {{if 'CALLED'==telstat || 'PUSH1'==telstat || 'PUSH1'==mailstat }}
                 <tr class="success">
-                {{else 'CALLWAITING'==telstat || 'CALLPROCESSING'==telstat }}
+                {{else 'CALLWAITING'==telstat || 'CALLPROCESSING'==telstat  }}
                 <tr class="warning">
                 {{else 'FAIL'==telstat || 'FAIL1'==telstat || 'FAIL2'==telstat || 'HUZAI'==telstat || 'HUZAI1'==telstat || 'HUZAI2'==telstat}}
                 <tr class="error">
@@ -245,23 +245,21 @@ var openpne = '.json_encode($jsonData).';
                   {{else}}
                   <td>ー</td>
                   {{/if}}
-                  <!--
                   {{if 'CALLWAITING'==mailstat}}
                   <td>発信待機</td>
                   {{else 'CALLPROCESSING'==mailstat}}
-                  <td>待機中</td>
+                  <td>発信作業中</td>
                   {{else 'FAIL1'==mailstat}}
-                  <td>待機中</td>
+                  <td>発信失敗1回目</td>
                   {{else 'FAIL2'==mailstat}}
-                  <td>待機中</td>
+                  <td>発信失敗2回目</td>
                   {{else 'PUSH1'==mailstat}}
-                  <td>待機中</td>
+                  <td>発信：了解有</td>
                   {{else 'CALLED'==mailstat}}
-                  <td>待機中</td>
+                  <td>発信：了解無</td>
                   {{else}}
                   <td>ー</td>
                   {{/if}}
-                  -->
                 </tr>
               {{/each}}
               </tbody>
