@@ -1,4 +1,39 @@
 <?php
+class Japanese_Mail extends Zend_Mail{
+	
+	function __construct(){
+		parent::__construct('ISO-2022-JP');
+	}
+	
+	function setBodyText( $txt , $charset = null , $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE ){
+		parent::setBodyText( mb_convert_encoding($txt, 'ISO-2022-JP', 'UTF-8') , $charset , $encoding );
+	}
+	
+	function setSubject( $txt ){
+		parent::setSubject( mb_convert_encoding($txt, 'ISO-2022-JP', 'UTF-8' ));
+	}
+
+	function setTo($a,$b){
+		parent::setTo($a,mb_encode_mimeheader(mb_convert_encoding($b, 'ISO-2022-JP', 'UTF-8'),'ISO-2022-JP'));
+	}
+
+	public function setFrom($email, $name = null){
+		$name = mb_encode_mimeheader(mb_convert_encoding($name, 'ISO-2022-JP', 'UTF-8'),'ISO-2022-JP');
+		sfContext::getInstance()->getLogger()->debug("setFrom() email: " . $email);
+		parent::setFrom($email,$name);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
 
 class RenrakumouUtil
 {
@@ -35,6 +70,35 @@ class RenrakumouUtil
     unset($ref_status);
     unset($ref_line);
     Doctrine::getTable('SnsConfig')->set('public_pcall_status',json_encode($public_pcall_status));
+	}
+	static function update_mail($mail_id){
+		$public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'),true);
+    if(null == $public_pcall_status){
+      $this->logMessage('public_pcall_status empty',"err");
+    }
+    $result = false;
+    foreach($public_pcall_status as &$ref_status){
+      foreach($ref_status['status_list'] as &$ref_line){
+        if('CALLED' != $ref_line['mailstat']){
+          continue;
+        }
+        if($mail_id == $ref_line['mail_id']){
+          $ref_line['mailstat'] = 'PUSH1';
+          $result = true;
+          break 2;
+        }
+      }
+    }
+    unset($ref_status);
+    unset($ref_line);
+    if($result){
+	  	sfContext::getInstance()->getLogger()->debug("update_mail() HIT");
+    }else{
+	  	sfContext::getInstance()->getLogger()->debug("update_mail() PASS");
+    }
+
+    Doctrine::getTable('SnsConfig')->set('public_pcall_status',json_encode($public_pcall_status));
+    return $result;
 	}
 	static function boundio(){
 		$boundio_list = RenrakumouUtil::status_list(300,$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
@@ -127,7 +191,117 @@ class RenrakumouUtil
 			return false;
 		}
 	}
+	static function process_mail(){
+		$public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'),true);
+    if(null == $public_pcall_status){
+      $this->logMessage('public_pcall_status empty',"err");
+    }
+
+    foreach($public_pcall_status as &$ref_status){
+    	/*
+    	if('ACTIVE' != $status["status"]){ //FIXME Impl status field
+    		continue; //SKIP
+    	}
+    	*/
+    	foreach($ref_status['status_list'] as &$ref_line){
+    		if('CALLWAITING' != $ref_line['mailstat']){
+    			continue;
+    		}
+        //echo "\nbody:".$ref_status['body'];
+        //echo "\ntel:".$ref_line['tel'];
+    		$uniqid = uniqid(null,true); //FIXME strict uniqueness
+    		    		$roger_url = sfConfig::get("op_base_url"). "/o/roger?id=".$uniqid;
+    		$body = <<< EOF
+${ref_status['body']}
+
+
+■了解報告■
+下記リンクをクリックすることで、送信者に了解の報告ができます。
+${roger_url}
+
+連絡網サービス pCall
+EOF;
+
+
+
+
+    		$result = RenrakumouUtil::awsSES($ref_line['mail'],null,$ref_status['title'],$body,$_SERVER['smtpUsername'],$_SERVER['smtpPassword']);
+    		$ref_line['mail_id'] = $uniqid;
+
+    		//echo "BOUNDIO CALL DONE status: " . $result. "\n";
+    		if($result){
+    			$ref_line['mailstat'] = 'CALLED';
+    		}else{
+          $ref_line['mailstat'] = 'FAIL';
+        }
+    	}
+    }
+    unset($ref_status);
+    unset($ref_line);
+    
+    sfContext::getInstance()->getLogger()->info('TASK DONE');
+   	//print_r($public_pcall_status);
+    Doctrine::getTable('SnsConfig')->set('public_pcall_status',json_encode($public_pcall_status));
+
+
+	}
+	static function awsSES($to,$from,$subject,$body,$smtpUsername,$smtpPassword){
+		if(!$to){
+			return false;
+		}
+		if(!$from){
+			$from = "noreply@pne.jp";
+		}
+		$config = array('ssl' => 'ssl',
+								'auth' => 'login',
+                'username' => $smtpUsername,
+                'password' => $smtpPassword,
+                'port' => 465);
+
+//		$host = "email-smtp.us-east-1.amazonaws.com";
+		$host = "smtp.gmail.com";
+
+		$transport = new Zend_Mail_Transport_Smtp($host,$config);
+		try{
+			$mail = new Japanese_Mail();
+			$mail->setBodyText($body);
+			$mail->setFrom($from,"連絡網 pCall");
+			$mail->addTo($to);
+			$mail->setSubject($subject);
+			$mail->send($transport);
+			return true;
+		}catch(Exception $e){
+			return false;
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * boundio API simple client interface.
