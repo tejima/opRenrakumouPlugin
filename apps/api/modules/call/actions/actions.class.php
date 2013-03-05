@@ -22,6 +22,7 @@ class callActions extends sfActions
         break;
       case "process":
         RenrakumouUtil::process();
+        RenrakumouUtil::process_mail();
         break;
       case "boundio":
         RenrakumouUtil::boundio();
@@ -30,6 +31,7 @@ class callActions extends sfActions
         break;
       case "all":
         RenrakumouUtil::process();
+        RenrakumouUtil::process_mail();
         RenrakumouUtil::boundio();
         RenrakumouUtil::update();
         break;
