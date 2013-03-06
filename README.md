@@ -45,16 +45,7 @@ opRenrakumouPlugin
 
 TODO
 ----
-- [ ] 件数リミット
-- [ ] 発信履歴ログ出力機能
-- [ ] 学校・学年一括配信
-- [ ] 紹介ボーナス機能
-
-- [ ] a task list item
-- [ ] list syntax required
-- [ ] normal **formatting**, @mentions, #1234 refs
-- [ ] incomplete
-- [x] completed
-
-
-
+- 件数リミット
+- 発信履歴ログ出力機能
+- 学校・学年一括配信
+- 紹介ボーナス機能
