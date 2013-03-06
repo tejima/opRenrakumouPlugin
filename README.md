@@ -16,6 +16,7 @@ opRenrakumouPlugin
 ・Apache ENV 環境変数で以下の値をセットする必要があります
 
 <pre>
+  SetEnv boundioMode develop # develop / production
   SetEnv userSerialId  #BOUNDIO
   SetEnv appId  #BOUNDIO
   SetEnv authKey  #BOUNDIO
@@ -23,8 +24,15 @@ opRenrakumouPlugin
   SetEnv smtpPassword #有効なgmailアカウント
 </pre>
 
-イメージ
+動作イメージ
 ----
-
 <img src="http://p.pne.jp/d/500/201303011422.png">
+
+
+改訂履歴
+----
+- v0.3.1
+ - test
+- v0.5.0
+
 
