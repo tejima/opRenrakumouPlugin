@@ -19,11 +19,11 @@ class oActions extends sfActions
   	$mail_id = $request->getParameter("id","");
 
   	if($mail_id){
-	  	$result = RenrakumouUtil::update_mail($mail_id);
-	  	sfContext::getInstance()->getLogger()->debug("RenrakumouUtil::update_mail(): $result");
+	  	$result = RenrakumouUtil::updatestatus_mail($mail_id);
+	  	sfContext::getInstance()->getLogger()->debug("RenrakumouUtil::updatestatus_mail(): $result");
 	    return $this->renderText("了解確認を送信者に報告しました。");
   	}else{
-  		return $this->renderText("確認できません。エラーコード:4192");
+  		return $this->renderText("報告できませんでした。");
   	}
   }
 }

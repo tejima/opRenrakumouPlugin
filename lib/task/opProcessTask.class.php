@@ -26,7 +26,8 @@ EOF;
 
   	sfContext::createInstance($this->configuration);
 
-    RenrakumouUtil::process();
+    RenrakumouUtil::process_tel();
+    RenrakumouUtil::process_mail();
     
   }
 }

@@ -24,6 +24,6 @@ EOF;
   	$this->configuration = parent::createConfiguration($options['application'], $options['env']);
     new sfDatabaseManager($this->configuration);
   	sfContext::createInstance($this->configuration);
-    RenrakumouUtil::update();
+    RenrakumouUtil::updatestatus_tel();
   }
 }

@@ -1,43 +1,8 @@
 <?php
-class Japanese_Mail extends Zend_Mail{
-	
-	function __construct(){
-		parent::__construct('ISO-2022-JP');
-	}
-	
-	function setBodyText( $txt , $charset = null , $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE ){
-		parent::setBodyText( mb_convert_encoding($txt, 'ISO-2022-JP', 'UTF-8') , $charset , $encoding );
-	}
-	
-	function setSubject( $txt ){
-		parent::setSubject( mb_convert_encoding($txt, 'ISO-2022-JP', 'UTF-8' ));
-	}
-
-	function setTo($a,$b){
-		parent::setTo($a,mb_encode_mimeheader(mb_convert_encoding($b, 'ISO-2022-JP', 'UTF-8'),'ISO-2022-JP'));
-	}
-
-	public function setFrom($email, $name = null){
-		$name = mb_encode_mimeheader(mb_convert_encoding($name, 'ISO-2022-JP', 'UTF-8'),'ISO-2022-JP');
-		sfContext::getInstance()->getLogger()->debug("setFrom() email: " . $email);
-		parent::setFrom($email,$name);
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
 
 class RenrakumouUtil
 {
-	static function update(){
+	static function updatestatus_tel(){
     $map = json_decode(Doctrine::getTable('SnsConfig')->get('boundio_status_map'),true);
     $public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'),true);
     if(null == $public_pcall_status){
@@ -45,11 +10,6 @@ class RenrakumouUtil
     }
 
     foreach($public_pcall_status as &$ref_status){
-      /*
-      if('ACTIVE' != $status["status"]){ //FIXME Impl status field
-        continue; //SKIP
-      }
-      */
       foreach($ref_status['status_list'] as &$ref_line){
         if('CALLPROCESSING' != $ref_line['telstat']){
           continue;
@@ -71,7 +31,7 @@ class RenrakumouUtil
     unset($ref_line);
     Doctrine::getTable('SnsConfig')->set('public_pcall_status',json_encode($public_pcall_status));
 	}
-	static function update_mail($mail_id){
+	static function updatestatus_mail($mail_id){
 		$public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'),true);
     if(null == $public_pcall_status){
       $this->logMessage('public_pcall_status empty',"err");
@@ -92,15 +52,15 @@ class RenrakumouUtil
     unset($ref_status);
     unset($ref_line);
     if($result){
-	  	sfContext::getInstance()->getLogger()->debug("update_mail() HIT");
+	  	sfContext::getInstance()->getLogger()->debug("updatestatus_mail() match");
     }else{
-	  	sfContext::getInstance()->getLogger()->debug("update_mail() PASS");
+	  	sfContext::getInstance()->getLogger()->debug("updatestatus_mail() unmatch");
     }
 
     Doctrine::getTable('SnsConfig')->set('public_pcall_status',json_encode($public_pcall_status));
     return $result;
 	}
-	static function boundio(){
+	static function sync_boundio(){
 		$boundio_list = RenrakumouUtil::status_list(300,$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
     if(!$boundio_list){
       //echo "Boundio access error";
@@ -127,27 +87,19 @@ class RenrakumouUtil
     Doctrine::getTable('SnsConfig')->set('boundio_status_raw',json_encode($boundio_list));
     Doctrine::getTable('SnsConfig')->set('boundio_status_map',json_encode($map));
 	}
-	static function process(){
+	static function process_tel(){
     $public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'),true);
     if(null == $public_pcall_status){
-      $this->logMessage('public_pcall_status empty',"err");
+			sfContext::getInstance()->getLogger()->info("public_pcall_status empty");
     }
 
     foreach($public_pcall_status as &$ref_status){
-    	/*
-    	if('ACTIVE' != $status["status"]){ //FIXME Impl status field
-    		continue; //SKIP
-    	}
-    	*/
     	foreach($ref_status['status_list'] as &$ref_line){
     		if('CALLWAITING' != $ref_line['telstat']){
     			continue;
     		}
-        //echo "\nbody:".$ref_status['body'];
-        //echo "\ntel:".$ref_line['tel'];
 
     		$result = RenrakumouUtil::pushcall($ref_line['tel'],$ref_status['body'],$_SERVER['userSerialId'],$_SERVER['appId'],$_SERVER['authKey']);
-    		//echo "BOUNDIO CALL DONE status: " . $result. "\n";
     		if($result){
     			$ref_line['telstat'] = 'CALLPROCESSING';
     			$ref_line['boundio_id'] = $result;
@@ -167,12 +119,13 @@ class RenrakumouUtil
 		Boundio::configure('userSerialId', $userSerialId);
 		Boundio::configure('appId', $appId);
 		Boundio::configure('authKey', $authKey);
-		//$str = 'silent()%%silent()%%file_d('.$text.')%%silent()%%file_d('.$text.')%%silent()%%file_d(この件に了解であれば1を、不明な場合は0をプッシュしてください。)%%gather(20,1)%%file_d(連絡は以上です。)';
+		Boundio::configure('env',$_SERVER['boundioMode']);
+
 		$str = 'silent()%%silent()%%silent()%%file_d('.$text.')%%silent()%%file_d(この件に了解であれば1を、不明な場合は0をプッシュしてください。)%%gather(20,1)%%file_d(連絡は以上です。)';
 
 		$result = Boundio::call($tel, $str);
+		 sfContext::getInstance()->getLogger()->debug("Boundio::call() :" .print_r($result,true));
 		//FIXME Boundioのエラーパターン位基づいて、クライアントにエラーを通知する
-		//print_r($result);
 		if("true" == $result["success"]){
 			return $result["_id"];
 		}else{
@@ -183,8 +136,11 @@ class RenrakumouUtil
 		Boundio::configure('userSerialId', $userSerialId);
 		Boundio::configure('appId', $appId);
 		Boundio::configure('authKey', $authKey);
-		
+		Boundio::configure('env',$_SERVER['boundioMode']);
+
 		$result = Boundio::status(null, date("Ymd",strtotime("-2 days")), date("Ymd",strtotime("-1 days")), $num);
+		sfContext::getInstance()->getLogger()->debug("Boundio::call() :" .print_r($result,true));
+
 		if("true" == $result[0]['success']){
 			return $result[0]['result'];
 		}else{
@@ -198,19 +154,12 @@ class RenrakumouUtil
     }
 
     foreach($public_pcall_status as &$ref_status){
-    	/*
-    	if('ACTIVE' != $status["status"]){ //FIXME Impl status field
-    		continue; //SKIP
-    	}
-    	*/
     	foreach($ref_status['status_list'] as &$ref_line){
     		if('CALLWAITING' != $ref_line['mailstat']){
     			continue;
     		}
-        //echo "\nbody:".$ref_status['body'];
-        //echo "\ntel:".$ref_line['tel'];
     		$uniqid = uniqid(null,true); //FIXME strict uniqueness
-    		    		$roger_url = sfConfig::get("op_base_url"). "/o/roger?id=".$uniqid;
+	  		$roger_url = sfConfig::get("op_base_url"). "/o/roger?id=".$uniqid;
     		$body = <<< EOF
 ${ref_status['body']}
 
@@ -222,16 +171,14 @@ ${roger_url}
 連絡網サービス pCall
 EOF;
 
-
-
-
     		$result = RenrakumouUtil::awsSES($ref_line['mail'],null,$ref_status['title'],$body,$_SERVER['smtpUsername'],$_SERVER['smtpPassword']);
     		$ref_line['mail_id'] = $uniqid;
 
-    		//echo "BOUNDIO CALL DONE status: " . $result. "\n";
     		if($result){
+    			sfContext::getInstance()->getLogger()->info( $ref_line['mail'] . ' mailstat changed ' . $ref_line['mailstat'] . " => CALLED" );
     			$ref_line['mailstat'] = 'CALLED';
     		}else{
+    			sfContext::getInstance()->getLogger()->info( $ref_line['mail'] . ' mailstat changed ' . $ref_line['mailstat'] . " => FAIL" );
           $ref_line['mailstat'] = 'FAIL';
         }
     	}
@@ -239,11 +186,7 @@ EOF;
     unset($ref_status);
     unset($ref_line);
     
-    sfContext::getInstance()->getLogger()->info('TASK DONE');
-   	//print_r($public_pcall_status);
     Doctrine::getTable('SnsConfig')->set('public_pcall_status',json_encode($public_pcall_status));
-
-
 	}
 	static function awsSES($to,$from,$subject,$body,$smtpUsername,$smtpPassword){
 		if(!$to){
@@ -450,3 +393,29 @@ class Boundio {
  * 
  */
 class BoundioException extends Exception{}
+
+class Japanese_Mail extends Zend_Mail{
+	
+	function __construct(){
+		parent::__construct('ISO-2022-JP');
+	}
+	
+	function setBodyText( $txt , $charset = null , $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE ){
+		parent::setBodyText( mb_convert_encoding($txt, 'ISO-2022-JP', 'UTF-8') , $charset , $encoding );
+	}
+	
+	function setSubject( $txt ){
+		parent::setSubject( mb_convert_encoding($txt, 'ISO-2022-JP', 'UTF-8' ));
+	}
+
+	function setTo($a,$b){
+		parent::setTo($a,mb_encode_mimeheader(mb_convert_encoding($b, 'ISO-2022-JP', 'UTF-8'),'ISO-2022-JP'));
+	}
+
+	public function setFrom($email, $name = null){
+		$name = mb_encode_mimeheader(mb_convert_encoding($name, 'ISO-2022-JP', 'UTF-8'),'ISO-2022-JP');
+		sfContext::getInstance()->getLogger()->debug("setFrom() email: " . $email);
+		parent::setFrom($email,$name);
+	}
+}
+
