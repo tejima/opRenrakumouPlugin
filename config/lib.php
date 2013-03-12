@@ -121,7 +121,7 @@ class RenrakumouUtil
 		Boundio::configure('authKey', $authKey);
 		Boundio::configure('env',$_SERVER['boundioMode']);
 
-		$str = 'silent()%%silent()%%silent()%%file_d('.$text.')%%silent()%%file_d(この件に了解であれば1を、不明な場合は0をプッシュしてください。)%%gather(20,1)%%file_d(連絡は以上です。)';
+		$str = 'silent()%%silent()%%silent()%%file_d('.$text.',1)%%silent()%%file_d(この件に了解であれば1を、不明な場合は0をプッシュしてください。,1)%%gather(20,1)%%file_d(連絡は以上です。,1)';
 
 		$result = Boundio::call($tel, $str);
 		 sfContext::getInstance()->getLogger()->debug("Boundio::call() :" .print_r($result,true));
