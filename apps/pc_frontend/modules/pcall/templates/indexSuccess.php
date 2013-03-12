@@ -366,7 +366,9 @@ var openpne = '.json_encode($jsonData).';
         if(data['status'] == 'success'){
           alert("発信手続きが完了しました");
           $('#docall-modal').modal('hide');
+
           update_call_status();
+          $('#update-status').click();
         }else{
           alert("発信手続きができませんでした:" + data['message']);
         }
