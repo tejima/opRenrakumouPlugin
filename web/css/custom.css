@@ -1,0 +1,92 @@
+html , body{
+  height: 100%;
+}
+
+body {
+  padding: 0px;
+
+}
+#body.full-h{
+  height: 100%;
+}
+
+#body{
+  min-height: 100%;
+  height: auto !important;
+  margin: 0 auto;
+  position: relative; 
+}
+
+h1 {
+  margin: 0;
+  line-height: 20px;
+}
+
+h1 > a {
+  color: #999999;
+}
+
+.row:before{
+  margin-top: 60px;
+}
+
+#footer {
+  text-align: center;
+  padding: 10px;
+}
+
+#info-textarea{
+  word-break: break-all;
+  overflow-y: scroll;
+  height: 300px;
+  width: 224px;
+}
+
+.main-window{
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+#accordion2 {
+  /*min-height: 1000px;*/
+  overflow: auto;
+
+}
+
+.img-rounded3 {
+  -webkit-border-radius: 3px;
+     -moz-border-radius: 3px;
+          border-radius: 3px;
+}
+
+.pad1 {
+  margin: 1px;
+}
+
+
+.text-right{
+  text-align: right;
+}
+
+.span5 {
+  background-color: #efefef;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  min-height: 40px;
+  line-height: 40px;
+}
+
+.span5 > h3{
+  padding-left: 20px;
+}
+
+.span5 > div{
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 20px;
+}
+
+.accordion-inner a {
+  margin-right: 3px;
+}
