@@ -1,0 +1,50 @@
+options:
+  charset: utf8
+actAs: [Timestampable]
+
+RenrakuBody:
+  columns:
+    id:
+      type: integer(4)
+      primary: true
+      autoincrement: true
+    body:
+      type: varchar(200)
+      notnull: true
+    title:
+      type: varchar(200)
+      notnull: true
+
+RenrakuMember:
+  columns:
+    id:
+      type: integer(4)
+      primary: true
+      autoincrement: true
+    renraku_id:
+      type: integer(4)
+      notnull: true
+    boundio_id:
+      type: integer(4)
+      notnull: true
+    name:
+      type: varchar(64)
+      notnull: true
+    mail:
+      type: varchar(255)
+    mail_id:
+      type: varchar(255)
+    mail_status:
+      type: varchar(64)
+    tel:
+      type: varchar(11)
+      notnull: true
+    tel_status:
+      type: varchar(64)
+    options:
+      type: longblob
+  relations:
+    Renraku_body:
+      local: renraku_id
+      foreign: id
+      onDelete: cascade
