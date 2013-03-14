@@ -9,8 +9,8 @@
 <?php //use_stylesheet('/opRenrakumouPlugin/css/bootstrap.css')?>
 <?php //use_stylesheet('/opRenrakumouPlugin/css/custom.css')?>
 <?php //include_stylesheets() ?>
-<link rel="stylesheet" type="text/css" href="/pcall/opRenrakumouPlugin/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="/pcall/opRenrakumouPlugin/css/custom.css">
+<link rel="stylesheet" type="text/css" href="/opRenrakumouPlugin/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/opRenrakumouPlugin/css/custom.css">
 <?php if (opConfig::get('enable_jsonapi') && opToolkit::isSecurePage()): ?>
 <?php
 use_helper('Javascript');
@@ -26,10 +26,10 @@ var openpne = '.$json.';
 <?php endif ?>
 <?php //todo: javascriptの読み込み ?>
 <?php //include_javascripts() ?>
-<script src="/pcall/opRenrakumouPlugin/js/jquery.js"></script>
-<script src="/pcall/opRenrakumouPlugin/js/jquery.tmpl.js"></script>
-<script src="/pcall/opRenrakumouPlugin/js/bootstrap.js"></script>
-<script src="/pcall/opRenrakumouPlugin/js/shortcut.js"></script>
+<script src="/opRenrakumouPlugin/js/jquery.js"></script>
+<script src="/opRenrakumouPlugin/js/jquery.tmpl.js"></script>
+<script src="/opRenrakumouPlugin/js/bootstrap.js"></script>
+<script src="/opRenrakumouPlugin/js/shortcut.js"></script>
 <?php echo $op_config->get('pc_html_head') ?>
 <?php include_partial('icons') ?>
 </head>
@@ -246,7 +246,7 @@ var openpne = '.$json.';
   function update_call_status(){
     $.ajax({
       type: "GET",
-      url: "/pcall/api.php/snsconfig/search.json",
+      url: "/api.php/snsconfig/search.json",
       data:  {format: 'json',apiKey: openpne.apiKey,key: 'public_pcall_status'},
       async: false,
       dataType: "json",
@@ -266,7 +266,7 @@ var openpne = '.$json.';
     update_call_status();
     $.ajax({
       type: "GET",
-      url: "/pcall/api.php/call/cron.json",
+      url: "/api.php/call/cron.json",
       data:  {format: 'json',apiKey: openpne.apiKey,mode: 'all'},
       async: true,
       dataType: "json",
@@ -292,7 +292,7 @@ var openpne = '.$json.';
     $('#docall-button').button('loading');
     $.ajax({
       type: "POST",
-      url: "/pcall/api.php/call/queue.json",
+      url: "/api.php/call/queue.json",
       data: { title: $("#call-title").val(),
               body: $("#call-body").val(),
               member_text: $("#direct-target-text").val()},
@@ -328,7 +328,7 @@ var openpne = '.$json.';
     $('#testcall-button').button('loading');
     $.ajax({
       type: "POST",
-      url: "/pcall/api.php/call/demo.json",
+      url: "/api.php/call/demo.json",
       data: { tel: $("#testcall-tel").val(),
               body: $("#testcall-body").val()},
       async: true,
