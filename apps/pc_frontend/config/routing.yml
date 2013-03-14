@@ -1,0 +1,7 @@
+homepage:
+  url: /
+  param: { module: pcall, action: index }
+
+no_pcall:
+  url: /*
+  param: { module: default, action: error }
