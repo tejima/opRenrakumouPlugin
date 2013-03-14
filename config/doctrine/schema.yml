@@ -1,0 +1,55 @@
+options:
+  charset: utf8
+  collate: utf8_bin
+actAs: [Timestampable]
+
+Renraku_body:
+  actAs:
+    Timestampable:
+  columns:
+    id:
+      type: integer(4)
+      primary: true
+      autoincrement: true
+    body:
+      type: char(200)
+      notnull: true
+    title:
+      type: char(200)
+      notnull: true
+
+Renraku_member:
+  actAs:
+    Timestampable:
+  columns:
+    id:
+      type: integer(4)
+      primary: true
+      autoincrement: true
+    renraku_id:
+      type: integer(4)
+      notnull: true
+    boundio_id:
+      type: integer(4)
+      notnull: true
+    name:
+      type: char(64)
+      notnull: true
+    mail:
+      type: char(255)
+    mail_id:
+      type: char(255)
+    mail_status:
+      type: char(64)
+    tel:
+      type: char(11)
+      notnull: true
+    tel_status:
+      type: char(64)
+    options:
+      type: longblob
+  relations:
+    Renraku_body:
+      local: renraku_id
+      foreign: id
+      onDelete: cascade
