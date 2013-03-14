@@ -9,6 +9,30 @@
  */
 class callActions extends sfActions
 {
+  // 現在の送信状況を取得する
+  public function executeStatus(sfWebRequest $request)
+  {
+    return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeStatus DONE')));
+  }
+
+  // 発信処理
+  public function executeSend(sfWebRequest $request)
+  {
+    return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeSend DONE')));
+  }
+
+  // boundioの情報取得
+  public function executeUpdate(sfWebRequest $request)
+  {
+    return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeUpdate DONE')));
+  }
+
+
+
+
+
+
+
   public function executeCron(sfWebRequest $request)
   {
     if(1 != $this->getUser()->getMemberId()){

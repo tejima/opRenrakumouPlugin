@@ -47,7 +47,7 @@ h1 > a {
   margin-bottom: 0px;
 }
 
-#accordion2 {
+#updateStatusBody {
   /*min-height: 1000px;*/
   overflow: auto;
 
@@ -89,4 +89,10 @@ h1 > a {
 
 .accordion-inner a {
   margin-right: 3px;
+}
+
+h1.brand > a:hover {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: transparent;
 }
