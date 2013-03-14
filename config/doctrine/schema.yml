@@ -2,9 +2,7 @@ options:
   charset: utf8
 actAs: [Timestampable]
 
-Renraku_body:
-  actAs:
-    Timestampable:
+RenrakuBody:
   columns:
     id:
       type: integer(4)
@@ -17,9 +15,7 @@ Renraku_body:
       type: varchar(200)
       notnull: true
 
-Renraku_member:
-  actAs:
-    Timestampable:
+RenrakuMember:
   columns:
     id:
       type: integer(4)
