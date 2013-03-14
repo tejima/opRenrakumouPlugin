@@ -8,8 +8,8 @@
 <?php //use_stylesheet('/opRenrakumouPlugin/css/bootstrap.css')?>
 <?php //use_stylesheet('/opRenrakumouPlugin/css/custom.css')?>
 <?php //include_stylesheets() ?>
-<link rel="stylesheet" type="text/css" href="/pcall/opRenrakumouPlugin/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="/pcall/opRenrakumouPlugin/css/custom.css">
+<link rel="stylesheet" type="text/css" href="/opRenrakumouPlugin/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/opRenrakumouPlugin/css/custom.css">
 <?php if (opConfig::get('enable_jsonapi') && opToolkit::isSecurePage()): ?>
 <?php
 use_helper('Javascript');
@@ -25,11 +25,11 @@ var openpne = '.$json.';
 <?php endif ?>
 <?php //todo: javascriptの読み込み ?>
 <?php //include_javascripts() ?>
-<script src="/pcall/opRenrakumouPlugin/js/jquery.js"></script>
-<script src="/pcall/opRenrakumouPlugin/js/jquery.tmpl.js"></script>
-<script src="/pcall/opRenrakumouPlugin/js/bootstrap.js"></script>
-<script src="/pcall/opRenrakumouPlugin/js/shortcut.js"></script>
-<script src="/pcall/opRenrakumouPlugin/js/pcall.js"></script>
+<script src="/opRenrakumouPlugin/js/jquery.js"></script>
+<script src="/opRenrakumouPlugin/js/jquery.tmpl.js"></script>
+<script src="/opRenrakumouPlugin/js/bootstrap.js"></script>
+<script src="/opRenrakumouPlugin/js/shortcut.js"></script>
+<script src="/opRenrakumouPlugin/js.js"></script>
 <?php echo $op_config->get('pc_html_head') ?>
 <?php include_partial('icons') ?>
 </head>
