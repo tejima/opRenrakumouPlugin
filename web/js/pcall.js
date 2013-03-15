@@ -361,7 +361,7 @@ $(document).ready(function(){
         {
           sendStatusList = data['data'];
           $('#updateStatusBody > *').remove();
-          $("#tmplAccordion").tmpl(sendStatusList).appendTo('#updateStatusBody');
+          $("#tmplAccordion").tmpl({value: sendStatusList}).appendTo('#updateStatusBody');
           $("#collapse0").collapse('show');
         }
         else
@@ -390,7 +390,7 @@ $(document).ready(function(){
     $('#callBody').val(call_list[index].body);
 */
   }
-  
+
   // 送信処理
   function send(isProd)
   {

@@ -44,7 +44,7 @@ var openpne = '.$json.';
         </div>
         <div>
           <label>連絡先</label>
-          <textarea id="directTarget" data-toggle="tab" class="tooltip-target input-block-level" data-placement="right" title="名字[半角スペース]電話番号[半角スペース]メールアドレス[改行]の形式で記入してください。エクセルで表を作成してから貼り付けるのをおすすめします。※電話番号はハイフン無し" rel="tooltip" rows="15" placeholder="山田 09012345678 yamada@example.com"></textarea>
+          <textarea id="directTarget" data-toggle="tab" class="tooltip-target input-block-level" data-placement="right" title="名字[半角スペース]電話番号[半角スペース]メールアドレス[改行]の形式で記入してください。エクセルで表を作成してから貼り付けるのをおすすめします。※電話番号はハイフン無し" rel="tooltip" rows="5" placeholder="山田 09012345678 yamada@example.com"></textarea>
           <label>件名</label>
           <input id="callTitle" class="input-block-level tooltip-target" type="text" placeholder="○月×日大雪休校連絡" rel="tooltip" title="後でわかりやすい日付を入力します。「◯月◯日 6年3組 大雪休みのお知らせ」などと、月日、クラス、内容を簡単に記載してください。" data-placement="right">
           <label>本文</label>
@@ -129,55 +129,55 @@ var openpne = '.$json.';
                 </tr>
               </thead>
               <tbody>
-              {{each status_list}}
-                {{if 'CALLED'==telstat || 'PUSH1'==telstat || 'PUSH1'==mailstat }}
+              {{each target}}
+                {{if 'CALLED'==tel_status || 'PUSH1'==tel_status || 'PUSH1'==mail_status }}
                 <tr class="success">
-                {{else 'CALLWAITING'==telstat || 'CALLPROCESSING'==telstat  }}
+                {{else 'CALLWAITING'==tel_status || 'CALLPROCESSING'==tel_status  }}
                 <tr class="warning">
-                {{else 'FAIL'==telstat || 'FAIL1'==telstat || 'FAIL2'==telstat || 'HUZAI'==telstat || 'HUZAI1'==telstat || 'HUZAI2'==telstat}}
+                {{else 'FAIL'==tel_status || 'FAIL1'==tel_status || 'FAIL2'==tel_status || 'HUZAI'==tel_status || 'HUZAI1'==tel_status || 'HUZAI2'==tel_status}}
                 <tr class="error">
                 {{else}}
                 <tr>
                 {{/if}}
-                  <td>${nickname}</td>
+                  <td>${name}</td>
                   <td>${tel}</td>
                   <td>${mail}</td>
-                  {{if 'CALLWAITING'==telstat}}
+                  {{if 'CALLWAITING'==tel_status}}
                   <td>発信待機</td>
-                  {{else 'CALLPROCESSING'==telstat}}
+                  {{else 'CALLPROCESSING'==tel_status}}
                   <td>発信作業中</td>
-                  {{else 'FAIL'==telstat}}
+                  {{else 'FAIL'==tel_status}}
                   <td>発信失敗</td>
-                  {{else 'FAIL1'==telstat}}
+                  {{else 'FAIL1'==tel_status}}
                   <td>発信失敗1回目</td>
-                  {{else 'FAIL2'==telstat}}
+                  {{else 'FAIL2'==tel_status}}
                   <td>発信失敗2回目</td>
-                  {{else 'FAIL3'==telstat}}
+                  {{else 'FAIL3'==tel_status}}
                   <td>発信失敗3回目</td>
-                  {{else 'HUZAI'==telstat}}
+                  {{else 'HUZAI'==tel_status}}
                   <td>不在着信</td>
-                  {{else 'HUZAI1'==telstat}}
+                  {{else 'HUZAI1'==tel_status}}
                   <td>不在着信1回目</td>
-                  {{else 'HUZAI2'==telstat}}
+                  {{else 'HUZAI2'==tel_status}}
                   <td>不在着信2回目</td>
-                  {{else 'PUSH1'==telstat}}
+                  {{else 'PUSH1'==tel_status}}
                   <td>発信：了解有</td>
-                  {{else 'CALLED'==telstat}}
+                  {{else 'CALLED'==tel_status}}
                   <td>発信：了解無</td>
                   {{else}}
                   <td>ー</td>
                   {{/if}}
-                  {{if 'CALLWAITING'==mailstat}}
+                  {{if 'CALLWAITING'==mail_status}}
                   <td>発信待機</td>
-                  {{else 'CALLPROCESSING'==mailstat}}
+                  {{else 'CALLPROCESSING'==mail_status}}
                   <td>発信作業中</td>
-                  {{else 'FAIL1'==mailstat}}
+                  {{else 'FAIL1'==mail_status}}
                   <td>発信失敗1回目</td>
-                  {{else 'FAIL2'==mailstat}}
+                  {{else 'FAIL2'==mail_status}}
                   <td>発信失敗2回目</td>
-                  {{else 'PUSH1'==mailstat}}
+                  {{else 'PUSH1'==mail_status}}
                   <td>発信：了解有</td>
-                  {{else 'CALLED'==mailstat}}
+                  {{else 'CALLED'==mail_status}}
                   <td>発信：了解無</td>
                   {{else}}
                   <td>ー</td>
