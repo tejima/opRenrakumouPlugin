@@ -13,7 +13,7 @@ call_update:
   url: /call/update.json
   param: { module: call, action: update, sf_format: json }
   requirements: { sf_method: [post] }
-# 月間コール数の取得
+# 送信件数の取得
 call_count:
   url: /call/count.json
   param: { module: call, action: count, sf_format: json }
