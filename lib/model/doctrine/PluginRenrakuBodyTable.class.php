@@ -9,12 +9,12 @@
  */
 
 /**
- * PluginRenraku_body
+ * PluginRenrakuBody
  *
  * @package    opRenrakumouPlugin
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
-class PluginRenraku_bodyTable extends Doctrine_Table
+class PluginRenrakuBodyTable extends Doctrine_Table
 {
   public function getLatestRenrakuBody($limit = 10)
   {
@@ -26,7 +26,7 @@ class PluginRenraku_bodyTable extends Doctrine_Table
 
   public function updateRenrakuBody($renrakuBody = array())
   {
-    $object = new Renraku_body();
+    $object = new RenrakuBody();
 
     if (isset($renrakuBody['body']))
     {

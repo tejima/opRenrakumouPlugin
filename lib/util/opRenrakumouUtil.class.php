@@ -133,6 +133,19 @@ class RenrakumouUtil
 
   static function process_tel()
   {
+    $callWaitingList = Doctrine::getTable('RenrakuMember')->getCallWaiting();
+    foreach ($callWaitingList as $line)
+    {
+      $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['id']);
+      $result = RenrakumouUtil::pushcall($line['tel'], $renrakuBody['body'], $_SERVER['userSerialId'], $_SERVER['appId'], $_SERVER['authKey']);
+      if ($result)
+      {
+        $line['tel_status'] = 'CALLPROCESSING';
+        Doctrine::getTable('RenrakuMember')->updateTelStatus($line);
+      }
+    }
+    //////////////////////////////////////
+/*
     $public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'), true);
     if(null == $public_pcall_status)
     {
@@ -166,6 +179,7 @@ class RenrakumouUtil
     sfContext::getInstance()->getLogger()->info('TASK DONE');
    	//print_r($public_pcall_status);
     Doctrine::getTable('SnsConfig')->set('public_pcall_status', json_encode($public_pcall_status));
+*/
 	}
 
   static function pushcall($tel = null, $text = null, $userSerialId, $appId, $authKey)

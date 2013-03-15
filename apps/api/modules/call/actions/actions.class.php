@@ -7,17 +7,100 @@
  * @subpackage main
  * @author     Your name here
  */
-class callActions extends sfActions
+class callActions extends opJsonApiActions
 {
+  const MY_SELF = 0;
+  const TEL_AND_MAIL = 1;
+  const MAIL_ONLY = 2;
+
+  public function preExecute()
+  {
+    $this->memberId = $this->getUser()->getMemberId();
+  }
+
   // 現在の送信状況を取得する
   public function executeStatus(sfWebRequest $request)
   {
-    return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeStatus DONE')));
+    $max = 10;
+    if ($request->hasParameter('max'))
+    {
+      $max = $request['max'];
+    }
+
+    $renrakuBody = Doctrine::getTable('RenrakuBody')->getLatestRenrakuBody($max);
+
+    $resultData = array();
+    foreach ($renrakuBody as $line)
+    {
+      $tmpData = array();
+      $tmpData['body'] = $line['body'];
+      $tmpData['title'] = $line['title'];
+      $tmpData['target'] = Doctrine::getTable('RenrakuMember')
+        ->retrieveByRenrakuId($line['id']);
+
+      $resultData[] = $tmpData;
+    }
+
+    return $this->renderText(json_encode(array('status' => 'success', 'data' => $resultData)));
   }
 
   // 発信処理
   public function executeSend(sfWebRequest $request)
   {
+    $this->forward400Unless($request['type'], 'type parameter not specified.');
+    $this->forward400Unless($request['body'], 'body parameter not specified.');
+    $this->forward400Unless($request['title'], 'title parameter not specified.');
+    $this->forward400Unless($request['target'], 'target parameter not specified.');
+    $type = $request['type'];
+    $body = $request['body'];
+    $title = $request['title'];
+    $target = $request['target'];
+
+    $renrakuBody = Doctrine::getTable('RenrakuBody')
+      ->updateRenrakuBody(array('body' => $body, 'title' => $title));
+
+    if (is_null($renrakuBody))
+    {
+      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
+    }
+
+    $renrakuMember = array();
+    $renrakuMember['renraku_id'] = $renrakuBody['id'];
+    $renrakuMember['boundio_id'] = '';
+    $renrakuMember['name'] = $target['name'];
+    $renrakuMember['mail'] = $target['mail'];
+    if (!is_null($renrakuMember['mail']))
+    {
+      $renrakuMember['mail_status'] = 'CALLWAITING';
+    }
+    elseif (MAIL_ONLY === $type && is_null($renrakuMember['mail']))
+    {
+      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
+    }
+    else
+    {
+      $renrakuMember['mail_status'] = 'NONE';
+    }
+
+    $renrakuMember['tel'] = $target['tel'];
+    if (TEL_AND_MAIL === $type || MY_SELF === $type)
+    {
+      $renrakuMember['tel_status'] = 'CALLWAITING';
+    }
+    else
+    {
+      $renrakuMember['tel_status'] = 'NONE';
+    }
+    $renrakuMember['options'] = $target['options'];
+
+    $renrakuMemberResult = Doctrine::getTable('RenrakuMember')
+      ->updateRenrakuMember($renrakuMember);
+
+    if (is_null($renrakuMemberResult))
+    {
+      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
+    }
+
     return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeSend DONE')));
   }
 
@@ -27,6 +110,11 @@ class callActions extends sfActions
     return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeUpdate DONE')));
   }
 
+  // 月間コール数の取得
+  public function executeCount(sfWebRequest $request)
+  {
+    return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeCount DONE')));
+  }
 
 
 

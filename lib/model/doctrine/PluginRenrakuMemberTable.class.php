@@ -9,12 +9,12 @@
  */
 
 /**
- * PluginRenraku_member
+ * PluginRenrakuMember
  *
  * @package    opRenrakumouPlugin
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
-class PluginRenraku_memberTable extends Doctrine_Table
+class PluginRenrakuMemberTable extends Doctrine_Table
 {
   public function retrieveByRenrakuId($renrakuId)
   {
@@ -36,9 +36,24 @@ class PluginRenraku_memberTable extends Doctrine_Table
       ->count();
   }
 
+  public function getCallWaiting()
+  {
+    return $this->createQuery()
+      ->where('tel_status = "CALLWAITING"')
+      ->execute();
+  }
+
+  public function updateTelStatus($renrakuMember)
+  {
+    return $this->createQuery()->update()
+      ->set('tel_status', '?', $renrakuMember['tel_status'])
+      ->where('id = ?', $renrakuMember['id'])
+      ->execute();
+  }
+
   public function updateRenrakuMember($renrakuMember = array())
   {
-    $object = new Renraku_member();
+    $object = new RenrakuMember();
 
     if (isset($renrakuMember['renraku_id']))
     {
