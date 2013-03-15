@@ -1,137 +1,120 @@
 <?php
-
 /**
  * boundio API simple client interface.
  *
  * Copyright (c) 2012, KDDI Web Communications Inc.
  * All rights reserved.
- *
+ * 
  * @package Boundio
  * @author hiromitz <hiromitz.m@gmail.com>
  * @link https://github.com/boundio/boundio-php
  * @license http://creativecommons.org/licenses/MIT/ MIT
  */
-class Boundio
-{
+class Boundio {
+	
 	public static $_config = array(
 		'env' => 'develop', // develop || production
 		'userSerialId' => 'User Serial ID',
 		'appId' => 'API Access Key',
 		'authKey' => 'User Auth Key'
 	);
-
+	
 	protected static $_baseDevUrl = 'https://boundio.jp/api/vd2/';
 	protected static $_baseUrl = 'https://boundio.jp/api/v2/';
-
-  public static function configure($key, $value)
-  {
+	
+	public static function configure($key, $value) {
 		static::$_config[$key] = $value;
 	}
-
-  protected static function getUrl($develop = false)
-  {
+	
+	protected static function getUrl($develop=false) {
 		$url = (static::$_config['env'] == 'develop' && $develop === false) ? static::$_baseDevUrl : static::$_baseUrl;
 		$url .= static::$_config['userSerialId'];
 		return $url;
 	}
 
-  public static function call($tel_to, $cast)
-  {
+	public static function call($tel_to, $cast) {
 		$tel_to = str_replace('-', '', $tel_to);
-
+		
 		// validation - phone number
-    if (!preg_match('/^0\d{9,10}$/', $tel_to))
-    {
+		if(!preg_match('/^0\d{9,10}$/', $tel_to)) {
 			return false;
 		}
-
+		
 		// validation - casts
-		/*
 		foreach($casts as $cast) {
 			if(!preg_match('/^(file\([0-9]+\)|num\([0-9]\)|silent\(\))$/', $cast)) {
 				return false;
 			}
 		}
-		*/
+
 		// execute call
-		$result = static::_execute(static::getUrl().'/call', array(
+		$result = static::_execute(static::getUrl(). '/call', array(
 			'tel_to' => $tel_to,
 			'cast' => $cast
 		), 'post');
-
+		
 		$result = json_decode($result, true);
-
+		
 		return $result;
 	}
-
-  public static function status($id = '', $start = '', $end = '', $count = 100)
-  {
+	
+	public static function status($id='', $start='', $end='', $count=100) {
 		$start = preg_replace('/[-\/]/', '', $start);
 		$end = preg_replace('/[-\/]/', '', $end);
-
+		
 		$params = array();
-
-		$params['count'] = $count;
-    if ('' !== $id)
-    {
+		
+		if($id !== '') {
 			$params['tel_id'] = $id;
-    }
-    elseif ('' !== $start)
-    {
+		} elseif($start !== '') {
 			// search one day if end day is not given
-      if ('' === $end)
-      {
+			if($end === '') {
 				$end = $start;
 			}
 			$params['start'] = $start;
 			$params['end'] = $end;
 		}
-
+		
 		// execute get status
-		$result = static::_execute(static::getUrl().'/tel_status', $params);
-
+		$result = static::_execute(static::getUrl(). '/tel_status', $params);
+		
 		$result = json_decode($result, true);
-
+		
 		return $result;
 	}
-
-  public static function file($text = '', $file = '', $filename)
-  {
+	
+	public static function file($text='', $file='', $filename) {
+		
 		$params = array();
 		$options = array();
-
-    if ('' !== $text)
-    {
+		
+		if($text !== '') {
 			$params['convtext'] = $text;
 			$params['filename'] = $filename;
-    }
-    else
-    {
+		} else {
 			// file validation
-      if
-        (!file_exists($file))
-      {
+			if(!file_exists($file)) {
 				return false;
 			}
-			$params['file'] = '@'.$file;
+			$params['file'] = '@'. $file;
 			$params['filename'] = $filename;
 		}
-
+		
 		// execute get status
 		$result = static::_execute(static::getUrl(true). '/file/post', $params, 'post');
-
+		
 		$result = json_decode($result, true);
-
+		
 		return $result;
 	}
-
-  protected static function _execute($url, array $params, $method='get', array $options = array())
-  {
+	
+	protected static function _execute($url, array $params, $method='get', array $options = array()) {
+		
 		$params['auth'] = static::$_config['authKey'];
 		$params['key'] = static::$_config['appId'];
-
+		
 		$defaults = ($method == 'post') ? array(
-			CURLOPT_POST => ($method == 'post') ? 1 : 0,
+			CURLOPT_POST => ($method == 'post') ? 1: 0,
 			CURLOPT_HEADER => 0,
 			CURLOPT_URL => $url,
 			CURLOPT_FRESH_CONNECT => 1,
@@ -140,54 +123,24 @@ class Boundio
 			CURLOPT_TIMEOUT => 4,
 			CURLOPT_POSTFIELDS => $params
 		) : array(
-			CURLOPT_URL => $url.(strpos($url, '?') === FALSE ? '?' : '').http_build_query($params),
+			CURLOPT_URL => $url. (strpos($url, '?') === FALSE ? '?' : ''). http_build_query($params),
 			CURLOPT_HEADER => 0,
 			CURLOPT_RETURNTRANSFER => TRUE,
 			CURLOPT_TIMEOUT => 4
 		);
-
+		
 		$ch = curl_init();
 		curl_setopt_array($ch, ($options + $defaults));
-
+		
 		$result = curl_exec($ch);
 		curl_close($ch);
-
+		
 		return $result;
 	}
 }
 
 /**
  * BoundioException class
- *
+ * 
  */
 class BoundioException extends Exception{}
-
-class Japanese_Mail extends Zend_Mail
-{
-  function __construct()
-  {
-		parent::__construct('ISO-2022-JP');
-	}
-
-  function setBodyText($txt, $charset = null, $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE)
-  {
-		parent::setBodyText(mb_convert_encoding($txt, 'ISO-2022-JP', 'UTF-8'), $charset , $encoding);
-	}
-
-  function setSubject($txt)
-  {
-		parent::setSubject(mb_convert_encoding($txt, 'ISO-2022-JP', 'UTF-8' ));
-	}
-
-  function setTo($a, $b)
-  {
-		parent::setTo($a, mb_encode_mimeheader(mb_convert_encoding($b, 'ISO-2022-JP', 'UTF-8'), 'ISO-2022-JP'));
-	}
-
-  public function setFrom($email, $name = null)
-  {
-		$name = mb_encode_mimeheader(mb_convert_encoding($name, 'ISO-2022-JP', 'UTF-8'), 'ISO-2022-JP');
-		sfContext::getInstance()->getLogger()->debug('setFrom() email: '.$email);
-		parent::setFrom($email, $name);
-	}
-}
