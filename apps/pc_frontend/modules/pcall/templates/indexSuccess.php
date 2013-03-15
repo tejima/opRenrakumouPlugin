@@ -3,7 +3,7 @@
 <head>
 <?php include_http_metas() ?>
 <?php include_metas() ?>
-<?php include_title() ?>
+<title>緊急連絡サービス pCall</title>
 <?php //todo: スタイルシートの読み込み ?>
 <?php //use_stylesheet('/opRenrakumouPlugin/css/bootstrap.css')?>
 <?php //use_stylesheet('/opRenrakumouPlugin/css/custom.css')?>
