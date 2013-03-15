@@ -35,8 +35,24 @@ class callActions extends opJsonApiActions
       $tmpData = array();
       $tmpData['body'] = $line['body'];
       $tmpData['title'] = $line['title'];
-      $tmpData['target'] = Doctrine::getTable('RenrakuMember')
-        ->retrieveByRenrakuId($line['id']);
+      $tmpRenrakuMember = Doctrine::getTable('RenrakuMember')->retrieveByRenrakuId($line['id']);
+      foreach ($tmpRenrakuMember as $memberLine)
+      {
+        $tmpData['target'][] = array(
+          'id' => $memberLine['id'],
+          'renraku_id' => $memberLine['renraku_id'],
+          'boundio_id' => $memberLine['boundio_id'],
+          'name' => $memberLine['name'],
+          'mail' => $memberLine['mail'],
+          'mail_id' => $memberLine['mail_id'],
+          'mail_status' => $memberLine['mail_status'],
+          'tel' => $memberLine['tel'],
+          'tel_status' => $memberLine['tel_status'],
+          'options' => $memberLine['options'],
+          'created_at' => $memberLine['created_at'],
+          'updated_at' => $memberLine['updated_at'],
+        );
+      }
 
       $resultData[] = $tmpData;
     }
@@ -75,7 +91,7 @@ class callActions extends opJsonApiActions
       {
         $renrakuMember['mail_status'] = 'CALLWAITING';
       }
-      elseif (self::MAIL_ONLY === $type && is_null($renrakuMember['mail']))
+      elseif (self::MAIL_ONLY === (int)$type && is_null($renrakuMember['mail']))
       {
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
       }
