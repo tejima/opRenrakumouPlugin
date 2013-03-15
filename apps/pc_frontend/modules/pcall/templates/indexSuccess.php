@@ -40,7 +40,7 @@ var openpne = '.$json.';
       <div class="span5">
         <h3>発信コントロール</h3>
         <div>
-          <a href="#demoCallModal" role="button" class="btn btn-block" data-toggle="modal">自分宛にテスト発信</a>
+          <a id="demoModalButton" href="#demoCallModal" role="button" class="btn btn-block" data-toggle="modal">自分宛にテスト発信</a>
         </div>
         <div>
           <label>連絡先</label>
@@ -50,8 +50,8 @@ var openpne = '.$json.';
           <label>本文</label>
           <textarea id="callBody" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。ここで書かれた文章は2回繰り返して発音されます。" class="input-block-level tooltip-target" rows="5" placeholder="○×小学校○年×組の連絡網です。大雪のため○月×日、○×小学校○年×組はお休みになりました。×日はお休みですが、翌△日は通常通り開校します。保護者のみなさま、ご対応、よろしくお願いたします。"></textarea>
           <!-- Button to trigger modal -->
-          <a href="#doCallModal" role="button" class="btn btn-danger btn-block" data-toggle="modal">電話・メール発信</a>
-          <a href="#doCallModal" role="button" class="btn btn-warning btn-block" data-toggle="modal">メール発信</a>
+          <a id="doTelModalButton" href="#doCallModal" role="button" class="btn btn-danger btn-block" data-toggle="modal">電話・メール発信</a>
+          <a id="doMailModalButton" href="#doCallModal" role="button" class="btn btn-warning btn-block" data-toggle="modal">メール発信</a>
         </div>
       </div>
       <div class="span7">
