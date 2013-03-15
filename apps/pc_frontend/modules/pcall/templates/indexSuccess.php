@@ -29,7 +29,7 @@ var openpne = '.$json.';
 <script src="/opRenrakumouPlugin/js/jquery.tmpl.js"></script>
 <script src="/opRenrakumouPlugin/js/bootstrap.js"></script>
 <script src="/opRenrakumouPlugin/js/shortcut.js"></script>
-<script src="/opRenrakumouPlugin/js.js"></script>
+<script src="/opRenrakumouPlugin/js/pcall.js"></script>
 <?php echo $op_config->get('pc_html_head') ?>
 <?php include_partial('icons') ?>
 </head>

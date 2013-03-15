@@ -443,7 +443,7 @@ $(document).ready(function(){
     $.ajax({
       type: "POST",
       url: openpne.apiBase + "call/send.json",
-      data: targetList,
+      data: sendTargetList,
       async: true,
       cache: false,
       dataType: "json",

@@ -44,7 +44,7 @@ RenrakuMember:
     options:
       type: longblob
   relations:
-    Renraku_body:
+    RenrakuBody:
       local: renraku_id
       foreign: id
       onDelete: cascade
