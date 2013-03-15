@@ -1,18 +1,5 @@
 $ = jQuery.noConflict();
 $(document).ready(function(){
-  // 初期表示ここから----------------
-  if (!('console' in window)) {
-    window.console = {};
-    window.console.log = function(str){
-      return str;
-    };
-  }
-  // show tooltip text
-  $(".tooltip-target").tooltip();
-  // 送信状況表示
-  updateStatus();
-  // 初期表示ここまで----------------
-
   /* 定数定義 */
   var DEMO = 'demo';
   var PROD = 'do';
@@ -33,6 +20,19 @@ $(document).ready(function(){
   var targetList = null;
   var sendType = -1;
   var sendStatusList = null;
+
+  // 初期表示ここから----------------
+  if (!('console' in window)) {
+    window.console = {};
+    window.console.log = function(str){
+      return str;
+    };
+  }
+  // show tooltip text
+  $(".tooltip-target").tooltip();
+  // 送信状況表示
+  updateStatus();
+  // 初期表示ここまで----------------
 
   /* イベント定義 */
   // 自分宛にテスト発信ボタン押下時
@@ -104,11 +104,13 @@ $(document).ready(function(){
 
   // 同じ内容でもう一度作成するボタン押下時
   $('#recreateAll').live('click', function(){
-    recreate(false);
+    var index = $(this).attr("data-index");
+    recreate(index, false);
   });
   // 送信できなかった送信先宛にもう一度作成するボタン押下時
   $('#recreateError').live('click', function(){
-    recreate(true);
+    var index = $(this).attr("data-index");
+    recreate(index, true);
   });
 
   // 入力チェック★
@@ -376,19 +378,16 @@ $(document).ready(function(){
   }
   
   // 送信状況から各入力項目への値コピー
-  function recreate(isOnlyError)
+  function recreate(index, isOnlyError)
   {
-    var index = $(this).attr("data-index");
-/*
-    var statusList = sendStatusList[index].statusList;
+    var statusList = sendStatusList[index].target;
     var str = "";
-    for (var i = 0; i < status_list.length; i++) {
-      str += status_list[i]["nickname"] + " " + status_list[i]["tel"] + " " +status_list[i]["mail"] + "\n";
+    for (var i = 0; i < statusList.length; i++) {
+      str += statusList[i]["name"] + " " + statusList[i]["tel"] + " " +statusList[i]["mail"] + "\n";
     };
     $('#directTarget').val(str);
-    $('#callTitle').val(call_list[index].title);
-    $('#callBody').val(call_list[index].body);
-*/
+    $('#callTitle').val(sendStatusList[index].title);
+    $('#callBody').val(sendStatusList[index].body);
   }
 
   // 送信処理
