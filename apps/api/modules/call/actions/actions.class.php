@@ -137,7 +137,7 @@ class callActions extends opJsonApiActions
   // 月間コール数の取得
   public function executeCount(sfWebRequest $request)
   {
-    return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeCount DONE')));
+    return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeCount DONE', 'data' => array('tel_count' => 110, 'mail_count' => 290))));
   }
 
 

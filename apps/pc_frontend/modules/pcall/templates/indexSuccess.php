@@ -27,6 +27,7 @@ var openpne = '.$json.';
 <?php //include_javascripts() ?>
 <script src="/opRenrakumouPlugin/js/jquery.js"></script>
 <script src="/opRenrakumouPlugin/js/jquery.tmpl.js"></script>
+<script src="/opRenrakumouPlugin/js/jquery.timers.js"></script>
 <script src="/opRenrakumouPlugin/js/bootstrap.js"></script>
 <script src="/opRenrakumouPlugin/js/shortcut.js"></script>
 <script src="/opRenrakumouPlugin/js/pcall.js"></script>
@@ -39,6 +40,12 @@ var openpne = '.$json.';
     <div class="row">
       <div class="span5">
         <h3>発信コントロール</h3>
+        <div>
+          <ul>
+            <li>現在の電話発信数: <span id="telCount"></span></li>
+            <li>現在のメール発信数: <span id="mailCount"></span></li>
+          </ul>
+        </div>
         <div>
           <a id="demoModalButton" href="#demoCallModal" role="button" class="btn btn-block" data-toggle="modal">自分宛にテスト発信</a>
         </div>
