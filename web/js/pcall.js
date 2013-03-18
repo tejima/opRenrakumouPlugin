@@ -1,21 +1,17 @@
 $ = jQuery.noConflict();
 $(document).ready(function(){
-  // 初期表示ここから----------------
-  if (!('console' in window)) {
-    window.console = {};
-    window.console.log = function(str){
-      return str;
-    };
-  }
-  // show tooltip text
-  $(".tooltip-target").tooltip();
-  // 送信状況表示
-  updateStatus();
-  // 初期表示ここまで----------------
-
   /* 定数定義 */
   var DEMO = 'demo';
   var PROD = 'do';
+  // 送信タイプ
+  // 自分へのデモ発信
+  SEND_TYPE_DEMO = 0;
+  // 電話＋メール
+  SEND_TYPE_TEL = 1;
+  // メール
+  SEND_TYPE_MAIL = 2;
+  // boundioステータス取得繰り返し秒数
+  var TIMER_BOUNDIO_STATUS = 120;
   // 連絡先最大件数
   var DIRECT_TARGET_NUM = 50;
   // 件数最大文字数
@@ -33,11 +29,35 @@ $(document).ready(function(){
   var targetList = null;
   var sendType = -1;
   var sendStatusList = null;
+  // todo: 次バージョンでは最大電話送信数、最大メール送信数をサーバから取得するようにする。
+  var maxTelCount = 110;
+  var maxMailCount = 500;
+  var telCount = 0;
+  var mailCount = 0;
+
+  // 初期表示ここから----------------
+  if (!('console' in window)) {
+    window.console = {};
+    window.console.log = function(str){
+      return str;
+    };
+  }
+  // show tooltip text
+  $(".tooltip-target").tooltip();
+  // 送信状況表示
+  updateStatus();
+  // 送信数表示
+  getCalledCount();
+  // 初期表示ここまで----------------
 
   /* イベント定義 */
+  // boundioステータス取得
+  var msec = TIMER_BOUNDIO_STATUS * 1000;
+  $("body").everyTime(msec, updateBoundio);
+
   // 自分宛にテスト発信ボタン押下時
   $('#demoModalButton').on('click', function(){
-    sendType = 0;
+    sendType = SEND_TYPE_DEMO;
   });
   // 自分宛にテスト発信ダイアログ表示時★
   $('#demoCallModal').on('show', function(){
@@ -68,11 +88,11 @@ $(document).ready(function(){
 
   // 電話・メール発信ボタン押下時
   $('#doTelModalButton').on('click', function(){
-    sendType = 1;
+    sendType = SEND_TYPE_TEL;
   });
   // メール発信ボタン押下時
   $('#doMailModalButton').on('click', function(){
-    sendType = 2;
+    sendType = SEND_TYPE_MAIL;
   });
   // 発信の最終確認ダイアログ表示時
   $('#doCallModal').on('show', function(){
@@ -104,11 +124,13 @@ $(document).ready(function(){
 
   // 同じ内容でもう一度作成するボタン押下時
   $('#recreateAll').live('click', function(){
-    recreate(false);
+    var index = $(this).attr("data-index");
+    recreate(index, false);
   });
   // 送信できなかった送信先宛にもう一度作成するボタン押下時
   $('#recreateError').live('click', function(){
-    recreate(true);
+    var index = $(this).attr("data-index");
+    recreate(index, true);
   });
 
   // 入力チェック★
@@ -172,6 +194,24 @@ $(document).ready(function(){
     {
       alert('一度に送信できる連絡先は' + DIRECT_TARGET_NUM + '件以下です。');
 
+      return false;
+    }
+
+    // 送信制限数チェック
+    // 現在の送信数の取得
+    getCalledCount();
+    // メール送信の場合
+    if (SEND_TYPE_MAIL == sendType)
+    {
+      if (maxMailCount < mailCount)
+      {
+        alert('メール送信数が最大を超えています。発信できません。');
+        return false;
+      }
+    }
+    if (maxTelCount < telCount || maxMailCount < mailCount)
+    {
+      alert('電話発信数またはメール送信数が最大を超えています。発信できません。');
       return false;
     }
 
@@ -253,6 +293,10 @@ $(document).ready(function(){
     targetValue = targetValue.replace(/(\n|\r)/g, '<>');
     // 全角空白の置換
     targetValue = targetValue.replace(/　/g, ' ');
+    // 全角数字の置換
+    targetValue = targetValue.replace(/[０-９]/g, function(s) {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
 
     // 連絡先情報を改行毎に区切る
     var targets = targetValue.split('<>');
@@ -346,6 +390,35 @@ $(document).ready(function(){
     return true;
   }
 
+  // 現在の発信数の取得
+  function getCalledCount()
+  {
+    // 送信状況の取得
+    $.ajax({
+      type: "GET",
+      url: openpne.apiBase + "call/count.json",
+      data:  {apiKey: openpne.apiKey},
+      async: false,
+      dataType: "json",
+      success: function(data){
+        if ('success' == data['status'])
+        {
+          telCount = data['data']['tel_count'];
+          mailCount = data['data']['mail_count'];
+          $('#telCount').html(telCount);
+          $('#mailCount').html(mailCount);
+        }
+        else
+        {
+          alert("送信数が取得できませんでした:" + data['message']);
+        }
+      },
+      error: function(data){
+        alert("送信数が取得できませんでした:" + data['message']);
+      }
+    });
+  }
+
   // 送信状況の表示
   function updateStatus()
   {
@@ -374,21 +447,27 @@ $(document).ready(function(){
       }
     });
   }
-  
+
   // 送信状況から各入力項目への値コピー
-  function recreate(isOnlyError)
+  function recreate(index, isOnlyError)
   {
-    var index = $(this).attr("data-index");
-/*
-    var statusList = sendStatusList[index].statusList;
+    var statusList = sendStatusList[index].target;
     var str = "";
-    for (var i = 0; i < status_list.length; i++) {
-      str += status_list[i]["nickname"] + " " + status_list[i]["tel"] + " " +status_list[i]["mail"] + "\n";
+    for (var i = 0; i < statusList.length; i++) {
+      if (isOnlyError)
+      {
+        if ('CALLED' !== statusList[i]['tel_status'] || 'CALLED' !== statusList[i]['mail_status'])
+        {
+          str += statusList[i]['name'] + " " + statusList[i]['tel'] + " " +statusList[i]['mail'] + "\n";
+        }
+      }
+      else{
+        str += statusList[i]['name'] + " " + statusList[i]['tel'] + " " +statusList[i]['mail'] + "\n";
+      }
     };
     $('#directTarget').val(str);
-    $('#callTitle').val(call_list[index].title);
-    $('#callBody').val(call_list[index].body);
-*/
+    $('#callTitle').val(sendStatusList[index].title);
+    $('#callBody').val(sendStatusList[index].body);
   }
 
   // 送信処理
@@ -475,6 +554,33 @@ $(document).ready(function(){
       },
       error: function(data){
         alert("発信手続きができませんでした:" + data['message']);
+        if (isProd)
+        {
+          $('#doCallButton').button('reset');
+        }
+        else
+        {
+          $('#demoCallButton').button('reset');
+        }
+      }
+    });
+  }
+
+  // boundioステータスの取得
+  function updateBoundio()
+  {
+    // 送信状況の取得
+    $.ajax({
+      type: "GET",
+      url: openpne.apiBase + "call/update.json",
+      data:  {apiKey: openpne.apiKey},
+      async: false,
+      dataType: "json",
+      success: function(data){
+        // 何もしない
+      },
+      error: function(data){
+        // 何もしない
       }
     });
   }
