@@ -153,19 +153,9 @@ var openpne = '.$json.';
                   <td>発信作業中</td>
                   {{else 'FAIL'==tel_status}}
                   <td>発信失敗</td>
-                  {{else 'FAIL1'==tel_status}}
-                  <td>発信失敗1回目</td>
-                  {{else 'FAIL2'==tel_status}}
-                  <td>発信失敗2回目</td>
-                  {{else 'FAIL3'==tel_status}}
-                  <td>発信失敗3回目</td>
                   {{else 'HUZAI'==tel_status}}
                   <td>不在着信</td>
-                  {{else 'HUZAI1'==tel_status}}
-                  <td>不在着信1回目</td>
-                  {{else 'HUZAI2'==tel_status}}
-                  <td>不在着信2回目</td>
-                  {{else 'PUSH1'==tel_status}}
+                  {{else 'PUSH'==tel_status}}
                   <td>発信：了解有</td>
                   {{else 'CALLED'==tel_status}}
                   <td>発信：了解無</td>
@@ -176,11 +166,9 @@ var openpne = '.$json.';
                   <td>発信待機</td>
                   {{else 'CALLPROCESSING'==mail_status}}
                   <td>発信作業中</td>
-                  {{else 'FAIL1'==mail_status}}
-                  <td>発信失敗1回目</td>
-                  {{else 'FAIL2'==mail_status}}
-                  <td>発信失敗2回目</td>
-                  {{else 'PUSH1'==mail_status}}
+                  {{else 'FAIL'==mail_status}}
+                  <td>発信失敗</td>
+                  {{else 'PUSH'==mail_status}}
                   <td>発信：了解有</td>
                   {{else 'CALLED'==mail_status}}
                   <td>発信：了解無</td>
