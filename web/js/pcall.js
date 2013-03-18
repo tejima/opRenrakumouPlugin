@@ -491,7 +491,7 @@ $(document).ready(function (){
     for (var i = 0; i < statusList.length; i++) {
       if (isOnlyError)
       {
-        if ('CALLED' !== statusList[i]['tel_status'] || 'CALLED' !== statusList[i]['mail_status'])
+        if ('PUSH' !== statusList[i]['tel_status'] || 'PUSH' !== statusList[i]['mail_status'])
         {
           str += statusList[i]['name'] + " " + statusList[i]['tel'] + " " +statusList[i]['mail'] + "\n";
         }
@@ -501,9 +501,19 @@ $(document).ready(function (){
         str += statusList[i]['name'] + " " + statusList[i]['tel'] + " " +statusList[i]['mail'] + "\n";
       }
     };
-    $('#directTarget').val(str);
-    $('#callTitle').val(sendStatusList[index].title);
-    $('#callBody').val(sendStatusList[index].body);
+    if (str)
+    {
+      $('#directTarget').val(str);
+      $('#callTitle').val(sendStatusList[index].title);
+      $('#callBody').val(sendStatusList[index].body);
+    }
+    else
+    {
+      alert('再作成内容はありません。');
+      $('#directTarget').val('');
+      $('#callTitle').val('');
+      $('#callBody').val('');
+    }
   }
 
   // 送信処理
