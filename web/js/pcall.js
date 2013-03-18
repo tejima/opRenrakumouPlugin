@@ -5,7 +5,7 @@ $(document).ready(function (){
   var PROD = 'do';
   // 送信タイプ
   // 自分へのデモ発信
-  SEND_TYPE_DEMO = 0;
+  SEND_TYPE_DEMO = 99;
   // 電話＋メール
   SEND_TYPE_TEL = 1;
   // メール
