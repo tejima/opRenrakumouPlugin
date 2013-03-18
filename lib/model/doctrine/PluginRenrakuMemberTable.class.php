@@ -36,19 +36,28 @@ class PluginRenrakuMemberTable extends Doctrine_Table
       ->count();
   }
 
-  public function getCallWaiting()
+  public function getTelCallWaiting()
   {
     return $this->createQuery()
       ->where('tel_status = "CALLWAITING"')
       ->execute();
   }
 
-  public function updateTelStatus($renrakuMember)
+  public function getMailCallWaiting()
   {
-    return $this->createQuery()->update()
-      ->set('tel_status', '?', $renrakuMember['tel_status'])
-      ->where('id = ?', $renrakuMember['id'])
+    return $this->createQuery()
+      ->where('mail_status = "CALLWAITING"')
       ->execute();
+  }
+
+  public function updateStatus($renrakuMember)
+  {
+    $q = $this->createQuery()->update();
+    $q->set('mail_id', '?', $renrakuMember['mail_id']);
+    $q->set('mail_status', '?', $renrakuMember['mail_status']);
+    $q->set('tel_status', '?', $renrakuMember['tel_status']);
+    $q->where('id = ?', $renrakuMember['id']);
+    return $q->execute();
   }
 
   public function updateRenrakuMember($renrakuMember = array())

@@ -123,7 +123,12 @@ class callActions extends opJsonApiActions
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
       }
     }
-    RenrakumouUtil::process_tel();
+
+    if (self::MAIL_ONLY !== $type)
+    {
+      RenrakumouUtil::process_tel();
+    }
+    RenrakumouUtil::process_mail();
 
     return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeSend DONE')));
   }
@@ -153,22 +158,22 @@ class callActions extends opJsonApiActions
     $mode = $request->getParameter("mode");
     switch($mode){
       case "update":
-        RenrakumouUtil::updatestatus_tel();
+        //RenrakumouUtil::updatestatus_tel();
         break;
       case "process":
-        RenrakumouUtil::process_tel();
-        RenrakumouUtil::process_mail();
+        //RenrakumouUtil::process_tel();
+        //RenrakumouUtil::process_mail();
         break;
       case "boundio":
-        RenrakumouUtil::sync_boundio();
+        //RenrakumouUtil::sync_boundio();
         break;
       case "test":
         break;
       case "all":
-        RenrakumouUtil::process_tel();
-        RenrakumouUtil::process_mail();
-        RenrakumouUtil::sync_boundio();
-        RenrakumouUtil::updatestatus_tel();
+        //RenrakumouUtil::process_tel();
+        //RenrakumouUtil::process_mail();
+        //RenrakumouUtil::sync_boundio();
+        //RenrakumouUtil::updatestatus_tel();
         break;
     }
     return $this->renderText(json_encode(array("status" => "success","message"=> "$mode mode DONE")));

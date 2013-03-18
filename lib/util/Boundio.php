@@ -41,11 +41,13 @@ class Boundio {
 		}
 		
 		// validation - casts
+    /*
 		foreach($casts as $cast) {
 			if(!preg_match('/^(file\([0-9]+\)|num\([0-9]\)|silent\(\))$/', $cast)) {
 				return false;
 			}
 		}
+     */
 
 		// execute call
 		$result = static::_execute(static::getUrl(). '/call', array(

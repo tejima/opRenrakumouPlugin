@@ -133,53 +133,22 @@ class RenrakumouUtil
 
   static function process_tel()
   {
-    $callWaitingList = Doctrine::getTable('RenrakuMember')->getCallWaiting();
+    $callWaitingList = Doctrine::getTable('RenrakuMember')->getTelCallWaiting();
     foreach ($callWaitingList as $line)
     {
-      $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['id']);
+      $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['renraku_id']);
       $result = RenrakumouUtil::pushcall($line['tel'], $renrakuBody['body'], $_SERVER['userSerialId'], $_SERVER['appId'], $_SERVER['authKey']);
       if ($result)
       {
         $line['tel_status'] = 'CALLPROCESSING';
-        Doctrine::getTable('RenrakuMember')->updateTelStatus($line);
       }
-    }
-    //////////////////////////////////////
-/*
-    $public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'), true);
-    if(null == $public_pcall_status)
-    {
-			sfContext::getInstance()->getLogger()->info('public_pcall_status empty');
-    }
-
-    foreach($public_pcall_status as &$ref_status)
-    {
-      foreach($ref_status['status_list'] as &$ref_line)
+      else
       {
-        if('CALLWAITING' != $ref_line['telstat'])
-        {
-    			continue;
-    		}
-
-    		$result = RenrakumouUtil::pushcall($ref_line['tel'], $ref_status['body'], $_SERVER['userSerialId'], $_SERVER['appId'], $_SERVER['authKey']);
-        if ($result)
-        {
-    			$ref_line['telstat'] = 'CALLPROCESSING';
-    			$ref_line['boundio_id'] = $result;
-        }
-        else
-        {
-          $ref_line['telstat'] = 'FAIL';
-        }
-    	}
+        $line['tel_status'] = 'FAIL';
+      }
+      $line['mail_id'] = '';
+      Doctrine::getTable('RenrakuMember')->updateStatus($line);
     }
-    unset($ref_status);
-    unset($ref_line);
-
-    sfContext::getInstance()->getLogger()->info('TASK DONE');
-   	//print_r($public_pcall_status);
-    Doctrine::getTable('SnsConfig')->set('public_pcall_status', json_encode($public_pcall_status));
-*/
 	}
 
   static function pushcall($tel = null, $text = null, $userSerialId, $appId, $authKey)
@@ -226,24 +195,14 @@ class RenrakumouUtil
 
   static function process_mail()
   {
-		$public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'), true);
-    if(null == $public_pcall_status)
+    $callWaitingList = Doctrine::getTable('RenrakuMember')->getMailCallWaiting();
+    foreach ($callWaitingList as $line)
     {
-      $this->logMessage('public_pcall_status empty', 'err');
-    }
-
-    foreach($public_pcall_status as &$ref_status)
-    {
-      foreach ($ref_status['status_list'] as &$ref_line)
-      {
-        if ('CALLWAITING' != $ref_line['mailstat'])
-        {
-    			continue;
-    		}
-    		$uniqid = uniqid(null, true); //FIXME strict uniqueness
-	  		$roger_url = sfConfig::get('op_base_url').'/o/roger?id='.$uniqid;
-    		$body = <<< EOF
-${ref_status['body']}
+      $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['id']);
+      $uniqid = uniqid(null, true); //FIXME strict uniqueness
+      $roger_url = sfConfig::get('op_base_url').'/o/roger?id='.$uniqid;
+      $body = <<< EOF
+${renrakuBody['body']}
 
 
 ■了解報告■
@@ -253,25 +212,18 @@ ${roger_url}
 連絡網サービス pCall
 EOF;
 
-    		$result = RenrakumouUtil::awsSES($ref_line['mail'], null, $ref_status['title'], $body, $_SERVER['smtpUsername'], $_SERVER['smtpPassword']);
-    		$ref_line['mail_id'] = $uniqid;
-
-        if ($result)
-        {
-    			sfContext::getInstance()->getLogger()->info($ref_line['mail'].' mailstat changed '.$ref_line['mailstat'].' => CALLED');
-    			$ref_line['mailstat'] = 'CALLED';
-        }
-        else
-        {
-    			sfContext::getInstance()->getLogger()->info($ref_line['mail'].' mailstat changed '.$ref_line['mailstat'].' => FAIL');
-          $ref_line['mailstat'] = 'FAIL';
-        }
-    	}
+      $result = RenrakumouUtil::awsSES($line['mail'], null, $renrakuBody['title'], $body, $_SERVER['smtpUsername'], $_SERVER['smtpPassword']);
+      $line['mail_id'] = $uniqid;
+      if ($result)
+      {
+        $line['mail_status'] = 'CALLED';
+      }
+      else
+      {
+        $line['mail_status'] = 'FAIL';
+      }
+      Doctrine::getTable('RenrakuMember')->updateStatus($line);
     }
-    unset($ref_status);
-    unset($ref_line);
-
-    Doctrine::getTable('SnsConfig')->set('public_pcall_status', json_encode($public_pcall_status));
 	}
 
   static function awsSES($to, $from, $subject, $body, $smtpUsername, $smtpPassword)
