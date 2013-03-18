@@ -401,6 +401,10 @@ $(document).ready(function (){
   {
     // テスト発信先電話番号
     var demoTel = $.trim($("#demoCallTel").val());
+    // 全角数字の置換
+    demoTel = demoTel.replace(/[０-９]/g, function (s) {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
     // テスト発信先メールアドレス
     var demoMail = $.trim($("#demoCallMail").val());
 
@@ -523,8 +527,30 @@ $(document).ready(function (){
     var sendTargetList = {};
     sendTargetList['apiKey'] = openpne.apiKey;
     sendTargetList['type'] = sendType;
-    sendTargetList['title'] = $.trim($("#callTitle").val());
-    sendTargetList['body'] = $.trim($("#callBody").val());
+
+    // titleの文字列変換
+    var titleText = $.trim($("#callTitle").val());
+    // 改行コードの置換
+    titleText = titleText.replace(/\r\n/g, '');
+    titleText = titleText.replace(/(\n|\r)/g, '');
+    // 全角空白の置換
+    titleText = titleText.replace(/　/g, '');
+    // 半角空白の置換
+    titleText = titleText.replace(/ /g, '');
+
+    sendTargetList['title'] = titleText;
+
+    // bodyの文字列変換
+    var bodyText = $.trim($("#callBody").val());
+    // 改行コードの置換
+    bodyText = bodyText.replace(/\r\n/g, '');
+    bodyText = bodyText.replace(/(\n|\r)/g, '');
+    // 全角空白の置換
+    bodyText = bodyText.replace(/　/g, '');
+    // 半角空白の置換
+    bodyText = bodyText.replace(/ /g, '');
+
+    sendTargetList['body'] = bodyText;
 
     // 本番の場合
     if (isProd)
