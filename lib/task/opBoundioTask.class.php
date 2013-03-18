@@ -8,7 +8,7 @@ class opBoundioTask extends sfBaseTask
     $this->name             = 'boundio';
     $this->briefDescription = 'Check Boundio status';
     $this->databaseManager = null;
-    $this->detailedDescription = 
+    $this->detailedDescription =
 <<< EOF
   [./symfony renrakumou:boundio]
 EOF;
@@ -29,12 +29,12 @@ EOF;
     if(!$boundio_list){
       echo "Boundio access error";
     }
-    
+
     $map = array();
     foreach($boundio_list as $line){
       $_status = "";
       if("1" == (string)$line['_gather']){
-        $_status = "PUSH1";
+        $_status = "PUSH";
       }else{
         switch ($line['_status']) {
           case '架電完了':

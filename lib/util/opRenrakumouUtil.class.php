@@ -13,86 +13,25 @@
  *
  * @package    opRenrakumouPlugin
  * @author     Mamoru Tejima <tejima@tejimaya.com>
+ * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
 class RenrakumouUtil
 {
-  static function updatestatus_tel()
-  {
-    $map = json_decode(Doctrine::getTable('SnsConfig')->get('boundio_status_map'), true);
-    $public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'), true);
-    if (null == $public_pcall_status)
-    {
-      $this->logMessage('public_pcall_status empty', 'err');
-    }
-
-    foreach ($public_pcall_status as &$ref_status)
-    {
-      foreach ($ref_status['status_list'] as &$ref_line)
-      {
-        if ('CALLPROCESSING' != $ref_line['telstat'])
-        {
-          continue;
-        }
-        if (!$map[(string)$ref_line['boundio_id']])
-        {
-          //echo 'MAP_NOT_HIT\n';
-          continue;
-        }
-        else
-        {
-          //echo 'MAP_HIT\n';
-        }
-        if ('HUZAI1' == $ref_line['telstat'] && 'HUZAI' == $map[$ref_line['boundio_id']])
-        {
-          $ref_line['telstat'] = 'HUZAI2';
-        }
-        else
-        {
-          $ref_line['telstat'] = $map[$ref_line['boundio_id']];
-        }
-      }
-    }
-    unset($ref_status);
-    unset($ref_line);
-    Doctrine::getTable('SnsConfig')->set('public_pcall_status', json_encode($public_pcall_status));
-	}
-
   static function updatestatus_mail($mail_id)
   {
-		$public_pcall_status = json_decode(Doctrine::getTable('SnsConfig')->get('public_pcall_status'), true);
-    if (null == $public_pcall_status)
-    {
-      $this->logMessage('public_pcall_status empty', 'err');
-    }
+    $renrakuMember = Doctrine::getTable('RenrakuMember')->findByMailId($mail_id);
+
     $result = false;
-    foreach ($public_pcall_status as &$ref_status)
+    foreach ($renrakuMember as $line)
     {
-      foreach ($ref_status['status_list'] as &$ref_line)
+      if ('CALLED' === $line['mail_status'])
       {
-        if ('CALLED' != $ref_line['mailstat'])
-        {
-          continue;
-        }
-        if ($mail_id == $ref_line['mail_id'])
-        {
-          $ref_line['mailstat'] = 'PUSH1';
-          $result = true;
-          break 2;
-        }
+        $line['mail_status'] = 'PUSH';
+        Doctrine::getTable('RenrakuMember')->updateStatus($line);
+        $result = true;
       }
     }
-    unset($ref_status);
-    unset($ref_line);
-    if ($result)
-    {
-	  	sfContext::getInstance()->getLogger()->debug('updatestatus_mail() match');
-    }
-    else
-    {
-	  	sfContext::getInstance()->getLogger()->debug('updatestatus_mail() unmatch');
-    }
 
-    Doctrine::getTable('SnsConfig')->set('public_pcall_status', json_encode($public_pcall_status));
     return $result;
 	}
 
@@ -101,7 +40,8 @@ class RenrakumouUtil
 		$boundio_list = RenrakumouUtil::status_list(300, $_SERVER['userSerialId'], $_SERVER['appId'], $_SERVER['authKey']);
     if (!$boundio_list)
     {
-      //echo 'Boundio access error';
+      $this->logMessage('boundio_list empty', 'err');
+      return false;
     }
 
     $map = array();
@@ -110,7 +50,7 @@ class RenrakumouUtil
       $_status = '';
       if ('1' == (string)$line['_gather'])
       {
-        $_status = 'PUSH1';
+        $_status = 'PUSH';
       }
       else
       {
@@ -124,16 +64,19 @@ class RenrakumouUtil
             break;
         }
       }
-      $map[(string)$line['_id']] = $_status;
+      $renrakuMember = Doctrine::getTable('RenrakuMember')->findByBoundioId($line['_id']);
+      foreach ($renrakuMember as $memberLine)
+      {
+        $memberLine['tel_status'] = $_status;
+        Doctrine::getTable('RenrakuMember')->updateStatus($memberLine);
+      }
     }
-
-    Doctrine::getTable('SnsConfig')->set('boundio_status_raw',json_encode($boundio_list));
-    Doctrine::getTable('SnsConfig')->set('boundio_status_map',json_encode($map));
+    return true;
 	}
 
   static function process_tel()
   {
-    $callWaitingList = Doctrine::getTable('RenrakuMember')->getTelCallWaiting();
+    $callWaitingList = Doctrine::getTable('RenrakuMember')->findByTelStatus('CALLWAITING');
     foreach ($callWaitingList as $line)
     {
       $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['renraku_id']);
@@ -141,6 +84,7 @@ class RenrakumouUtil
       if ($result)
       {
         $line['tel_status'] = 'CALLPROCESSING';
+        $line['boundio_id'] = $result;
       }
       else
       {
@@ -195,10 +139,10 @@ class RenrakumouUtil
 
   static function process_mail()
   {
-    $callWaitingList = Doctrine::getTable('RenrakuMember')->getMailCallWaiting();
+    $callWaitingList = Doctrine::getTable('RenrakuMember')->findByMailStatus('CALLWAITING');
     foreach ($callWaitingList as $line)
     {
-      $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['id']);
+      $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['renraku_id']);
       $uniqid = uniqid(null, true); //FIXME strict uniqueness
       $roger_url = sfConfig::get('op_base_url').'/o/roger?id='.$uniqid;
       $body = <<< EOF

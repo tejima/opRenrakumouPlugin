@@ -8,7 +8,7 @@ class opUpdateTask extends sfBaseTask
     $this->name             = 'update';
     $this->briefDescription = 'update status';
     $this->databaseManager = null;
-    $this->detailedDescription = 
+    $this->detailedDescription =
 <<< EOF
   [./symfony renrakumou:update]
 EOF;
@@ -24,6 +24,6 @@ EOF;
   	$this->configuration = parent::createConfiguration($options['application'], $options['env']);
     new sfDatabaseManager($this->configuration);
   	sfContext::createInstance($this->configuration);
-    RenrakumouUtil::updatestatus_tel();
+    RenrakumouUtil::sync_boundio();
   }
 }

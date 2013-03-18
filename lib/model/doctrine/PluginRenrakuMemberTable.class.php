@@ -16,43 +16,32 @@
  */
 class PluginRenrakuMemberTable extends Doctrine_Table
 {
-  public function retrieveByRenrakuId($renrakuId)
+  public function getMonthlyCalled()
   {
-    return $this->createQuery()
-      ->where('renraku_id = ?', $renrakuId)
-      ->execute();
-  }
-
-  public function getMonthlyCalled($year, $month)
-  {
-    if (2 > strlen($month))
+    $nowDate = getDate();
+    $year = $nowDate['year'];
+    $month = $nowDate['mon'];
+    if (1 <= strlen($month))
     {
       $month = '0'.$month;
     }
 
-    return $this->createQuery()
+    $telCount = $this->createQuery()
       ->where('DATE_FORMAT(created_at, "%Y%m") = ?', $year.$month)
       ->andWhere('tel_status = "CALLED"')
       ->count();
-  }
 
-  public function getTelCallWaiting()
-  {
-    return $this->createQuery()
-      ->where('tel_status = "CALLWAITING"')
-      ->execute();
-  }
-
-  public function getMailCallWaiting()
-  {
-    return $this->createQuery()
-      ->where('mail_status = "CALLWAITING"')
-      ->execute();
+    $mailCount = $this->createQuery()
+      ->where('DATE_FORMAT(created_at, "%Y%m") = ?', $year.$month)
+      ->andWhere('mail_status = "CALLED"')
+      ->count();
+    return array('tel_count' => $telCount, 'mail_count' => $mailCount);
   }
 
   public function updateStatus($renrakuMember)
   {
     $q = $this->createQuery()->update();
+    $q->set('boundio_id', '?', $renrakuMember['boundio_id']);
     $q->set('mail_id', '?', $renrakuMember['mail_id']);
     $q->set('mail_status', '?', $renrakuMember['mail_status']);
     $q->set('tel_status', '?', $renrakuMember['tel_status']);
