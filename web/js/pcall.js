@@ -29,8 +29,9 @@ $(document).ready(function(){
   var targetList = null;
   var sendType = -1;
   var sendStatusList = null;
+  var sendTargets = null;
   // todo: 次バージョンでは最大電話送信数、最大メール送信数をサーバから取得するようにする。
-  var maxTelCount = 110;
+  var maxTelCount = 300;
   var maxMailCount = 500;
   var telCount = 0;
   var mailCount = 0;
@@ -53,7 +54,7 @@ $(document).ready(function(){
   /* イベント定義 */
   // boundioステータス取得
   var msec = TIMER_BOUNDIO_STATUS * 1000;
-  $("body").everyTime(msec, updateBoundio);
+  $("body").everyTime(msec, updateStatus);
 
   // 自分宛にテスト発信ボタン押下時
   $('#demoModalButton').on('click', function(){
@@ -197,24 +198,6 @@ $(document).ready(function(){
       return false;
     }
 
-    // 送信制限数チェック
-    // 現在の送信数の取得
-    getCalledCount();
-    // メール送信の場合
-    if (SEND_TYPE_MAIL == sendType)
-    {
-      if (maxMailCount < mailCount)
-      {
-        alert('メール送信数が最大を超えています。発信できません。');
-        return false;
-      }
-    }
-    if (maxTelCount < telCount || maxMailCount < mailCount)
-    {
-      alert('電話発信数またはメール送信数が最大を超えています。発信できません。');
-      return false;
-    }
-
     // 連絡先内容チェック
     var isInvalid = false;
     for (var index = 0; index < targetListLen; index++)
@@ -278,6 +261,53 @@ $(document).ready(function(){
     {
       alert('連絡先は、名字[半角スペース]電話番号[半角スペース]メールアドレス[改行]の形式で記入してください。\n電話番号はハイフン無し数字のみで入力してください。');
 
+      return false;
+    }
+
+    // 送信データの作成
+    var targetListLen = targetList.length;
+    var targets = [];
+    var sendTelCount = 0;
+    var sendMailCount = 0;
+    for (var index = 0; index < targetListLen; index++)
+    {
+      var targetInfo = targetList[index];
+      var info = {};
+      // 名前
+      info['name'] = 'undefined' == typeof(targetInfo[0]) ? '': targetInfo[0];
+      // 電話番号
+      info['tel'] = 'undefined' == typeof(targetInfo[1]) ? '': targetInfo[1];
+      if (info['tel'])
+      {
+        sendTelCount++;
+      }
+      // メールアドレス
+      info['mail'] = 'undefined' == typeof(targetInfo[2]) ? '': targetInfo[2];
+      if (info['mail'])
+      {
+        sendMailCount++;
+      }
+      targets.push(info);
+    }
+    sendTargets = targets;
+
+    // 送信制限数チェック
+    // 現在の送信数の取得
+    getCalledCount();
+    // メール送信の場合
+    $('#doCallTargetTelNum').html(sendTelCount);
+    $('#doCallTargetMailNum').html(sendMailCount);
+    if (SEND_TYPE_MAIL == sendType)
+    {
+      if (maxMailCount < (mailCount + sendMailCount))
+      {
+        alert('メール送信数が最大を超えてしまうため発信できません。');
+        return false;
+      }
+    }
+    if (maxTelCount < (telCount + sendTelCount) || maxMailCount < (mailCount + sendMailCount))
+    {
+      alert('電話発信数またはメール送信数が最大を超えてしまうため発信できません。');
       return false;
     }
 
@@ -422,6 +452,8 @@ $(document).ready(function(){
   // 送信状況の表示
   function updateStatus()
   {
+    // boundioステータスの更新
+    updateBoundio();
     // 送信状況の取得
     $.ajax({
       type: "GET",
@@ -479,28 +511,14 @@ $(document).ready(function(){
     sendTargetList['type'] = sendType;
     sendTargetList['title'] = $.trim($("#callTitle").val());
     sendTargetList['body'] = $.trim($("#callBody").val());
-
+alert(sendTargetList['body']);
     // 本番の場合
     if (isProd)
     {
       // ボタンをローディング中に変更
       $('#doCallButton').button('loading');
       // 送信データの作成
-      var targetListLen = targetList.length;
-      var targets = [];
-      for (var index = 0; index < targetListLen; index++)
-      {
-        var targetInfo = targetList[index];
-        var info = {};
-        // 名前
-        info['name'] = 'undefined' == typeof(targetInfo[0]) ? '': targetInfo[0];
-        // 電話番号
-        info['tel'] = 'undefined' == typeof(targetInfo[1]) ? '': targetInfo[1];
-        // メールアドレス
-        info['mail'] = 'undefined' == typeof(targetInfo[2]) ? '': targetInfo[2];
-        targets.push(info);
-      }
-      sendTargetList['target'] = targets;
+      sendTargetList['target'] = sendTargets;
     }
     // デモの場合
     else

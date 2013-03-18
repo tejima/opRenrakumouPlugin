@@ -4,12 +4,11 @@
 <?php include_http_metas() ?>
 <?php include_metas() ?>
 <title>緊急連絡サービス pCall</title>
-<?php //todo: スタイルシートの読み込み ?>
-<?php //use_stylesheet('/opRenrakumouPlugin/css/bootstrap.css')?>
-<?php //use_stylesheet('/opRenrakumouPlugin/css/custom.css')?>
-<?php //include_stylesheets() ?>
-<link rel="stylesheet" type="text/css" href="/opRenrakumouPlugin/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="/opRenrakumouPlugin/css/custom.css">
+<?php use_helper('opRenrakumou') ?>
+<?php remove_assets() ?>
+<?php use_stylesheet('/opRenrakumouPlugin/css/bootstrap.css') ?>
+<?php use_stylesheet('/opRenrakumouPlugin/css/custom.css')?>
+<?php include_stylesheets() ?>
 <?php if (opConfig::get('enable_jsonapi') && opToolkit::isSecurePage()): ?>
 <?php
 use_helper('Javascript');
@@ -23,14 +22,13 @@ var openpne = '.$json.';
 ');
 ?>
 <?php endif ?>
-<?php //todo: javascriptの読み込み ?>
-<?php //include_javascripts() ?>
-<script src="/opRenrakumouPlugin/js/jquery.js"></script>
-<script src="/opRenrakumouPlugin/js/jquery.tmpl.js"></script>
-<script src="/opRenrakumouPlugin/js/jquery.timers.js"></script>
-<script src="/opRenrakumouPlugin/js/bootstrap.js"></script>
-<script src="/opRenrakumouPlugin/js/shortcut.js"></script>
-<script src="/opRenrakumouPlugin/js/pcall.js"></script>
+<?php use_javascript('/opRenrakumouPlugin/js/jquery.js') ?>
+<?php use_javascript('/opRenrakumouPlugin/js/jquery.tmpl.js') ?>
+<?php use_javascript('/opRenrakumouPlugin/js/jquery.timers.js') ?>
+<?php use_javascript('/opRenrakumouPlugin/js/bootstrap.js') ?>
+<?php use_javascript('/opRenrakumouPlugin/js/shortcut.js') ?>
+<?php use_javascript('/opRenrakumouPlugin/js/pcall.js') ?>
+<?php include_javascripts() ?>
 <?php echo $op_config->get('pc_html_head') ?>
 <?php include_partial('icons') ?>
 </head>
@@ -98,7 +96,7 @@ var openpne = '.$json.';
       <h3>発信の最終確認</h3>
     </div>
     <div class="modal-body">
-      <p>電話連絡：<span id="doCallTargetTelnum"></span>人 メール連絡：<span id="doCallTargetMailnum"></span>人</p>
+      <p>電話連絡：<span id="doCallTargetTelNum"></span>人 メール連絡：<span id="doCallTargetMailNum"></span>人</p>
       <label>件名</label>
       <input id="doCallTitle" class="input-block-level" type="text" disabled>
       <label>連絡本文</label>

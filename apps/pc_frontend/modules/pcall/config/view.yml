@@ -3,6 +3,4 @@ indexSuccess:
   http_metas:
     charset: utf-8
     viewport: width=device-width, initial-scale=1.0
-  stylesheets: [/opRenrakumouPlugin/css/bootstrap.css: {position: last}, /opRenrakumouPlugin/css/custom.css: {position: last}]
-  javascripts: [/opRenrakumouPlugin/js/jquery.js: {position: last}, /opRenrakumouPlugin/js/jquery.tmpl.js: {position: last}, /opRenrakumouPlugin/js/bootstrap.js: {position: last}, /opRenrakumouPlugin/js/shortcut.js: {position: last}]
 
