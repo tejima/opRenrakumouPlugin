@@ -447,11 +447,11 @@ $(document).ready(function (){
         }
         else
         {
-          alert("送信数が取得できませんでした:" + data['message']);
+          alert("送信数が取得できませんでした:");
         }
       },
       error: function (data){
-        alert("送信数が取得できませんでした:" + data['message']);
+        alert("送信数が取得できませんでした:");
       }
     });
   }
@@ -478,11 +478,11 @@ $(document).ready(function (){
         }
         else
         {
-          alert("送信状況が取得できませんでした:" + data['message']);
+          alert("送信状況が取得できませんでした:");
         }
       },
       error: function (data){
-        alert("送信状況が取得できませんでした:" + data['message']);
+        alert("送信状況が取得できませんでした:");
       }
     });
   }
@@ -599,7 +599,7 @@ $(document).ready(function (){
         }
         else
         {
-          alert("発信手続きができませんでした:" + data['message']);
+          alert("発信手続きができませんでした:");
         }
         if (isProd)
         {
@@ -611,7 +611,7 @@ $(document).ready(function (){
         }
       },
       error: function (data){
-        alert("発信手続きができませんでした:" + data['message']);
+        alert("発信手続きができませんでした:");
         if (isProd)
         {
           $('#doCallButton').button('reset');
