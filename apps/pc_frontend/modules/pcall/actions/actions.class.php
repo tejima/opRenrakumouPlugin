@@ -5,7 +5,7 @@
  *
  * @package    OpenPNE
  * @subpackage pcall
- * @author     Your name here
+ * @author     kaoru nishizoe <nishizoe@tejimaya.com>
  */
 class pcallActions extends sfActions
 {

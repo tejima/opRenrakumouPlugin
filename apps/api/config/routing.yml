@@ -18,31 +18,3 @@ call_count:
   url: /call/count.json
   param: { module: call, action: count, sf_format: json }
   requirements: { sf_method: [get] }
-
-
-
-
-call_call:
-  url: /call/call.json
-  param: { module: call, action: call, sf_format: json }
-  requirements: { sf_method: [post] }
-call_search:
-  url: /call/search.json
-  param: { module: call, action: search, sf_format: json }
-  requirements: { sf_method: [post] }
-call_demo:
-  url: /call/demo.json
-  param: { module: call, action: demo, sf_format: json }
-  requirements: { sf_method: [post] }
-call_reloadboundio:
-  url: /call/reloadboundio.json
-  param: { module: call, action: reloadboundio, sf_format: json }
-  requirements: { sf_method: [get] }
-call_queue:
-  url: /call/queue.json
-  param: { module: call, action: queue, sf_format: json }
-  requirements: { sf_method: [post] }
-call_cron:
-  url: /call/cron.json
-  param: { module: call, action: cron, sf_format: json }
-  requirements: { sf_method: [get] }
