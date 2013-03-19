@@ -33,7 +33,6 @@
 * Windows用Firefox最新版
 * mac用Chrome最新版
 * mac用Firefox最新版
-* mac用Safari最新版
 
 ## 携帯対応
 >不要
