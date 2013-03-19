@@ -62,13 +62,18 @@ class RenrakumouUtil
           case '不在':
             $_status = 'HUZAI';
             break;
+          default :
+            $_status = 'FAIL';
         }
       }
       $renrakuMember = Doctrine::getTable('RenrakuMember')->findByBoundioId($line['_id']);
       foreach ($renrakuMember as $memberLine)
       {
-        $memberLine['tel_status'] = $_status;
-        Doctrine::getTable('RenrakuMember')->updateStatus($memberLine);
+        if ('' !== $_status)
+        {
+          $memberLine['tel_status'] = $_status;
+          Doctrine::getTable('RenrakuMember')->updateStatus($memberLine);
+        }
       }
     }
     return true;
@@ -143,7 +148,7 @@ class RenrakumouUtil
     foreach ($callWaitingList as $line)
     {
       $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['renraku_id']);
-      $uniqid = uniqid(null, true); //FIXME strict uniqueness
+      $uniqid = uniqid(rand(), true);
       $roger_url = sfConfig::get('op_base_url').'/o/roger?id='.$uniqid;
       $body = <<< EOF
 ${renrakuBody['body']}

@@ -17,11 +17,6 @@ opRenrakumouPlugin
  - テスト機能：音声のテストのため発信者だけにコール
 
 
-インストール環境
-----
-・opChatTaskPlugin が必要です
-・opSkinThemePluginが必要です
-
 設定方法
 ----
 ・Apache ENV 環境変数で以下の値をセットする必要があります
@@ -37,7 +32,7 @@ opRenrakumouPlugin
 
 動作イメージ
 ----
-<img src="http://p.pne.jp/d/500/201303011422.png">
+<img src="http://i3.minus.com/jAtUkahXKnI73.png">
 
 
 改訂履歴
@@ -53,6 +48,10 @@ opRenrakumouPlugin
  - 電話了解機能
  - 同じ内容でコールを作り直す機能
  - 開発・本番切り替え
+- v1.0.0
+ - データ構造変更
+ - 電話発信数・メール発信数を表示
+ - 送信出来なかった人に、同じ内容で送り直す機能を追加
 
 TODO
 ----
