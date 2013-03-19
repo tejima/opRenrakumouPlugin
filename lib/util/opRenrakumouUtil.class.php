@@ -62,6 +62,8 @@ class RenrakumouUtil
           case '不在':
             $_status = 'HUZAI';
             break;
+          default :
+            $_status = 'FAIL';
         }
       }
       $renrakuMember = Doctrine::getTable('RenrakuMember')->findByBoundioId($line['_id']);
