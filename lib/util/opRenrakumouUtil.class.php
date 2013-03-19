@@ -146,7 +146,7 @@ class RenrakumouUtil
     foreach ($callWaitingList as $line)
     {
       $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['renraku_id']);
-      $uniqid = uniqid(null, true); //FIXME strict uniqueness
+      $uniqid = uniqid(rand(), true);
       $roger_url = sfConfig::get('op_base_url').'/o/roger?id='.$uniqid;
       $body = <<< EOF
 ${renrakuBody['body']}
