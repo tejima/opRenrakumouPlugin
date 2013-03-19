@@ -592,7 +592,14 @@ $(document).ready(function (){
       // 送信データの作成
       var target = {};
       target['name'] = 'myself';
-      target['tel'] = $.trim($("#demoCallTel").val());
+      // テスト発信先電話番号
+      var demoTel = $.trim($("#demoCallTel").val());
+      // 全角数字の置換
+      demoTel = demoTel.replace(/[０-９]/g, function (s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+      });
+
+      target['tel'] = demoTel;
       target['mail'] = $.trim($("#demoCallMail").val());
       var targets = [];
       targets.push(target);
