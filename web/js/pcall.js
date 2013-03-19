@@ -258,6 +258,14 @@ $(document).ready(function (){
           break;
         }
       }
+      else
+      {
+        if (SEND_TYPE_MAIL == sendType)
+        {
+          isInvalid = true;
+          break;
+        }
+      }
     }
 
     if (isInvalid)
