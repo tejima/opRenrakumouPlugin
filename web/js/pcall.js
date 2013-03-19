@@ -290,7 +290,10 @@ $(document).ready(function (){
       info['tel'] = 'undefined' == typeof(targetInfo[1]) ? '': targetInfo[1];
       if (info['tel'])
       {
-        sendTelCount++;
+        if (SEND_TYPE_MAIL != sendType)
+        {
+          sendTelCount++;
+        }
       }
       // メールアドレス
       info['mail'] = 'undefined' == typeof(targetInfo[2]) ? '': targetInfo[2];
