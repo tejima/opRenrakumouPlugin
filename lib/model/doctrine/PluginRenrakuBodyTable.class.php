@@ -30,7 +30,7 @@ class PluginRenrakuBodyTable extends Doctrine_Table
 
     if (isset($renrakuBody['body']))
     {
-      if (200 < mb_strlen($renrakuBody['body'], 'urf-8'))
+      if (200 < mb_strlen($renrakuBody['body'], 'utf-8'))
       {
         throw new LogicException('body is should be 200 characters.');
       }
