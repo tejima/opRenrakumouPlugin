@@ -94,13 +94,14 @@ class callActions extends opJsonApiActions
       $renrakuMember['boundio_id'] = '';
       $renrakuMember['name'] = $line['name'];
       $renrakuMember['mail'] = $line['mail'];
+      if (self::MAIL_ONLY === (int)$type && (is_null($renrakuMember['mail']) || '' == $renrakuMember['mail']))
+      {
+        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
+      }
+
       if (!is_null($renrakuMember['mail']))
       {
         $renrakuMember['mail_status'] = 'CALLWAITING';
-      }
-      elseif (self::MAIL_ONLY === (int)$type && is_null($renrakuMember['mail']))
-      {
-        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
       }
       else
       {
@@ -108,6 +109,11 @@ class callActions extends opJsonApiActions
       }
 
       $renrakuMember['tel'] = $line['tel'];
+      if (is_null($renrakuMember['tel']) || '' == $renrakuMember['tel'])
+      {
+        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not specified.')));
+      }
+
       if (self::TEL_AND_MAIL === (int)$type || self::MY_SELF === (int)$type)
       {
         $renrakuMember['tel_status'] = 'CALLWAITING';
