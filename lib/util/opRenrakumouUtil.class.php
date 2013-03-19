@@ -59,6 +59,9 @@ class RenrakumouUtil
           case '架電完了':
             $_status = 'CALLED';
             break;
+          case '架電待機':
+            $_status = 'CALLPROCESSING';
+            break;
           case '不在':
             $_status = 'HUZAI';
             break;

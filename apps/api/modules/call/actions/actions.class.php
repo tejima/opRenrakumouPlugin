@@ -16,7 +16,7 @@
  */
 class callActions extends opJsonApiActions
 {
-  const MY_SELF = 0;
+  const MY_SELF = 99;
   const TEL_AND_MAIL = 1;
   const MAIL_ONLY = 2;
 
