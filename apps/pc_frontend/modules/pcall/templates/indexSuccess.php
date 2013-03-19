@@ -53,7 +53,7 @@ var openpne = '.$json.';
           <label>件名</label>
           <input id="callTitle" class="input-block-level tooltip-target" type="text" placeholder="○月×日大雪休校連絡" rel="tooltip" title="後でわかりやすい日付を入力します。「◯月◯日 6年3組 大雪休みのお知らせ」などと、月日、クラス、内容を簡単に記載してください。" data-placement="right">
           <label>本文</label>
-          <textarea id="callBody" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。ここで書かれた文章は2回繰り返して発音されます。" class="input-block-level tooltip-target" rows="5" placeholder="○×小学校○年×組の連絡網です。大雪のため○月×日、○×小学校○年×組はお休みになりました。×日はお休みですが、翌△日は通常通り開校します。保護者のみなさま、ご対応、よろしくお願いたします。"></textarea>
+          <textarea id="callBody" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。" class="input-block-level tooltip-target" rows="5" placeholder="○×小学校○年×組の連絡網です。大雪のため○月×日、○×小学校○年×組はお休みになりました。×日はお休みですが、翌△日は通常通り開校します。保護者のみなさま、ご対応、よろしくお願いたします。"></textarea>
           <!-- Button to trigger modal -->
           <a id="doTelModalButton" href="#doCallModal" role="button" class="btn btn-danger btn-block" data-toggle="modal">電話・メール発信</a>
           <a id="doMailModalButton" href="#doCallModal" role="button" class="btn btn-warning btn-block" data-toggle="modal">メール発信</a>
@@ -79,7 +79,7 @@ var openpne = '.$json.';
       <label>件名</label>
       <input id="demoCallTitle" class="input-block-level" type="text" disabled>
       <label>連絡本文</label>
-      <textarea id="demoCallBody" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。ここで書かれた文章は2回繰り返して発音されます。" class="input-block-level tooltip-target" rows="5" disabled></textarea>
+      <textarea id="demoCallBody" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。" class="input-block-level tooltip-target" rows="5" disabled></textarea>
       <label>テスト発信先電話番号</label>
       <input id="demoCallTel" class="input-block-level tooltip-target" type="text" placeholder="09012345678" rel="tooltip" title="電話番号をハイフン無しで入力します" data-placement="top">
       <label>テスト発信先メールアドレス</label>
@@ -100,7 +100,7 @@ var openpne = '.$json.';
       <label>件名</label>
       <input id="doCallTitle" class="input-block-level" type="text" disabled>
       <label>連絡本文</label>
-      <textarea id="doCallBody" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。ここで書かれた文章は2回繰り返して発音されます。" class="input-block-level tooltip-target" rows="5" disabled></textarea>
+      <textarea id="doCallBody" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。" class="input-block-level tooltip-target" rows="5" disabled></textarea>
       <div class="alert alert-error">
         <strong>注意！</strong>発信ボタン押すと、実際に電話（メール）が発信されます。必ずテスト発信で確認をしてから。宛先、本文は十分確認の上、実行してください。
       </div>
