@@ -99,6 +99,11 @@ class callActions extends opJsonApiActions
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
       }
 
+      if ('false' === preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/', $renrakuMember['mail']))
+      {
+        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
+      }
+
       if (!is_null($renrakuMember['mail']))
       {
         $renrakuMember['mail_status'] = 'CALLWAITING';
@@ -112,6 +117,11 @@ class callActions extends opJsonApiActions
       if (is_null($renrakuMember['tel']) || '' == $renrakuMember['tel'])
       {
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not specified.')));
+      }
+
+      if ('false' === preg_match('/^[0-9]+$/', $renrakuMember['tel']))
+      {
+        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not alphanumeric.')));
       }
 
       if (self::TEL_AND_MAIL === (int)$type || self::MY_SELF === (int)$type)
