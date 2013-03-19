@@ -28,12 +28,12 @@ class PluginRenrakuMemberTable extends Doctrine_Table
 
     $telCount = $this->createQuery()
       ->where('DATE_FORMAT(created_at, "%Y%m") = ?', $year.$month)
-      ->andWhere('tel_status = "CALLED"')
+      ->andWhere('(tel_status = "CALLED" OR tel_status = "PUSH")')
       ->count();
 
     $mailCount = $this->createQuery()
       ->where('DATE_FORMAT(created_at, "%Y%m") = ?', $year.$month)
-      ->andWhere('mail_status = "CALLED"')
+      ->andWhere('(mail_status = "CALLED" OR mail_status = "PUSH")')
       ->count();
     return array('tel_count' => $telCount, 'mail_count' => $mailCount);
   }
