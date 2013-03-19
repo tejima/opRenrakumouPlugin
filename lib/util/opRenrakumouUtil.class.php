@@ -37,7 +37,7 @@ class RenrakumouUtil
 
   static function sync_boundio()
   {
-		$boundio_list = RenrakumouUtil::status_list(300, $_SERVER['userSerialId'], $_SERVER['appId'], $_SERVER['authKey']);
+		$boundio_list = RenrakumouUtil::status_list(300, sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
     if (!$boundio_list)
     {
       $this->logMessage('boundio_list empty', 'err');
@@ -88,7 +88,7 @@ class RenrakumouUtil
     foreach ($callWaitingList as $line)
     {
       $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['renraku_id']);
-      $result = RenrakumouUtil::pushcall($line['tel'], $renrakuBody['body'], $_SERVER['userSerialId'], $_SERVER['appId'], $_SERVER['authKey']);
+      $result = RenrakumouUtil::pushcall($line['tel'], $renrakuBody['body'], sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
       if ($result)
       {
         $line['tel_status'] = 'CALLPROCESSING';
@@ -108,7 +108,7 @@ class RenrakumouUtil
     Boundio::configure('userSerialId', $userSerialId);
     Boundio::configure('appId', $appId);
     Boundio::configure('authKey', $authKey);
-    Boundio::configure('env', $_SERVER['boundioMode']);
+    Boundio::configure('env', sfConfig::get('op_boundioMode'));
 
     $str = 'silent()%%silent()%%silent()%%file_d('.$text.',1)%%silent()%%file_d(この件に了解であれば1を、不明な場合は0をプッシュしてください。,1)%%gather(20,1)%%file_d(連絡は以上です。,1)';
 
@@ -130,7 +130,7 @@ class RenrakumouUtil
 		Boundio::configure('userSerialId', $userSerialId);
 		Boundio::configure('appId', $appId);
 		Boundio::configure('authKey', $authKey);
-		Boundio::configure('env', $_SERVER['boundioMode']);
+		Boundio::configure('env', sfConfig::get('op_boundioMode'));
 
 		$result = Boundio::status(null, date('Ymd',strtotime('-2 days')), date('Ymd',strtotime('-1 days')), $num);
 		sfContext::getInstance()->getLogger()->debug('Boundio::call() :'.print_r($result, true));
@@ -164,7 +164,7 @@ ${roger_url}
 連絡網サービス pCall
 EOF;
 
-      $result = RenrakumouUtil::awsSES($line['mail'], null, $renrakuBody['title'], $body, $_SERVER['smtpUsername'], $_SERVER['smtpPassword']);
+      $result = RenrakumouUtil::awsSES($line['mail'], null, $renrakuBody['title'], $body, sfConfig::get('op_smtpUsername'), sfConfig::get('op_smtpPassword'));
       $line['mail_id'] = $uniqid;
       if ($result)
       {

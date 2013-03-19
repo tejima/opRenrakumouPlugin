@@ -19,15 +19,15 @@ opRenrakumouPlugin
 
 設定方法
 ----
-・Apache ENV 環境変数で以下の値をセットする必要があります
+・OpenPNE.ymlに環境変数で以下の値をセットする必要があります
 
 <pre>
-  SetEnv boundioMode develop # develop / production
-  SetEnv userSerialId  #BOUNDIO
-  SetEnv appId  #BOUNDIO
-  SetEnv authKey  #BOUNDIO
-  SetEnv smtpUsername #有効なgmailアカウント
-  SetEnv smtpPassword #有効なgmailアカウント
+  boundioMode: "develop" # develop / production
+  userSerialId:  "#BOUNDIO"
+  appId:  "#BOUNDIO"
+  authKey: "#BOUNDIO"
+  smtpUsername: "#有効なgmailアカウント"
+  smtpPassword: "#有効なgmailアカウント"
 </pre>
 
 動作イメージ
