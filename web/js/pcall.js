@@ -529,7 +529,15 @@ $(document).ready(function (){
     sendTargetList['type'] = sendType;
 
     // titleの文字列変換
-    var titleText = $.trim($("#callTitle").val());
+    var titleText = '';
+    if (isProd)
+    {
+      titleText = $.trim($("#callTitle").val());
+    }
+    else
+    {
+      titleText = $.trim($("#demoCallTitle").val());
+    }
     // 改行コードの置換
     titleText = titleText.replace(/\r\n/g, '');
     titleText = titleText.replace(/(\n|\r)/g, '');
@@ -541,7 +549,15 @@ $(document).ready(function (){
     sendTargetList['title'] = titleText;
 
     // bodyの文字列変換
-    var bodyText = $.trim($("#callBody").val());
+    var bodyText = '';
+    if (isProd)
+    {
+      bodyText = $.trim($("#callBody").val());
+    }
+    else
+    {
+      bodyText = $.trim($("#demoCallBody").val());
+    }
     // 改行コードの置換
     bodyText = bodyText.replace(/\r\n/g, '');
     bodyText = bodyText.replace(/(\n|\r)/g, '');
