@@ -54,8 +54,8 @@ h1 > a {
 
 .img-rounded3 {
   -webkit-border-radius: 3px;
-     -moz-border-radius: 3px;
-          border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 .pad1 {
@@ -94,4 +94,12 @@ h1.brand > a:hover {
   color: #ffffff;
   text-decoration: none;
   background-color: transparent;
+}
+
+.table tbody tr.caution td {
+  background-color: #ffeddb;
+}
+
+.table-hover tbody tr.caution:hover td {
+  background-color: #ffe0c1;
 }

@@ -135,12 +135,14 @@ var openpne = '.$json.';
               </thead>
               <tbody>
               {{each target}}
-                {{if 'CALLED'==tel_status || 'PUSH'==tel_status || 'PUSH'==mail_status}}
-                <tr class="success">
-                {{else 'CALLWAITING'==tel_status || 'CALLPROCESSING'==tel_status}}
-                <tr class="warning">
-                {{else 'FAIL'==tel_status || 'HUZAI'==tel_status}}
+                {{if 'FAIL'==tel_status || 'HUZAI'==tel_status || 'FAIL'==mail_status}}
                 <tr class="error">
+                {{else 'CALLWAITING'==tel_status || 'CALLPROCESSING'==tel_status || 'CALLWAITING'==mail_status || 'CALLPROCESSING'==mail_status}}
+                <tr class="warning">
+                {{else 'CALLED'==tel_status || 'CALLED'==mail_status}}
+                <tr class="caution">
+                {{else 'PUSH'==tel_status || 'PUSH'==mail_status}}
+                <tr class="success">
                 {{else}}
                 <tr>
                 {{/if}}
