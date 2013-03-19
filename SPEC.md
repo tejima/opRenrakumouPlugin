@@ -60,4 +60,4 @@
 >要
 
 ## 機能説明
-![機能説明](http://i1.minus.com/jxdtaJpFaEDO6.png)
+![機能説明](http://i1.minus.com/ixdtaJpFaEDO6.png)
