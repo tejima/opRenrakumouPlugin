@@ -506,7 +506,8 @@ $(document).ready(function (){
     for (var i = 0; i < statusList.length; i++) {
       if (isOnlyError)
       {
-        if ('PUSH' !== statusList[i]['tel_status'] || 'PUSH' !== statusList[i]['mail_status'])
+        if ('PUSH' !== statusList[i]['tel_status'] || 'PUSH' !== statusList[i]['mail_status']
+            || 'NONE' !== statusList[i]['tel_status'] || 'NONE' !== statusList[i]['mail_status'])
         {
           str += statusList[i]['name'] + " " + statusList[i]['tel'] + " " +statusList[i]['mail'] + "\n";
         }
