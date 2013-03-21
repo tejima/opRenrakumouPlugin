@@ -16,5 +16,4 @@
  */
 abstract class PluginRenrakuBody extends BaseRenrakuBody
 {
-
 }

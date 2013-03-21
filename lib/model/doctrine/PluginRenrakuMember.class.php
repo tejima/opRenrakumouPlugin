@@ -16,5 +16,4 @@
  */
 abstract class PluginRenrakuMember extends BaseRenrakuMember
 {
-
 }

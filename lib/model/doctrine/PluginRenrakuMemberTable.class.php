@@ -35,6 +35,7 @@ class PluginRenrakuMemberTable extends Doctrine_Table
       ->where('DATE_FORMAT(created_at, "%Y%m") = ?', $year.$month)
       ->andWhere('(mail_status = "CALLED" OR mail_status = "PUSH")')
       ->count();
+
     return array('tel_count' => $telCount, 'mail_count' => $mailCount);
   }
 
@@ -46,6 +47,7 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     $q->set('mail_status', '?', $renrakuMember['mail_status']);
     $q->set('tel_status', '?', $renrakuMember['tel_status']);
     $q->where('id = ?', $renrakuMember['id']);
+
     return $q->execute();
   }
 
@@ -115,6 +117,7 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     }
 
     $object->save();
+
     return $object;
   }
 }

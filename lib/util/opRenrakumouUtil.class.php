@@ -41,6 +41,7 @@ class RenrakumouUtil
     if (!$boundio_list)
     {
       $this->logMessage('boundio_list empty', 'err');
+
       return false;
     }
 
@@ -79,6 +80,7 @@ class RenrakumouUtil
         }
       }
     }
+
     return true;
   }
 
@@ -207,6 +209,7 @@ EOF;
       $mail->addTo($to);
       $mail->setSubject($subject);
       $mail->send($transport);
+
       return true;
     }
     catch (Exception $e)

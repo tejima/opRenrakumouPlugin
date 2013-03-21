@@ -55,6 +55,7 @@ class PluginRenrakuBodyTable extends Doctrine_Table
     }
 
     $object->save();
+
     return $object;
   }
 }
