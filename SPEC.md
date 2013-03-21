@@ -21,12 +21,12 @@
 ## 対応端末
 >PC WEBブラウザ
 
->### 対応ブラウザ
+## 対応ブラウザ
 >* Windows用InternetExplorer8以降
 * Windows用Chrome最新版
 * Windows用Firefox最新版
 * mac用Chrome最新版
 * mac用Firefox最新版
 
->### 携帯／スマートフォン／タブレット対応
+## 携帯／スマートフォン／タブレット対応
 >無し
