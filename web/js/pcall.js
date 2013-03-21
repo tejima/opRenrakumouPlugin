@@ -81,7 +81,7 @@ $(document).ready(function (){
     $('#demoCallButton').button('reset');
   });
   // 自分宛にテスト発信ダイアログ：発信ボタン押下時
-  $('#demoCallButton').live('click', function (){
+  $('#demoCallButton').on('click', function (){
     var valid = isValidForDemo();
     if (!valid)
     {
@@ -117,22 +117,22 @@ $(document).ready(function (){
     $('#doCallButton').button('reset');
   });
   // 発信の最終確認ダイアログ：発信ボタン押下時
-  $('#doCallButton').live('click', function (){
+  $('#doCallButton').on('click', function (){
     send(true);
   });
 
   // 更新ボタン押下時
-  $('#updateStatus').live('click',function (){
+  $('#updateStatus').on('click',function (){
     updateStatus();
   });
 
   // 同じ内容でもう一度作成するボタン押下時
-  $('#recreateAll').live('click', function (){
+  $('#recreateAll').on('click', function (){
     var index = $(this).attr('data-index');
     recreate(index, false);
   });
   // 送信できなかった送信先宛にもう一度作成するボタン押下時
-  $('#recreateError').live('click', function (){
+  $('#recreateError').on('click', function (){
     var index = $(this).attr('data-index');
     recreate(index, true);
   });
