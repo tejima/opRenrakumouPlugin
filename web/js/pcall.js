@@ -47,7 +47,7 @@ $(document).ready(function (){
     };
   }
   // ツールチップテキストの表示
-  $(".tooltip-target").tooltip();
+  $('.tooltip-target').tooltip();
   // 送信状況表示
   updateStatus();
   // 送信数表示
@@ -57,7 +57,7 @@ $(document).ready(function (){
   /* イベント定義 */
   // boundioステータス取得
   var msec = TIMER_BOUNDIO_STATUS * 1000;
-  $("body").everyTime(msec, updateStatus);
+  $('body').everyTime(msec, updateStatus);
 
   // 自分宛にテスト発信ボタン押下時
   $('#demoModalButton').on('click', function (){
@@ -65,8 +65,8 @@ $(document).ready(function (){
   });
   // 自分宛にテスト発信ダイアログ表示時
   $('#demoCallModal').on('show', function (){
-    $('#demoCallTitle').val($.trim($("#callTitle").val()) ? $.trim($("#callTitle").val()) : $.trim($("#callTitle").attr("placeholder")));
-    $('#demoCallBody').val($.trim($("#callBody").val()) ? $.trim($("#callBody").val()) : $.trim($("#callBody").attr("placeholder")));
+    $('#demoCallTitle').val($.trim($('#callTitle').val()) ? $.trim($('#callTitle').val()) : $.trim($('#callTitle').attr('placeholder')));
+    $('#demoCallBody').val($.trim($('#callBody').val()) ? $.trim($('#callBody').val()) : $.trim($('#callBody').attr('placeholder')));
   });
   // 自分宛にテスト発信ダイアログ表示後
   $('#demoCallModal').on('shown', function (){
@@ -100,8 +100,8 @@ $(document).ready(function (){
   });
   // 発信の最終確認ダイアログ表示時
   $('#doCallModal').on('show', function (){
-    $('#doCallTitle').val($.trim($("#callTitle").val()));
-    $('#doCallBody').val($.trim($("#callBody").val()));
+    $('#doCallTitle').val($.trim($('#callTitle').val()));
+    $('#doCallBody').val($.trim($('#callBody').val()));
   });
   // 発信の最終確認ダイアログ表示後
   $('#doCallModal').on('shown', function (){
@@ -128,12 +128,12 @@ $(document).ready(function (){
 
   // 同じ内容でもう一度作成するボタン押下時
   $('#recreateAll').live('click', function (){
-    var index = $(this).attr("data-index");
+    var index = $(this).attr('data-index');
     recreate(index, false);
   });
   // 送信できなかった送信先宛にもう一度作成するボタン押下時
   $('#recreateError').live('click', function (){
-    var index = $(this).attr("data-index");
+    var index = $(this).attr('data-index');
     recreate(index, true);
   });
 
@@ -169,7 +169,7 @@ $(document).ready(function (){
   // isNullCheck: 未入力チェックを行う場合はtrue
   function isValidDirectTarget(isNullCheck)
   {
-    var targetValue = $.trim($("#directTarget").val());
+    var targetValue = $.trim($('#directTarget').val());
     if (0 == targetValue.length)
     {
       // 未入力チェックを行う場合
@@ -331,7 +331,7 @@ $(document).ready(function (){
   // 連絡先リストの分解
   function parseTarget()
   {
-    var targetValue = $.trim($("#directTarget").val());
+    var targetValue = $.trim($('#directTarget').val());
     // 改行コードの置換
     targetValue = targetValue.replace(/\r\n/g, '<>');
     targetValue = targetValue.replace(/(\n|\r)/g, '<>');
@@ -361,7 +361,7 @@ $(document).ready(function (){
   // isNullCheck: 未入力チェックを行う場合はtrue
   function isValidCallTitle(isNullCheck)
   {
-    var callTitleLength = $.trim($("#callTitle").val()).length;
+    var callTitleLength = $.trim($('#callTitle').val()).length;
     // 未入力チェックを行う場合
     if (isNullCheck)
     {
@@ -386,7 +386,7 @@ $(document).ready(function (){
   // isNullCheck: 未入力チェックを行う場合はtrue
   function isValidCallBody(isNullCheck)
   {
-    var callBodyLength = $.trim($("#callBody").val()).length;
+    var callBodyLength = $.trim($('#callBody').val()).length;
     // 未入力チェックを行う場合
     if (isNullCheck)
     {
@@ -411,13 +411,13 @@ $(document).ready(function (){
   function isValidForDemo()
   {
     // テスト発信先電話番号
-    var demoTel = $.trim($("#demoCallTel").val());
+    var demoTel = $.trim($('#demoCallTel').val());
     // 全角数字の置換
     demoTel = demoTel.replace(/[０-９]/g, function (s) {
       return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
     });
     // テスト発信先メールアドレス
-    var demoMail = $.trim($("#demoCallMail").val());
+    var demoMail = $.trim($('#demoCallMail').val());
 
     // テスト発信先電話番号文字数チェック
     if (0 == demoTel.length || TARGET_TEL_LENGTH < demoTel.length || !$.isNumeric(demoTel))
@@ -443,11 +443,11 @@ $(document).ready(function (){
   {
     // 送信状況の取得
     $.ajax({
-      type: "GET",
-      url: openpne.apiBase + "call/count.json",
+      type: 'GET',
+      url: openpne.apiBase + 'call/count.json',
       data:  {apiKey: openpne.apiKey},
       async: false,
-      dataType: "json",
+      dataType: 'json',
       success: function (data){
         if ('success' == data['status'])
         {
@@ -458,11 +458,11 @@ $(document).ready(function (){
         }
         else
         {
-          alert("送信数が取得できませんでした。");
+          alert('送信数が取得できませんでした。');
         }
       },
       error: function (data){
-        alert("送信数が取得できませんでした。");
+        alert('送信数が取得できませんでした。');
       }
     });
   }
@@ -476,26 +476,26 @@ $(document).ready(function (){
     updateBoundio();
     // 送信状況の取得
     $.ajax({
-      type: "GET",
-      url: openpne.apiBase + "call/status.json",
+      type: 'GET',
+      url: openpne.apiBase + 'call/status.json',
       data:  {apiKey: openpne.apiKey},
       async: false,
-      dataType: "json",
+      dataType: 'json',
       success: function (data){
         if ('success' == data['status'])
         {
           sendStatusList = data['data'];
           $('#updateStatusBody > *').remove();
-          $("#tmplAccordion").tmpl({value: sendStatusList}).appendTo('#updateStatusBody');
-          $("#collapse0").collapse('show');
+          $('#tmplAccordion').tmpl({value: sendStatusList}).appendTo('#updateStatusBody');
+          $('#collapse0').collapse('show');
         }
         else
         {
-          alert("送信状況が取得できませんでした。");
+          alert('送信状況が取得できませんでした。');
         }
       },
       error: function (data){
-        alert("送信状況が取得できませんでした。");
+        alert('送信状況が取得できませんでした。');
       }
     });
   }
@@ -504,7 +504,7 @@ $(document).ready(function (){
   function recreate(index, isOnlyError)
   {
     var statusList = sendStatusList[index].target;
-    var str = "";
+    var str = '';
     for (var i = 0; i < statusList.length; i++) {
       var telStatus = statusList[i]['tel_status'];
       var mailStatus = statusList[i]['mail_status'];
@@ -537,12 +537,12 @@ $(document).ready(function (){
 
         if (isCopy)
         {
-          str += statusList[i]['name'] + " " + statusList[i]['tel'] + " " +statusList[i]['mail'] + "\n";
+          str += statusList[i]['name'] + ' ' + statusList[i]['tel'] + ' ' +statusList[i]['mail'] + '\n';
         }
       }
       else
       {
-        str += statusList[i]['name'] + " " + statusList[i]['tel'] + " " +statusList[i]['mail'] + "\n";
+        str += statusList[i]['name'] + ' ' + statusList[i]['tel'] + ' ' +statusList[i]['mail'] + '\n';
       }
     };
     if (str)
@@ -572,11 +572,11 @@ $(document).ready(function (){
     var titleText = '';
     if (isProd)
     {
-      titleText = $.trim($("#callTitle").val());
+      titleText = $.trim($('#callTitle').val());
     }
     else
     {
-      titleText = $.trim($("#demoCallTitle").val());
+      titleText = $.trim($('#demoCallTitle').val());
     }
     // 改行コードの置換
     titleText = titleText.replace(/\r\n/g, '');
@@ -592,11 +592,11 @@ $(document).ready(function (){
     var bodyText = '';
     if (isProd)
     {
-      bodyText = $.trim($("#callBody").val());
+      bodyText = $.trim($('#callBody').val());
     }
     else
     {
-      bodyText = $.trim($("#demoCallBody").val());
+      bodyText = $.trim($('#demoCallBody').val());
     }
     // 改行コードの置換
     bodyText = bodyText.replace(/\r\n/g, '');
@@ -625,14 +625,14 @@ $(document).ready(function (){
       var target = {};
       target['name'] = 'myself';
       // テスト発信先電話番号
-      var demoTel = $.trim($("#demoCallTel").val());
+      var demoTel = $.trim($('#demoCallTel').val());
       // 全角数字の置換
       demoTel = demoTel.replace(/[０-９]/g, function (s) {
         return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
       });
 
       target['tel'] = demoTel;
-      target['mail'] = $.trim($("#demoCallMail").val());
+      target['mail'] = $.trim($('#demoCallMail').val());
       var targets = [];
       targets.push(target);
 
@@ -641,16 +641,16 @@ $(document).ready(function (){
 
     // 送信
     $.ajax({
-      type: "POST",
-      url: openpne.apiBase + "call/send.json",
+      type: 'POST',
+      url: openpne.apiBase + 'call/send.json',
       data: sendTargetList,
       async: true,
       cache: false,
-      dataType: "json",
+      dataType: 'json',
       success: function (data){
         if ('success' == data['status'])
         {
-          alert("発信手続きが完了しました。");
+          alert('発信手続きが完了しました。');
           if (isProd)
           {
             $('#doCallModal').modal('hide');
@@ -662,7 +662,7 @@ $(document).ready(function (){
         }
         else
         {
-          alert("発信手続きができませんでした。");
+          alert('発信手続きができませんでした。');
         }
         if (isProd)
         {
@@ -674,7 +674,7 @@ $(document).ready(function (){
         }
       },
       error: function (data){
-        alert("発信手続きができませんでした。");
+        alert('発信手続きができませんでした。');
         if (isProd)
         {
           $('#doCallButton').button('reset');
@@ -692,11 +692,11 @@ $(document).ready(function (){
   {
     // 送信状況の取得
     $.ajax({
-      type: "GET",
-      url: openpne.apiBase + "call/update.json",
+      type: 'GET',
+      url: openpne.apiBase + 'call/update.json',
       data:  {apiKey: openpne.apiKey},
       async: false,
-      dataType: "json",
+      dataType: 'json',
       success: function (data){
         // 何もしない
       },
