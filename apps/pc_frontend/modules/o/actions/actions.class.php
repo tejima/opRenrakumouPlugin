@@ -23,14 +23,18 @@ class oActions extends sfActions
   */
   public function executeRoger(sfWebRequest $request)
   {
-  	$mail_id = $request->getParameter("id","");
+    $mail_id = $request->getParameter("id","");
 
-  	if($mail_id){
-	  	$result = RenrakumouUtil::updatestatus_mail($mail_id);
-	  	sfContext::getInstance()->getLogger()->debug("RenrakumouUtil::updatestatus_mail(): $result");
-	    return $this->renderText("了解確認を送信者に報告しました。");
-  	}else{
-  		return $this->renderText("報告できませんでした。");
-  	}
+    if ($mail_id)
+    {
+      $result = RenrakumouUtil::updatestatus_mail($mail_id);
+      sfContext::getInstance()->getLogger()->debug("RenrakumouUtil::updatestatus_mail(): $result");
+
+      return $this->renderText("了解確認を送信者に報告しました。");
+    }
+    else
+    {
+      return $this->renderText("報告できませんでした。");
+    }
   }
 }

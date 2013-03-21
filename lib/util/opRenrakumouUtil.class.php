@@ -33,11 +33,11 @@ class RenrakumouUtil
     }
 
     return $result;
-	}
+  }
 
   static function sync_boundio()
   {
-		$boundio_list = RenrakumouUtil::status_list(300, sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
+    $boundio_list = RenrakumouUtil::status_list(300, sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
     if (!$boundio_list)
     {
       $this->logMessage('boundio_list empty', 'err');
@@ -80,7 +80,7 @@ class RenrakumouUtil
       }
     }
     return true;
-	}
+  }
 
   static function process_tel()
   {
@@ -101,7 +101,7 @@ class RenrakumouUtil
       $line['mail_id'] = '';
       Doctrine::getTable('RenrakuMember')->updateStatus($line);
     }
-	}
+  }
 
   static function pushcall($tel = null, $text = null, $userSerialId, $appId, $authKey)
   {
@@ -127,23 +127,23 @@ class RenrakumouUtil
 
   static function status_list($num = 100, $userSerialId, $appId, $authKey)
   {
-		Boundio::configure('userSerialId', $userSerialId);
-		Boundio::configure('appId', $appId);
-		Boundio::configure('authKey', $authKey);
-		Boundio::configure('env', sfConfig::get('op_boundioMode'));
+    Boundio::configure('userSerialId', $userSerialId);
+    Boundio::configure('appId', $appId);
+    Boundio::configure('authKey', $authKey);
+    Boundio::configure('env', sfConfig::get('op_boundioMode'));
 
-		$result = Boundio::status(null, date('Ymd',strtotime('-2 days')), date('Ymd',strtotime('-1 days')), $num);
-		sfContext::getInstance()->getLogger()->debug('Boundio::call() :'.print_r($result, true));
+    $result = Boundio::status(null, date('Ymd',strtotime('-2 days')), date('Ymd',strtotime('-1 days')), $num);
+    sfContext::getInstance()->getLogger()->debug('Boundio::call() :'.print_r($result, true));
 
     if ('true' == $result[0]['success'])
     {
-			return $result[0]['result'];
+      return $result[0]['result'];
     }
     else
     {
-			return false;
-		}
-	}
+      return false;
+    }
+  }
 
   static function process_mail()
   {
@@ -176,42 +176,42 @@ EOF;
       }
       Doctrine::getTable('RenrakuMember')->updateStatus($line);
     }
-	}
+  }
 
   static function awsSES($to, $from, $subject, $body, $smtpUsername, $smtpPassword)
   {
     if (!$to)
     {
-			return false;
-		}
+      return false;
+    }
     if (!$from)
     {
-			$from = 'noreply@pne.jp';
-		}
-		$config = array('ssl' => 'ssl',
-								'auth' => 'login',
+      $from = 'noreply@pne.jp';
+    }
+    $config = array('ssl' => 'ssl',
+                'auth' => 'login',
                 'username' => $smtpUsername,
                 'password' => $smtpPassword,
                 'port' => 465
               );
 
-//		$host = 'email-smtp.us-east-1.amazonaws.com';
-		$host = 'smtp.gmail.com';
+//    $host = 'email-smtp.us-east-1.amazonaws.com';
+    $host = 'smtp.gmail.com';
 
-		$transport = new Zend_Mail_Transport_Smtp($host, $config);
+    $transport = new Zend_Mail_Transport_Smtp($host, $config);
     try
     {
-			$mail = new Japanese_Mail();
-			$mail->setBodyText($body);
-			$mail->setFrom($from, '連絡網 pCall');
-			$mail->addTo($to);
-			$mail->setSubject($subject);
-			$mail->send($transport);
-			return true;
+      $mail = new Japanese_Mail();
+      $mail->setBodyText($body);
+      $mail->setFrom($from, '連絡網 pCall');
+      $mail->addTo($to);
+      $mail->setSubject($subject);
+      $mail->send($transport);
+      return true;
     }
     catch (Exception $e)
     {
-			return false;
-		}
-	}
+      return false;
+    }
+  }
 }
