@@ -135,17 +135,17 @@ var openpne = '.$json.';
               </thead>
               <tbody>
               {{each target}}
-                {{if 'PUSH'==tel_status || 'PUSH'==mail_status}}
+                {{if 'PUSH' == tel_status || 'PUSH' == mail_status}}
                 <tr class="success">
-                {{else 'FAIL'==tel_status || 'FAIL'==mail_status}}
+                {{else 'FAIL' == tel_status || 'FAIL' == mail_status}}
                 <tr class="error">
-                {{else 'CALLED'==mail_status}}
-                  {{if 'HUZAI'==tel_status || 'CALLED'==tel_status || 'NONE'==tel_status}}
+                {{else 'CALLED' == mail_status}}
+                  {{if 'HUZAI' == tel_status || 'CALLED' == tel_status || 'NONE' == tel_status}}
                 <tr class="caution">
                   {{else}}
                 <tr class="warning">
                   {{/if}}
-                {{else 'CALLED'==tel_status || 'CALLWAITING'==tel_status || 'CALLPROCESSING'==tel_status || 'HUZAI'==tel_status || 'CALLWAITING'==mail_status || 'CALLPROCESSING'==mail_status}}
+                {{else 'CALLED' == tel_status || 'CALLWAITING' == tel_status || 'CALLPROCESSING' == tel_status || 'HUZAI' == tel_status || 'CALLWAITING' == mail_status || 'CALLPROCESSING' == mail_status}}
                 <tr class="warning">
                 {{else}}
                 <tr>
@@ -153,30 +153,30 @@ var openpne = '.$json.';
                   <td>${name}</td>
                   <td>${tel}</td>
                   <td>${mail}</td>
-                  {{if 'CALLWAITING'==tel_status}}
+                  {{if 'CALLWAITING' == tel_status}}
                   <td>発信待機</td>
-                  {{else 'CALLPROCESSING'==tel_status}}
+                  {{else 'CALLPROCESSING' == tel_status}}
                   <td>発信作業中</td>
-                  {{else 'FAIL'==tel_status}}
+                  {{else 'FAIL' == tel_status}}
                   <td>発信失敗</td>
-                  {{else 'HUZAI'==tel_status}}
+                  {{else 'HUZAI' == tel_status}}
                   <td>不在着信</td>
-                  {{else 'PUSH'==tel_status}}
+                  {{else 'PUSH' == tel_status}}
                   <td>発信：了解有</td>
-                  {{else 'CALLED'==tel_status}}
+                  {{else 'CALLED' == tel_status}}
                   <td>発信：了解無</td>
                   {{else}}
                   <td>ー</td>
                   {{/if}}
-                  {{if 'CALLWAITING'==mail_status}}
+                  {{if 'CALLWAITING' == mail_status}}
                   <td>発信待機</td>
-                  {{else 'CALLPROCESSING'==mail_status}}
+                  {{else 'CALLPROCESSING' == mail_status}}
                   <td>発信作業中</td>
-                  {{else 'FAIL'==mail_status}}
+                  {{else 'FAIL' == mail_status}}
                   <td>発信失敗</td>
-                  {{else 'PUSH'==mail_status}}
+                  {{else 'PUSH' == mail_status}}
                   <td>発信：了解有</td>
-                  {{else 'CALLED'==mail_status}}
+                  {{else 'CALLED' == mail_status}}
                   <td>発信：了解無</td>
                   {{else}}
                   <td>ー</td>
