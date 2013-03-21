@@ -20,7 +20,7 @@ class Japanese_Mail extends Zend_Mail{
 
   public function setFrom($email, $name = null){
     $name = mb_encode_mimeheader(mb_convert_encoding($name, 'ISO-2022-JP', 'UTF-8'),'ISO-2022-JP');
-    sfContext::getInstance()->getLogger()->debug("setFrom() email: " . $email);
+    sfContext::getInstance()->getLogger()->debug('setFrom() email: ' . $email);
     parent::setFrom($email,$name);
   }
 }
