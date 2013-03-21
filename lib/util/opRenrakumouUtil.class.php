@@ -134,7 +134,7 @@ class RenrakumouUtil
     Boundio::configure('authKey', $authKey);
     Boundio::configure('env', sfConfig::get('op_boundioMode'));
 
-    $result = Boundio::status(null, date('Ymd',strtotime('-2 days')), date('Ymd',strtotime('-1 days')), $num);
+    $result = Boundio::status(null, date('Ymd', strtotime('-2 days')), date('Ymd', strtotime('-1 days')), $num);
     sfContext::getInstance()->getLogger()->debug('Boundio::call() :'.print_r($result, true));
 
     if ('true' == $result[0]['success'])
