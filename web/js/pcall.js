@@ -470,8 +470,10 @@ $(document).ready(function (){
   // 送信状況の表示
   function updateStatus()
   {
+    // 送信数表示
+    getCalledCount();
     // boundioステータスの更新
-//    updateBoundio();
+    updateBoundio();
     // 送信状況の取得
     $.ajax({
       type: "GET",
