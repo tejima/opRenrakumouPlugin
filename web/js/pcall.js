@@ -458,11 +458,11 @@ $(document).ready(function (){
         }
         else
         {
-          alert("送信数が取得できませんでした:");
+          alert("送信数が取得できませんでした。");
         }
       },
       error: function (data){
-        alert("送信数が取得できませんでした:");
+        alert("送信数が取得できませんでした。");
       }
     });
   }
@@ -471,7 +471,7 @@ $(document).ready(function (){
   function updateStatus()
   {
     // boundioステータスの更新
-    updateBoundio();
+//    updateBoundio();
     // 送信状況の取得
     $.ajax({
       type: "GET",
@@ -489,11 +489,11 @@ $(document).ready(function (){
         }
         else
         {
-          alert("送信状況が取得できませんでした:");
+          alert("送信状況が取得できませんでした。");
         }
       },
       error: function (data){
-        alert("送信状況が取得できませんでした:");
+        alert("送信状況が取得できませんでした。");
       }
     });
   }
@@ -504,10 +504,36 @@ $(document).ready(function (){
     var statusList = sendStatusList[index].target;
     var str = "";
     for (var i = 0; i < statusList.length; i++) {
+      var telStatus = statusList[i]['tel_status'];
+      var mailStatus = statusList[i]['mail_status'];
       if (isOnlyError)
       {
-        if (('PUSH' !== statusList[i]['tel_status'] && 'NONE' !== statusList[i]['tel_status'])
-          || ('PUSH' !== statusList[i]['mail_status'] && 'NONE' !== statusList[i]['mail_status']))
+        var isCopy = false;
+        if ('FAIL' === telStatus
+          && ('FAIL' === mailStatus 
+            || 'CALLED' === mailStatus
+            || 'NONE' === mailStatus))
+        {
+          isCopy = true;
+        }
+        else if ('HUZAI' === telStatus
+          && ('FAIL' === mailStatus 
+            || 'NONE' === mailStatus))
+        {
+          isCopy = true;
+        }
+        else if ('CALLED' === telStatus
+          && ('FAIL' === mailStatus 
+            || 'NONE' === mailStatus))
+        {
+          isCopy = true;
+        }
+        else if ('NONE' === telStatus && 'FAIL' === mailStatus)
+        {
+          isCopy = true;
+        }
+
+        if (isCopy)
         {
           str += statusList[i]['name'] + " " + statusList[i]['tel'] + " " +statusList[i]['mail'] + "\n";
         }
@@ -622,7 +648,7 @@ $(document).ready(function (){
       success: function (data){
         if ('success' == data['status'])
         {
-          alert("発信手続きが完了しました");
+          alert("発信手続きが完了しました。");
           if (isProd)
           {
             $('#doCallModal').modal('hide');
@@ -634,7 +660,7 @@ $(document).ready(function (){
         }
         else
         {
-          alert("発信手続きができませんでした:");
+          alert("発信手続きができませんでした。");
         }
         if (isProd)
         {
@@ -646,7 +672,7 @@ $(document).ready(function (){
         }
       },
       error: function (data){
-        alert("発信手続きができませんでした:");
+        alert("発信手続きができませんでした。");
         if (isProd)
         {
           $('#doCallButton').button('reset');
