@@ -19,6 +19,8 @@ opRenrakumouPlugin
 
 設定方法
 ----
+・BoundioAPIを使用して電話を発信するためBoundioのアカウントが必要です (http://boundio.jp/)  
+・メールを送信する場合、gmailアカウントが必要です  
 ・OpenPNE.ymlに環境変数で以下の値をセットする必要があります
 
 <pre>
@@ -26,7 +28,7 @@ opRenrakumouPlugin
   userSerialId:  "#BOUNDIO"
   appId:  "#BOUNDIO"
   authKey: "#BOUNDIO"
-  smtpUsername: "#有効なgmailアカウント"
+  smtpUserName: "#有効なgmailアカウント"
   smtpPassword: "#有効なgmailアカウント"
 </pre>
 

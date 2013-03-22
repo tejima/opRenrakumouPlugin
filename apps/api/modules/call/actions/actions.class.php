@@ -74,7 +74,7 @@ class callActions extends opJsonApiActions
     $this->forward400Unless($request['body'], 'body parameter not specified.');
     $this->forward400Unless($request['title'], 'title parameter not specified.');
     $this->forward400Unless($request['target'], 'target parameter not specified.');
-    $type = $request['type'];
+    $type = (int)$request['type'];
     $body = $request['body'];
     $title = $request['title'];
     $target = $request['target'];
@@ -94,12 +94,12 @@ class callActions extends opJsonApiActions
       $renrakuMember['boundio_id'] = '';
       $renrakuMember['name'] = $line['name'];
       $renrakuMember['mail'] = $line['mail'];
-      if (self::MAIL_ONLY === (int)$type && (is_null($renrakuMember['mail']) || '' == $renrakuMember['mail']))
+      if (self::MAIL_ONLY === $type && (is_null($renrakuMember['mail']) || '' == $renrakuMember['mail']))
       {
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
       }
 
-      if ('false' === preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/', $renrakuMember['mail']))
+      if (false === preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/', $renrakuMember['mail']))
       {
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
       }
@@ -119,12 +119,12 @@ class callActions extends opJsonApiActions
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not specified.')));
       }
 
-      if ('false' === preg_match('/^[0-9]+$/', $renrakuMember['tel']))
+      if (false === preg_match('/^[0-9]+$/', $renrakuMember['tel']))
       {
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not alphanumeric.')));
       }
 
-      if (self::TEL_AND_MAIL === (int)$type || self::MY_SELF === (int)$type)
+      if (self::TEL_AND_MAIL === $type || self::MY_SELF === $type)
       {
         $renrakuMember['tel_status'] = 'CALLWAITING';
       }
@@ -149,9 +149,9 @@ class callActions extends opJsonApiActions
 
     if (self::MAIL_ONLY !== $type)
     {
-      RenrakumouUtil::process_tel();
+      opRenrakumouUtil::processTel();
     }
-    RenrakumouUtil::process_mail();
+    opRenrakumouUtil::processMail();
 
     return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeSend DONE')));
   }
@@ -159,7 +159,7 @@ class callActions extends opJsonApiActions
   // boundioの情報取得
   public function executeUpdate(sfWebRequest $request)
   {
-    $result = RenrakumouUtil::sync_boundio();
+    $result = opRenrakumouUtil::syncBoundio();
     if ($result)
     {
       return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeUpdate DONE')));
@@ -174,7 +174,7 @@ class callActions extends opJsonApiActions
   public function executeCount(sfWebRequest $request)
   {
     $count = Doctrine::getTable('RenrakuMember')->getMonthlyCalled();
-    if (!is_null($count['tel_count'] && !is_null($count['mail_count'])))
+    if (!is_null($count['tel_count']) && !is_null($count['mail_count']))
     {
       return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeCount DONE', 'data' => array('tel_count' => $count['tel_count'], 'mail_count' => $count['mail_count']))));
     }

@@ -9,7 +9,7 @@
  */
 
 /**
- * PluginRenrakuBody
+ * PluginRenrakuBodyTable
  *
  * @package    opRenrakumouPlugin
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>

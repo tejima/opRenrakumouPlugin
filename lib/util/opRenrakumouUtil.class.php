@@ -9,17 +9,17 @@
  */
 
 /**
- * RenrakumouUtil
+ * opRenrakumouUtil
  *
  * @package    opRenrakumouPlugin
  * @author     Mamoru Tejima <tejima@tejimaya.com>
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
-class RenrakumouUtil
+class opRenrakumouUtil
 {
-  static function updatestatus_mail($mail_id)
+  static function updatestatusMail($mailId)
   {
-    $renrakuMember = Doctrine::getTable('RenrakuMember')->findByMailId($mail_id);
+    $renrakuMember = Doctrine::getTable('RenrakuMember')->findByMailId($mailId);
 
     $result = false;
     foreach ($renrakuMember as $line)
@@ -35,18 +35,18 @@ class RenrakumouUtil
     return $result;
   }
 
-  static function sync_boundio()
+  static function syncBoundio()
   {
-    $boundio_list = RenrakumouUtil::status_list(300, sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
-    if (!$boundio_list)
+    $boundioList = opRenrakumouUtil::statusList(300, sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
+    if (!$boundioList)
     {
-      $this->logMessage('boundio_list empty', 'err');
+      $this->logMessage('boundioList empty', 'err');
 
       return false;
     }
 
     $map = array();
-    foreach ($boundio_list as $line)
+    foreach ($boundioList as $line)
     {
       $_status = '';
       if ('1' == (string)$line['_gather'])
@@ -84,13 +84,13 @@ class RenrakumouUtil
     return true;
   }
 
-  static function process_tel()
+  static function processTel()
   {
     $callWaitingList = Doctrine::getTable('RenrakuMember')->findByTelStatus('CALLWAITING');
     foreach ($callWaitingList as $line)
     {
       $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['renraku_id']);
-      $result = RenrakumouUtil::pushcall($line['tel'], $renrakuBody['body'], sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
+      $result = opRenrakumouUtil::pushCall($line['tel'], $renrakuBody['body'], sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
       if ($result)
       {
         $line['tel_status'] = 'CALLPROCESSING';
@@ -105,7 +105,7 @@ class RenrakumouUtil
     }
   }
 
-  static function pushcall($tel = null, $text = null, $userSerialId, $appId, $authKey)
+  static function pushCall($tel = null, $text = null, $userSerialId, $appId, $authKey)
   {
     Boundio::configure('userSerialId', $userSerialId);
     Boundio::configure('appId', $appId);
@@ -116,8 +116,7 @@ class RenrakumouUtil
 
     $result = Boundio::call($tel, $str);
     sfContext::getInstance()->getLogger()->debug('Boundio::call() :'.print_r($result, true));
-    //FIXME Boundioのエラーパターン位基づいて、クライアントにエラーを通知する
-    if ('true' == $result['success'])
+    if (true == $result['success'])
     {
       return $result['_id'];
     }
@@ -127,7 +126,7 @@ class RenrakumouUtil
     }
   }
 
-  static function status_list($num = 100, $userSerialId, $appId, $authKey)
+  static function statusList($num = 100, $userSerialId, $appId, $authKey)
   {
     Boundio::configure('userSerialId', $userSerialId);
     Boundio::configure('appId', $appId);
@@ -137,7 +136,7 @@ class RenrakumouUtil
     $result = Boundio::status(null, date('Ymd', strtotime('-2 days')), date('Ymd', strtotime('-1 days')), $num);
     sfContext::getInstance()->getLogger()->debug('Boundio::call() :'.print_r($result, true));
 
-    if ('true' == $result[0]['success'])
+    if (true == $result[0]['success'])
     {
       return $result[0]['result'];
     }
@@ -147,26 +146,26 @@ class RenrakumouUtil
     }
   }
 
-  static function process_mail()
+  static function processMail()
   {
     $callWaitingList = Doctrine::getTable('RenrakuMember')->findByMailStatus('CALLWAITING');
     foreach ($callWaitingList as $line)
     {
       $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['renraku_id']);
       $uniqid = uniqid(rand(), true);
-      $roger_url = sfConfig::get('op_base_url').'/o/roger?id='.$uniqid;
+      $rogerUrl = sfConfig::get('op_base_url').'/o/roger?id='.$uniqid;
       $body = <<< EOF
 ${renrakuBody['body']}
 
 
 ■了解報告■
 下記リンクをクリックすることで、送信者に了解の報告ができます。
-${roger_url}
+${rogerUrl}
 
 連絡網サービス pCall
 EOF;
 
-      $result = RenrakumouUtil::awsSES($line['mail'], null, $renrakuBody['title'], $body, sfConfig::get('op_smtpUsername'), sfConfig::get('op_smtpPassword'));
+      $result = opRenrakumouUtil::awsSES($line['mail'], null, $renrakuBody['title'], $body, sfConfig::get('op_smtpUserName'), sfConfig::get('op_smtpPassword'));
       $line['mail_id'] = $uniqid;
       if ($result)
       {
@@ -180,7 +179,7 @@ EOF;
     }
   }
 
-  static function awsSES($to, $from, $subject, $body, $smtpUsername, $smtpPassword)
+  static function awsSES($to, $from, $subject, $body, $smtpUserName, $smtpPassword)
   {
     if (!$to)
     {
@@ -192,18 +191,17 @@ EOF;
     }
     $config = array('ssl' => 'ssl',
                 'auth' => 'login',
-                'username' => $smtpUsername,
+                'username' => $smtpUserName,
                 'password' => $smtpPassword,
-                'port' => 465
+                'port' => 465,
               );
 
-//    $host = 'email-smtp.us-east-1.amazonaws.com';
     $host = 'smtp.gmail.com';
 
     $transport = new Zend_Mail_Transport_Smtp($host, $config);
     try
     {
-      $mail = new Japanese_Mail();
+      $mail = new JapaneseMail();
       $mail->setBodyText($body);
       $mail->setFrom($from, '連絡網 pCall');
       $mail->addTo($to);

@@ -9,7 +9,7 @@
  */
 
 /**
- * RenrakumouActions
+ * oActions
  *
  * @package    opRenrakumouPlugin
  * @author     Mamoru Tejima <tejima@tejimaya.com>
@@ -23,12 +23,12 @@ class oActions extends sfActions
   */
   public function executeRoger(sfWebRequest $request)
   {
-    $mail_id = $request->getParameter('id', '');
+    $mailId = $request->getParameter('id', '');
 
-    if ($mail_id)
+    if ($mailId)
     {
-      $result = RenrakumouUtil::updatestatus_mail($mail_id);
-      sfContext::getInstance()->getLogger()->debug("RenrakumouUtil::updatestatus_mail(): $result");
+      $result = opRenrakumouUtil::updatestatusMail($mailId);
+      sfContext::getInstance()->getLogger()->debug('opRenrakumouUtil::updatestatusMail(): '.$result);
 
       return $this->renderText('了解確認を送信者に報告しました。');
     }

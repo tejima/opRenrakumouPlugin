@@ -9,7 +9,7 @@
  */
 
 /**
- * PluginRenrakuMember
+ * PluginRenrakuMemberTable
  *
  * @package    opRenrakumouPlugin
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
