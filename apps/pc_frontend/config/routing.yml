@@ -1,3 +1,7 @@
 homepage:
   url: /
   param: { module: pcall, action: index }
+
+member_index:
+  url:   /member
+  param: { module: pcall, action: index }
