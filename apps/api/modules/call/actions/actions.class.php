@@ -86,6 +86,10 @@ class callActions extends opJsonApiActions
     {
       return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
     }
+    else
+    {
+      $renrakuBody->save();
+    }
 
     foreach ($target as $line)
     {
@@ -99,7 +103,7 @@ class callActions extends opJsonApiActions
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
       }
 
-      if (false === preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/', $renrakuMember['mail']))
+      if (false === opRenrakumouUtil::isValidMail($renrakuMember['mail']) || 0 === opRenrakumouUtil::isValidMail($renrakuMember['mail']))
       {
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
       }

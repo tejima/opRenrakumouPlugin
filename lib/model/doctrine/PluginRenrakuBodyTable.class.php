@@ -32,29 +32,31 @@ class PluginRenrakuBodyTable extends Doctrine_Table
     {
       if (200 < mb_strlen($renrakuBody['body'], 'utf-8'))
       {
-        throw new LogicException('body is should be 200 characters.');
+        sfContext::getInstance()->getLogger()->err('body is should be 200 characters.', 'error');
+        return null;
       }
       $object->setBody($renrakuBody['body']);
     }
     else
     {
-      throw new LogicException('body is not specified.');
+      sfContext::getInstance()->getLogger()->err('body is not specified.', 'error');
+      return null;
     }
 
     if (isset($renrakuBody['title']))
     {
       if (200 < mb_strlen($renrakuBody['title'], 'utf-8'))
       {
-        throw new LogicException('title is should be 200 characters.');
+        sfContext::getInstance()->getLogger()->err('title is should be 200 characters.', 'error');
+        return null;
       }
       $object->setTitle($renrakuBody['title']);
     }
     else
     {
-      throw new LogicException('title is not specified.');
+      sfContext::getInstance()->getLogger()->err('title is not specified.', 'error');
+      return null;
     }
-
-    $object->save();
 
     return $object;
   }
