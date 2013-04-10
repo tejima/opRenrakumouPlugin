@@ -103,12 +103,12 @@ class callActions extends opJsonApiActions
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
       }
 
-      if (false === opRenrakumouUtil::isValidMail($renrakuMember['mail']) || 0 === opRenrakumouUtil::isValidMail($renrakuMember['mail']))
+      if (false === opRenrakumouUtil::isValidMail($renrakuMember['mail']))
       {
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
       }
 
-      if (!is_null($renrakuMember['mail']))
+      if (!is_null($renrakuMember['mail']) && '' !== $renrakuMember['mail'])
       {
         $renrakuMember['mail_status'] = 'CALLWAITING';
       }
