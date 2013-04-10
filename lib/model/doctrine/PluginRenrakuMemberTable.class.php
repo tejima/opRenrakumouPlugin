@@ -18,12 +18,12 @@ class PluginRenrakuMemberTable extends Doctrine_Table
 {
   public function getMonthlyCalled()
   {
-    $nowDate = getDate();
+    $nowDate = getdate();
     $year = $nowDate['year'];
     $month = $nowDate['mon'];
     if (1 <= strlen($month))
     {
-      $month = '0'.$month;
+      $month = sprintf('%02d', $nowDate['mon']);
     }
 
     $telCount = $this->createQuery()

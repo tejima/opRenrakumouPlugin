@@ -168,14 +168,14 @@ $(document).ready(function(){
   }
 
   // 連絡先のチェック
-  // isNullCheck: 未入力チェックを行う場合はtrue
-  function isValidDirectTarget(isNullCheck)
+  // isNotEnterCheck: 未入力チェックを行う場合はtrue
+  function isValidDirectTarget(isNotEnterCheck)
   {
     var targetValue = $.trim($('#directTarget').val());
     if (0 == targetValue.length)
     {
       // 未入力チェックを行う場合
-      if (isNullCheck)
+      if (isNotEnterCheck)
       {
         alert('連絡先が入力されていません。');
 
@@ -239,7 +239,8 @@ $(document).ready(function(){
         break;
       }
       // 電話番号文字種チェック
-      if (!$.isNumeric(targetTel))
+      //if (!$.isNumeric(targetTel))
+      if (null === targetTel.match(/^[0-9]+$/))
       {
         isInvalid = true;
         break;
@@ -359,12 +360,12 @@ $(document).ready(function(){
   }
 
   // 件名入力チェック
-  // isNullCheck: 未入力チェックを行う場合はtrue
-  function isValidCallTitle(isNullCheck)
+  // isNotEnterCheck: 未入力チェックを行う場合はtrue
+  function isValidCallTitle(isNotEnterCheck)
   {
     var callTitleLength = $.trim($('#callTitle').val()).length;
     // 未入力チェックを行う場合
-    if (isNullCheck)
+    if (isNotEnterCheck)
     {
       if (0 == callTitleLength)
       {
@@ -384,12 +385,12 @@ $(document).ready(function(){
   }
 
   // 本文入力チェック
-  // isNullCheck: 未入力チェックを行う場合はtrue
-  function isValidCallBody(isNullCheck)
+  // isNotEnterCheck: 未入力チェックを行う場合はtrue
+  function isValidCallBody(isNotEnterCheck)
   {
     var callBodyLength = $.trim($('#callBody').val()).length;
     // 未入力チェックを行う場合
-    if (isNullCheck)
+    if (isNotEnterCheck)
     {
       if (0 == callBodyLength)
       {

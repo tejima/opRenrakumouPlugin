@@ -30,7 +30,6 @@ var openpne = '.$json.';
 <?php use_javascript('/opRenrakumouPlugin/js/pcall.js') ?>
 <?php include_javascripts() ?>
 <?php echo $op_config->get('pc_html_head') ?>
-<?php include_partial('icons') ?>
 </head>
 <body>
 <?php include_partial('pcallheader') ?>
