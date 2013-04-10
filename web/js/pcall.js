@@ -68,7 +68,7 @@ $(document).ready(function(){
     var callTitle = $('#callTitle');
     var callBody = $('#callBody');
     $.trim($(callTitle).val()) ? $('#demoCallTitle').val($.trim($(callTitle).val())) : $('#demoCallTitle').val($.trim($(callTitle).attr('placeholder')));
-+    $.trim(callBody.val()) ? $('#demoCallBody').val($.trim(callBody.val())) : $('#demoCallBody').val($.trim(callBody.attr('placeholder')));
+    $.trim(callBody.val()) ? $('#demoCallBody').val($.trim(callBody.val())) : $('#demoCallBody').val($.trim(callBody.attr('placeholder')));
   });
   // 自分宛にテスト発信ダイアログ表示後
   $('#demoCallModal').on('shown', function(){
