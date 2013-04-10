@@ -37,7 +37,7 @@ class opRenrakumouUtil
 
   static function syncBoundio()
   {
-    $boundioList = opRenrakumouUtil::statusList(300, sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
+    $boundioList = opRenrakumouUtil::statusList(100, sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
     if (!$boundioList)
     {
       sfContext::getInstance()->getLogger()->err('boundioList empty', 'error');
@@ -70,6 +70,7 @@ class opRenrakumouUtil
             break;
         }
       }
+
       $renrakuMember = Doctrine::getTable('RenrakuMember')->findByBoundioId($line['_id']);
       foreach ($renrakuMember as $memberLine)
       {
@@ -133,8 +134,8 @@ class opRenrakumouUtil
     Boundio::configure('authKey', $authKey);
     Boundio::configure('env', sfConfig::get('op_boundioMode'));
 
-    $result = Boundio::status(null, date('Ymd', strtotime('-2 days')), date('Ymd', strtotime('-1 days')), $num);
-    sfContext::getInstance()->getLogger()->debug('Boundio::call() :'.print_r($result, true));
+    $result = Boundio::status(null, date('Ymd', strtotime('-2 days')), date('Ymd', strtotime('+1 days')), $num);
+    sfContext::getInstance()->getLogger()->debug('Boundio::status() :'.print_r($result, true));
 
     if (true == $result[0]['success'])
     {

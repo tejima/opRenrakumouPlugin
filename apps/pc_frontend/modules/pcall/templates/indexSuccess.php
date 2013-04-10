@@ -185,8 +185,8 @@ var openpne = '.$json.';
               </tbody>
             </table>
             <p>
-              <a id="recreateError" style="margin-bottom: 10px;" data-index="${$index}" class="duplicate-link btn btn-small pull-right">送信できなかった送信先宛にもう一度作成する</a>
-              <a id="recreateAll" style="margin-bottom: 10px;" data-index="${$index}" class="duplicate-link btn btn-small pull-right">同じ内容でもう一度作成する</a>
+              <a style="margin-bottom: 10px;" data-index="${$index}" class="recreateError duplicate-link btn btn-small pull-right">送信できなかった送信先宛にもう一度作成する</a>
+              <a style="margin-bottom: 10px;" data-index="${$index}" class="recreateAll duplicate-link btn btn-small pull-right">同じ内容でもう一度作成する</a>
             </p>
           </div>
         </div>

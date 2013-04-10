@@ -129,12 +129,12 @@ $(document).ready(function(){
   });
 
   // 同じ内容でもう一度作成するボタン押下時
-  $('#recreateAll').on('click', function(){
+  $(document).on('click', '.recreateAll', function(){
     var index = $(this).attr('data-index');
     recreate(index, false);
   });
   // 送信できなかった送信先宛にもう一度作成するボタン押下時
-  $('#recreateError').on('click', function(){
+  $(document).on('click', '.recreateError', function(){
     var index = $(this).attr('data-index');
     recreate(index, true);
   });
@@ -448,7 +448,6 @@ $(document).ready(function(){
       type: 'GET',
       url: openpne.apiBase + 'call/count.json',
       data:  {apiKey: openpne.apiKey},
-      async: false,
       dataType: 'json',
       success: function(data){
         if ('success' == data['status'])
@@ -481,7 +480,6 @@ $(document).ready(function(){
       type: 'GET',
       url: openpne.apiBase + 'call/status.json',
       data:  {apiKey: openpne.apiKey},
-      async: false,
       dataType: 'json',
       success: function(data){
         if ('success' == data['status'])
@@ -636,7 +634,6 @@ $(document).ready(function(){
       type: 'POST',
       url: openpne.apiBase + 'call/send.json',
       data: sendTargetList,
-      async: true,
       cache: false,
       dataType: 'json',
       success: function(data){
@@ -687,7 +684,6 @@ $(document).ready(function(){
       type: 'GET',
       url: openpne.apiBase + 'call/update.json',
       data:  {apiKey: openpne.apiKey},
-      async: false,
       dataType: 'json',
       success: function(data){
         // 何もしない

@@ -66,7 +66,7 @@ class Boundio {
 		
 		$params = array();
 		
-		if($id !== '') {
+		if($id !== '' && !is_null($id)) {
 			$params['tel_id'] = $id;
 		} elseif($start !== '') {
 			// search one day if end day is not given
@@ -75,6 +75,7 @@ class Boundio {
 			}
 			$params['start'] = $start;
 			$params['end'] = $end;
+      $params['count'] = $count;
 		}
 		
 		// execute get status
