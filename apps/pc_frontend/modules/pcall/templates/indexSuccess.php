@@ -101,7 +101,8 @@ var openpne = '.$json.';
       <label>連絡本文</label>
       <textarea id="doCallBody" data-placement="right" title="200文字以内で、伝えたい要件を記入してください。" class="input-block-level tooltip-target" rows="5" disabled></textarea>
       <div class="alert alert-error">
-        <strong>注意！</strong>発信ボタン押すと、実際に電話（メール）が発信されます。必ずテスト発信で確認をしてから。宛先、本文は十分確認の上、実行してください。
+        <strong>注意！</strong>発信ボタン押すと、実際に電話（メール）が発信されます。必ずテスト発信で確認をしてから。宛先、本文は十分確認の上、実行してください。<br />
+        ※電話1発信につき2秒ほどかかります。発信ボタンを押してから応答があるまでしばらくお待ち下さい。
       </div>
     </div>
     <div class="modal-footer">
