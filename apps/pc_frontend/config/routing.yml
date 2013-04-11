@@ -5,3 +5,7 @@ homepage:
 member_index:
   url:   /member
   param: { module: pcall, action: index }
+
+member_home:
+  url:   /member/home
+  param: { module: pcall, action: index }
