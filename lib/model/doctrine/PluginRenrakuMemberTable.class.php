@@ -120,4 +120,22 @@ class PluginRenrakuMemberTable extends Doctrine_Table
 
     return $object;
   }
+
+  static function updateStatusMail($mailId)
+  {
+    $renrakuMember = $this->findByMailId($mailId);
+
+    $result = false;
+    foreach ($renrakuMember as $line)
+    {
+      if ('CALLED' === $line['mail_status'])
+      {
+        $line['mail_status'] = 'PUSH';
+        $this->updateStatus($line);
+        $result = true;
+      }
+    }
+
+    return $result;
+  }
 }

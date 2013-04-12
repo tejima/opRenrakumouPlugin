@@ -103,7 +103,7 @@ class callActions extends opJsonApiActions
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
       }
 
-      if (false === opRenrakumouUtil::isValidMail($renrakuMember['mail']))
+      if (false === opRenrakumouMail::isValidMail($renrakuMember['mail']))
       {
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
       }
@@ -155,7 +155,7 @@ class callActions extends opJsonApiActions
     {
       opRenrakumouUtil::processTel();
     }
-    opRenrakumouUtil::processMail();
+    opRenrakumouMail::processMail();
 
     return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeSend DONE')));
   }
