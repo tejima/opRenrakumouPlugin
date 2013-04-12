@@ -79,7 +79,7 @@ class callActions extends opJsonApiActions
     try
     {
       $renrakuBody = Doctrine::getTable('RenrakuBody')
-        ->updateRenrakuBody(array('body' => $body, 'title' => $title));
+        ->insertRenrakuBody(array('body' => $body, 'title' => $title));
 
       if (is_null($renrakuBody))
       {
@@ -138,7 +138,7 @@ class callActions extends opJsonApiActions
         }
 
         $renrakuMemberResult = Doctrine::getTable('RenrakuMember')
-          ->updateRenrakuMember($renrakuMember);
+          ->insertRenrakuMember($renrakuMember);
 
         if (is_null($renrakuMemberResult))
         {

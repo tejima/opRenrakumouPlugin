@@ -1,8 +1,6 @@
 $ = jQuery.noConflict();
 $(document).ready(function(){
   /* 定数定義 */
-  var DEMO = 'demo';
-  var PROD = 'do';
   // 送信タイプ
   // 自分へのデモ発信
   var SEND_TYPE_DEMO = 99;

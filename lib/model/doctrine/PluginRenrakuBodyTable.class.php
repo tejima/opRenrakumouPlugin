@@ -24,7 +24,7 @@ class PluginRenrakuBodyTable extends Doctrine_Table
       ->execute();
   }
 
-  public function updateRenrakuBody($renrakuBody = array())
+  public function insertRenrakuBody($renrakuBody = array())
   {
     $object = new RenrakuBody();
 

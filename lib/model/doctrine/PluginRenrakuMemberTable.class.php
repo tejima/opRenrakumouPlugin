@@ -51,7 +51,7 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     return $q->execute();
   }
 
-  public function updateRenrakuMember($renrakuMember = array())
+  public function insertRenrakuMember($renrakuMember = array())
   {
     $object = new RenrakuMember();
 
@@ -121,25 +121,23 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     return $object;
   }
 
-  static function updateStatusMail($mailId)
+  static public function updateStatusMail($mailId)
   {
-    $renrakuMember = Doctrine::getTable('RenrakuMember')->findByMailId($mailId);
+    $renrakuMember = Doctrine::getTable('RenrakuMember')->findOneByMailId($mailId);
 
     $result = false;
-    foreach ($renrakuMember as $line)
+
+    if ('CALLED' === $renrakuMember['mail_status'])
     {
-      if ('CALLED' === $line['mail_status'])
-      {
-        $line['mail_status'] = 'PUSH';
-        Doctrine::getTable('RenrakuMember')->updateStatus($line);
-        $result = true;
-      }
+      $renrakuMember['mail_status'] = 'PUSH';
+      Doctrine::getTable('RenrakuMember')->updateStatus($renrakuMember);
+      $result = true;
     }
 
     return $result;
   }
 
-  static function isValidMail($mailaddress) {
+  static public function isValidMail($mailaddress) {
       return preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/', $mailaddress);
   }
 }
