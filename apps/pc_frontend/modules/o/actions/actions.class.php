@@ -27,8 +27,8 @@ class oActions extends sfActions
 
     if ($mailId)
     {
-      $result = Doctrine::getTable('RenrakuMember')->updateStatusMail($mailId);
-      sfContext::getInstance()->getLogger()->debug('RenrakuMember->updateStatusMail(): '.$result);
+      $result = PluginRenrakuMemberTable::updateStatusMail($mailId);
+      sfContext::getInstance()->getLogger()->debug('PluginRenrakuMemberTable::updateStatusMail(): '.$result);
 
       return $this->renderText('了解確認を送信者に報告しました。');
     }

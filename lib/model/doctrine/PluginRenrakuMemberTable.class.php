@@ -123,7 +123,7 @@ class PluginRenrakuMemberTable extends Doctrine_Table
 
   static function updateStatusMail($mailId)
   {
-    $renrakuMember = $this->findByMailId($mailId);
+    $renrakuMember = Doctrine::getTable('RenrakuMember')->findByMailId($mailId);
 
     $result = false;
     foreach ($renrakuMember as $line)
@@ -131,11 +131,15 @@ class PluginRenrakuMemberTable extends Doctrine_Table
       if ('CALLED' === $line['mail_status'])
       {
         $line['mail_status'] = 'PUSH';
-        $this->updateStatus($line);
+        Doctrine::getTable('RenrakuMember')->updateStatus($line);
         $result = true;
       }
     }
 
     return $result;
+  }
+
+  static function isValidMail($mailaddress) {
+      return preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/', $mailaddress);
   }
 }

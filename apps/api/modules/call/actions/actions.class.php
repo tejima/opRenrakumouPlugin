@@ -47,17 +47,12 @@ class callActions extends opJsonApiActions
       {
         $tmpData['target'][] = array(
           'id' => $memberLine['id'],
-          'renraku_id' => $memberLine['renraku_id'],
-          'boundio_id' => $memberLine['boundio_id'],
           'name' => $memberLine['name'],
           'mail' => $memberLine['mail'],
-          'mail_id' => $memberLine['mail_id'],
           'mail_status' => $memberLine['mail_status'],
           'tel' => $memberLine['tel'],
           'tel_status' => $memberLine['tel_status'],
           'options' => $memberLine['options'],
-          'created_at' => $memberLine['created_at'],
-          'updated_at' => $memberLine['updated_at'],
         );
       }
 
@@ -79,76 +74,84 @@ class callActions extends opJsonApiActions
     $title = $request['title'];
     $target = $request['target'];
 
-    $renrakuBody = Doctrine::getTable('RenrakuBody')
-      ->updateRenrakuBody(array('body' => $body, 'title' => $title));
-
-    if (is_null($renrakuBody))
+    $con = Doctrine::getTable('RenrakuBody')->getConnection();
+    $con->beginTransaction();
+    try
     {
-      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
-    }
-    else
-    {
-      $renrakuBody->save();
-    }
+      $renrakuBody = Doctrine::getTable('RenrakuBody')
+        ->updateRenrakuBody(array('body' => $body, 'title' => $title));
 
-    foreach ($target as $line)
-    {
-      $renrakuMember = array();
-      $renrakuMember['renraku_id'] = $renrakuBody['id'];
-      $renrakuMember['boundio_id'] = '';
-      $renrakuMember['name'] = $line['name'];
-      $renrakuMember['mail'] = $line['mail'];
-      if (self::MAIL_ONLY === $type && (is_null($renrakuMember['mail']) || '' == $renrakuMember['mail']))
-      {
-        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
-      }
-
-      if (false === opRenrakumouMail::isValidMail($renrakuMember['mail']))
-      {
-        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
-      }
-
-      if (!is_null($renrakuMember['mail']) && '' !== $renrakuMember['mail'])
-      {
-        $renrakuMember['mail_status'] = 'CALLWAITING';
-      }
-      else
-      {
-        $renrakuMember['mail_status'] = 'NONE';
-      }
-
-      $renrakuMember['tel'] = $line['tel'];
-      if (is_null($renrakuMember['tel']) || '' == $renrakuMember['tel'])
-      {
-        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not specified.')));
-      }
-
-      if (false === preg_match('/^[0-9]+$/', $renrakuMember['tel']))
-      {
-        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not alphanumeric.')));
-      }
-
-      if (self::TEL_AND_MAIL === $type || self::MY_SELF === $type)
-      {
-        $renrakuMember['tel_status'] = 'CALLWAITING';
-      }
-      else
-      {
-        $renrakuMember['tel_status'] = 'NONE';
-      }
-
-      if (isset($line['options']))
-      {
-        $renrakuMember['options'] = $line['options'];
-      }
-
-      $renrakuMemberResult = Doctrine::getTable('RenrakuMember')
-        ->updateRenrakuMember($renrakuMember);
-
-      if (is_null($renrakuMemberResult))
+      if (is_null($renrakuBody))
       {
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
       }
+
+      foreach ($target as $line)
+      {
+        $renrakuMember = array();
+        $renrakuMember['renraku_id'] = $renrakuBody['id'];
+        $renrakuMember['boundio_id'] = '';
+        $renrakuMember['name'] = $line['name'];
+        $renrakuMember['mail'] = $line['mail'];
+        if (self::MAIL_ONLY === $type && (is_null($renrakuMember['mail']) || '' == $renrakuMember['mail']))
+        {
+          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
+        }
+
+        if (false === PluginRenrakuMemberTable::isValidMail($renrakuMember['mail']))
+        {
+          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
+        }
+
+        if (!is_null($renrakuMember['mail']) && '' !== $renrakuMember['mail'])
+        {
+          $renrakuMember['mail_status'] = 'CALLWAITING';
+        }
+        else
+        {
+          $renrakuMember['mail_status'] = 'NONE';
+        }
+
+        $renrakuMember['tel'] = $line['tel'];
+        if (is_null($renrakuMember['tel']) || '' == $renrakuMember['tel'])
+        {
+          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not specified.')));
+        }
+
+        if (false === preg_match('/^[0-9]+$/', $renrakuMember['tel']))
+        {
+          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not alphanumeric.')));
+        }
+
+        if (self::TEL_AND_MAIL === $type || self::MY_SELF === $type)
+        {
+          $renrakuMember['tel_status'] = 'CALLWAITING';
+        }
+        else
+        {
+          $renrakuMember['tel_status'] = 'NONE';
+        }
+
+        if (isset($line['options']))
+        {
+          $renrakuMember['options'] = $line['options'];
+        }
+
+        $renrakuMemberResult = Doctrine::getTable('RenrakuMember')
+          ->updateRenrakuMember($renrakuMember);
+
+        if (is_null($renrakuMemberResult))
+        {
+          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
+        }
+      }
+      $con->commit();
+    }
+    catch (Exception $e)
+    {
+      $con->rollback();
+      sfContext::getInstance()->getLogger()->err('executeSend', 'error');
+      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
     }
 
     if (self::MAIL_ONLY !== $type)

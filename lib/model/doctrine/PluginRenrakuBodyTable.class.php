@@ -57,6 +57,7 @@ class PluginRenrakuBodyTable extends Doctrine_Table
       sfContext::getInstance()->getLogger()->err('title is not specified.', 'error');
       return null;
     }
+    $object->save();
 
     return $object;
   }
