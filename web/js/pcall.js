@@ -37,13 +37,6 @@ $(document).ready(function(){
   var mailCount = 0;
 
   // 初期表示ここから----------------
-  if (!('console' in window))
-  {
-    window.console = {};
-    window.console.log = function(str){
-      return str;
-    };
-  }
   // ツールチップテキストの表示
   $('.tooltip-target').tooltip();
   // 送信状況表示
