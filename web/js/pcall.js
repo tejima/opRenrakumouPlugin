@@ -24,7 +24,7 @@ $(document).ready(function(){
   var TARGET_MAIL_LENGTH = 255;
 
   /* オブジェクトの初期化 */
-  var targetList = null;
+  var targetData = null;
   var sendType = -1;
   var sendStatusList = null;
   var sendTargets = null;
@@ -184,17 +184,17 @@ $(document).ready(function(){
     }
 
     // 連絡先リストの分解
-    targetList = parseTarget();
+    targetData = parseTarget();
 
     // 件数チェック
-    var targetListLen = targetList.length;
-    if (0 == targetListLen)
+    var targetDataLen = targetData.length;
+    if (0 == targetDataLen)
     {
       alert('連絡先が入力されていません。');
 
       return false;
     }
-    else if (DIRECT_TARGET_NUM < targetListLen)
+    else if (DIRECT_TARGET_NUM < targetDataLen)
     {
       alert('一度に送信できる連絡先は' + DIRECT_TARGET_NUM + '件以下です。');
 
@@ -203,9 +203,9 @@ $(document).ready(function(){
 
     // 連絡先内容チェック
     var isInvalid = false;
-    for (var index = 0; index < targetListLen; index++)
+    for (var index = 0; index < targetDataLen; index++)
     {
-      var targetInfo = targetList[index];
+      var targetInfo = targetData[index];
       // 名前
       var targetName = 'undefined' == typeof(targetInfo[0]) ? '': targetInfo[0];
       // 電話番号
@@ -280,9 +280,9 @@ $(document).ready(function(){
     var targets = [];
     var sendTelCount = 0;
     var sendMailCount = 0;
-    for (var index = 0; index < targetListLen; index++)
+    for (var index = 0; index < targetDataLen; index++)
     {
-      var targetInfo = targetList[index];
+      var targetInfo = targetData[index];
       var info = {};
       // 名前
       info['name'] = 'undefined' == typeof(targetInfo[0]) ? '': targetInfo[0];
