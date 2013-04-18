@@ -1,27 +1,32 @@
 $ = jQuery.noConflict();
-$(document).ready(function(){
+
+// pCallオブジェクト
+var pCall = {
   /* 定数定義 */
   // 送信タイプ
   // 自分へのデモ発信
-  var SEND_TYPE_DEMO = 99;
+  SEND_TYPE_DEMO: 99,
   // 電話＋メール
-  var SEND_TYPE_TEL = 1;
+  SEND_TYPE_TEL: 1,
   // メール
-  var SEND_TYPE_MAIL = 2;
+  SEND_TYPE_MAIL: 2,
   // boundioステータス取得繰り返し秒数
-  var TIMER_BOUNDIO_STATUS = 120;
+  TIMER_BOUNDIO_STATUS: 120,
   // 連絡先最大件数
-  var DIRECT_TARGET_NUM = 50;
+  DIRECT_TARGET_NUM: 50,
   // 件数最大文字数
-  var CALL_TITLE_LENGTH = 200;
+  CALL_TITLE_LENGTH: 200,
   // 本文最大文字数
-  var CALL_BODY_LENGTH = 200;
+  CALL_BODY_LENGTH: 200,
   // 名前
-  var TARGET_NAME_LENGTH = 64;
+  TARGET_NAME_LENGTH: 64,
   // 電話番号
-  var TARGET_TEL_LENGTH = 11;
+  TARGET_TEL_LENGTH: 11,
   // メールアドレス
-  var TARGET_MAIL_LENGTH = 255;
+  TARGET_MAIL_LENGTH: 255
+};
+
+$(document).ready(function(){
 
   /* オブジェクトの初期化 */
   var targetData = null;
@@ -48,12 +53,12 @@ $(document).ready(function(){
 
   /* イベント定義 */
   // boundioステータス取得
-  var msec = TIMER_BOUNDIO_STATUS * 1000;
+  var msec = pCall.TIMER_BOUNDIO_STATUS * 1000;
   $('body').everyTime(msec, updateStatus);
 
   // 自分宛にテスト発信ボタン押下時
   $('#demoModalButton').on('click', function(){
-    sendType = SEND_TYPE_DEMO;
+    sendType = pCall.SEND_TYPE_DEMO;
   });
   // 自分宛にテスト発信ダイアログ表示時
   $('#demoCallModal').on('show', function(){
@@ -86,11 +91,11 @@ $(document).ready(function(){
 
   // 電話・メール発信ボタン押下時
   $('#doTelModalButton').on('click', function(){
-    sendType = SEND_TYPE_TEL;
+    sendType = pCall.SEND_TYPE_TEL;
   });
   // メール発信ボタン押下時
   $('#doMailModalButton').on('click', function(){
-    sendType = SEND_TYPE_MAIL;
+    sendType = pCall.SEND_TYPE_MAIL;
   });
   // 発信の最終確認ダイアログ表示時
   $('#doCallModal').on('show', function(){
@@ -188,9 +193,9 @@ $(document).ready(function(){
 
       return false;
     }
-    else if (DIRECT_TARGET_NUM < targetDataLen)
+    else if (pCall.DIRECT_TARGET_NUM < targetDataLen)
     {
-      alert('一度に送信できる連絡先は' + DIRECT_TARGET_NUM + '件以下です。');
+      alert('一度に送信できる連絡先は' + pCall.DIRECT_TARGET_NUM + '件以下です。');
 
       return false;
     }
@@ -213,7 +218,7 @@ $(document).ready(function(){
         isInvalid = true;
         break;
       }
-      else if (TARGET_NAME_LENGTH < targetName.length)
+      else if (pCall.TARGET_NAME_LENGTH < targetName.length)
       {
         isInvalid = true;
         break;
@@ -225,7 +230,7 @@ $(document).ready(function(){
         isInvalid = true;
         break;
       }
-      else if (TARGET_TEL_LENGTH < targetTel.length)
+      else if (pCall.TARGET_TEL_LENGTH < targetTel.length)
       {
         isInvalid = true;
         break;
@@ -239,7 +244,7 @@ $(document).ready(function(){
       }
 
       // メールアドレス文字数チェック
-      if (TARGET_MAIL_LENGTH < targetMail.length)
+      if (pCall.TARGET_MAIL_LENGTH < targetMail.length)
       {
         isInvalid = true;
         break;
@@ -255,7 +260,7 @@ $(document).ready(function(){
       }
       else
       {
-        if (SEND_TYPE_MAIL == sendType)
+        if (pCall.SEND_TYPE_MAIL == sendType)
         {
           isInvalid = true;
           break;
@@ -284,7 +289,7 @@ $(document).ready(function(){
       info['tel'] = 'undefined' == typeof(targetInfo[1]) ? '': targetInfo[1];
       if (info['tel'])
       {
-        if (SEND_TYPE_MAIL != sendType)
+        if (pCall.SEND_TYPE_MAIL != sendType)
         {
           sendTelCount++;
         }
@@ -305,7 +310,7 @@ $(document).ready(function(){
     // メール送信の場合
     $('#doCallTargetTelNum').html(sendTelCount);
     $('#doCallTargetMailNum').html(sendMailCount);
-    if (SEND_TYPE_MAIL == sendType)
+    if (pCall.SEND_TYPE_MAIL == sendType)
     {
       if (maxMailCount < (mailCount + sendMailCount))
       {
@@ -367,9 +372,9 @@ $(document).ready(function(){
       }
     }
     // 文字数チェック
-    if (CALL_TITLE_LENGTH < callTitleLength)
+    if (pCall.CALL_TITLE_LENGTH < callTitleLength)
     {
-      alert('件名は' + CALL_TITLE_LENGTH + '文字以下で入力してください。');
+      alert('件名は' + pCall.CALL_TITLE_LENGTH + '文字以下で入力してください。');
 
       return false;
     }
@@ -392,9 +397,9 @@ $(document).ready(function(){
       }
     }
     // 文字数チェック
-    if (CALL_BODY_LENGTH < callBodyLength)
+    if (pCall.CALL_BODY_LENGTH < callBodyLength)
     {
-      alert('本文は' + CALL_BODY_LENGTH + '文字以下で入力してください。');
+      alert('本文は' + pCall.CALL_BODY_LENGTH + '文字以下で入力してください。');
 
       return false;
     }
@@ -414,7 +419,7 @@ $(document).ready(function(){
     var demoMail = $.trim($('#demoCallMail').val());
 
     // テスト発信先電話番号文字数チェック
-    if (0 == demoTel.length || TARGET_TEL_LENGTH < demoTel.length || !$.isNumeric(demoTel))
+    if (0 == demoTel.length || pCall.TARGET_TEL_LENGTH < demoTel.length || !$.isNumeric(demoTel))
     {
       alert('テスト発信先電話番号はハイフン無し数字のみで入力してください。');
 
@@ -422,7 +427,7 @@ $(document).ready(function(){
     }
 
     // テスト発信先メールアドレス文字数チェック
-    if (0 == demoMail.length || TARGET_MAIL_LENGTH < demoMail.length || (0 < demoMail.length && !demoMail.match(/.+@.+\..+/g)))
+    if (0 == demoMail.length || pCall.TARGET_MAIL_LENGTH < demoMail.length || (0 < demoMail.length && !demoMail.match(/.+@.+\..+/g)))
     {
       alert('テスト発信先メールアドレスを正しく入力してください。');
 
