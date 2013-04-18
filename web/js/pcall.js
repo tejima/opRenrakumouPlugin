@@ -1,7 +1,7 @@
 $ = jQuery.noConflict();
 
-// pCallオブジェクト
-var pCall = {
+// pCall定数定義オブジェクト
+var pCallConst = {
   /* 定数定義 */
   // 送信タイプ
   // 自分へのデモ発信
@@ -23,12 +23,16 @@ var pCall = {
   // 電話番号
   TARGET_TEL_LENGTH: 11,
   // メールアドレス
-  TARGET_MAIL_LENGTH: 255
+  TARGET_MAIL_LENGTH: 255,
+  // todo: 次バージョンでは最大電話送信数、最大メール送信数をサーバから取得するようにする。
+  // 無料通話は10回まで。無料メール送信は500回まで
+  maxTelCount: 10,
+  maxMailCount: 500
 };
 
 // 送信データオブジェクト
 var sendDataObject = function(){
-  // 送信タイプ(pCall.SEND_TYPE_DEMO, pCall.SEND_TYPE_TEL, pCall.SEND_TYPE_MAIL)
+  // 送信タイプ(pCallConst.SEND_TYPE_DEMO, pCallConst.SEND_TYPE_TEL, pCallConst.SEND_TYPE_MAIL)
   var sendType = -1;
   // 送信先リスト
   var targetList = null;
@@ -40,18 +44,6 @@ $(document).ready(function(){
   /* オブジェクトの初期化 */
   // 送信オブジェクト
   var sendData = sendDataObject();
-//  var targetData = null;
-//  var sendType = -1;
-  var sendStatusList = null;
-  var sendTargets = null;
-
-  // todo: 次バージョンでは最大電話送信数、最大メール送信数をサーバから取得するようにする。
-  // 無料通話は10回まで。無料メール送信は500回まで
-  var maxTelCount = 10;
-  var maxMailCount = 500;
-
-  var telCount = 0;
-  var mailCount = 0;
 
   // 初期表示ここから----------------
   // ツールチップテキストの表示
@@ -62,12 +54,12 @@ $(document).ready(function(){
 
   /* イベント定義 */
   // boundioステータス取得
-  var msec = pCall.TIMER_BOUNDIO_STATUS * 1000;
+  var msec = pCallConst.TIMER_BOUNDIO_STATUS * 1000;
   $('body').everyTime(msec, updateStatus);
 
   // 自分宛にテスト発信ボタン押下時
   $('#demoModalButton').on('click', function(){
-    sendData.sendType = pCall.SEND_TYPE_DEMO;
+    sendData.sendType = pCallConst.SEND_TYPE_DEMO;
   });
   // 自分宛にテスト発信ダイアログ表示時
   $('#demoCallModal').on('show', function(){
@@ -78,7 +70,7 @@ $(document).ready(function(){
   });
   // 自分宛にテスト発信ダイアログ表示後
   $('#demoCallModal').on('shown', function(){
-    var valid = isValid(sendData.sendType);
+    var valid = pCallValidator.isValid(sendData);
     if (!valid)
     {
       return false;
@@ -90,7 +82,16 @@ $(document).ready(function(){
   });
   // 自分宛にテスト発信ダイアログ：発信ボタン押下時
   $('#demoCallButton').on('click', function(){
-    var valid = isValidForDemo();
+    // テスト発信先電話番号
+    var demoTel = $.trim($('#demoCallTel').val());
+    // 全角数字の置換
+    demoTel = demoTel.replace(/[０-９]/g, function(s) {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+    // テスト発信先メールアドレス
+    var demoMail = $.trim($('#demoCallMail').val());
+
+    var valid = pCallValidator.isValidForDemo(demoTel, demoMail);
     if (!valid)
     {
       return false;
@@ -100,11 +101,11 @@ $(document).ready(function(){
 
   // 電話・メール発信ボタン押下時
   $('#doTelModalButton').on('click', function(){
-    sendData.sendType = pCall.SEND_TYPE_TEL;
+    sendData.sendType = pCallConst.SEND_TYPE_TEL;
   });
   // メール発信ボタン押下時
   $('#doMailModalButton').on('click', function(){
-    sendData.sendType = pCall.SEND_TYPE_MAIL;
+    sendData.sendType = pCallConst.SEND_TYPE_MAIL;
   });
   // 発信の最終確認ダイアログ表示時
   $('#doCallModal').on('show', function(){
@@ -113,7 +114,7 @@ $(document).ready(function(){
   });
   // 発信の最終確認ダイアログ表示後
   $('#doCallModal').on('shown', function(){
-    var valid = isValid(sendData.sendType);
+    var valid = pCallValidator.isValid(sendData);
     if (!valid)
     {
       $('#doCallModal').modal('hide');
@@ -144,308 +145,6 @@ $(document).ready(function(){
     var index = $(this).attr('data-index');
     recreate(index, true);
   });
-
-  // 入力チェック
-  // isProd: デモの場合はfalse
-  function isValid(sendType)
-  {
-    // 連絡先
-    var isValidTarget = isValidDirectTarget(sendType);
-    if (!isValidTarget)
-    {
-      return false;
-    }
-
-    // 件名
-    var isValidTitle = isValidCallTitle(sendType);
-    if (!isValidTitle)
-    {
-      return false;
-    }
-
-    // 本文
-    var isValidBody = isValidCallBody(sendType);
-    if (!isValidBody)
-    {
-      return false;
-    }
-
-    return true;
-  }
-
-  // 連絡先のチェック
-  // isNotEnterCheck: 未入力チェックを行う場合はtrue
-  function isValidDirectTarget(sendType)
-  {
-    var targetValue = $.trim($('#directTarget').val());
-    if (0 == targetValue.length)
-    {
-      // 未入力チェックを行う場合
-      if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
-      {
-        alert('連絡先が入力されていません。');
-
-        return false;
-      }
-
-      return true;
-    }
-
-    // 連絡先リストの分解
-    sendData.targetList = parseTarget();
-
-    // 件数チェック
-    var targetDataLen = sendData.targetList.length;
-    if (0 == targetDataLen)
-    {
-      alert('連絡先が入力されていません。');
-
-      return false;
-    }
-    else if (pCall.DIRECT_TARGET_NUM < targetDataLen)
-    {
-      alert('一度に送信できる連絡先は' + pCall.DIRECT_TARGET_NUM + '件以下です。');
-
-      return false;
-    }
-
-    // 連絡先内容チェック
-    var isInvalid = false;
-    for (var index = 0; index < targetDataLen; index++)
-    {
-      var targetInfo = sendData.targetList[index];
-      // 名前
-      var targetName = 'undefined' == typeof(targetInfo[0]) ? '': targetInfo[0];
-      // 電話番号
-      var targetTel = 'undefined' == typeof(targetInfo[1]) ? '': targetInfo[1];
-      // メールアドレス
-      var targetMail = 'undefined' == typeof(targetInfo[2]) ? '': targetInfo[2];
-
-      // 名前文字数チェック
-      if (0 == targetName.length)
-      {
-        isInvalid = true;
-        break;
-      }
-      else if (pCall.TARGET_NAME_LENGTH < targetName.length)
-      {
-        isInvalid = true;
-        break;
-      }
-
-      // 電話番号文字数チェック
-      if (0 == targetTel.length)
-      {
-        isInvalid = true;
-        break;
-      }
-      else if (pCall.TARGET_TEL_LENGTH < targetTel.length)
-      {
-        isInvalid = true;
-        break;
-      }
-      // 電話番号文字種チェック
-      //if (!$.isNumeric(targetTel))
-      if (null === targetTel.match(/^[0-9]+$/))
-      {
-        isInvalid = true;
-        break;
-      }
-
-      // メールアドレス文字数チェック
-      if (pCall.TARGET_MAIL_LENGTH < targetMail.length)
-      {
-        isInvalid = true;
-        break;
-      }
-      // メールアドレス形式チェック
-      if (0 < targetMail.length)
-      {
-        if (!targetMail.match(/.+@.+\..+/g))
-        {
-          isInvalid = true;
-          break;
-        }
-      }
-      else
-      {
-        if (pCall.SEND_TYPE_MAIL == sendType)
-        {
-          isInvalid = true;
-          break;
-        }
-      }
-    }
-
-    if (isInvalid)
-    {
-      alert('連絡先は、名字[半角スペース]電話番号[半角スペース]メールアドレス[改行]の形式で記入してください。\n電話番号はハイフン無し数字のみで入力してください。');
-
-      return false;
-    }
-
-    // 送信データの作成
-    var targets = [];
-    var sendTelCount = 0;
-    var sendMailCount = 0;
-    for (var index = 0; index < targetDataLen; index++)
-    {
-      var targetInfo = sendData.targetList[index];
-      var info = {};
-      // 名前
-      info['name'] = 'undefined' == typeof(targetInfo[0]) ? '': targetInfo[0];
-      // 電話番号
-      info['tel'] = 'undefined' == typeof(targetInfo[1]) ? '': targetInfo[1];
-      if (info['tel'])
-      {
-        if (pCall.SEND_TYPE_MAIL != sendType)
-        {
-          sendTelCount++;
-        }
-      }
-      // メールアドレス
-      info['mail'] = 'undefined' == typeof(targetInfo[2]) ? '': targetInfo[2];
-      if (info['mail'])
-      {
-        sendMailCount++;
-      }
-      targets.push(info);
-    }
-    sendTargets = targets;
-
-    // 送信制限数チェック
-    // 現在の送信数の取得
-    showSendCount();
-    // メール送信の場合
-    $('#doCallTargetTelNum').html(sendTelCount);
-    $('#doCallTargetMailNum').html(sendMailCount);
-    if (pCall.SEND_TYPE_MAIL == sendType)
-    {
-      if (maxMailCount < (mailCount + sendMailCount))
-      {
-        alert('メール送信数が最大を超えてしまうため発信できません。');
-        return false;
-      }
-    }
-    if (maxTelCount < (telCount + sendTelCount) || maxMailCount < (mailCount + sendMailCount))
-    {
-      alert('電話発信数またはメール送信数が最大を超えてしまうため発信できません。');
-      return false;
-    }
-
-    return true;
-  }
-
-  // 連絡先リストの分解
-  function parseTarget()
-  {
-    var targetValue = $.trim($('#directTarget').val());
-    // 改行コードの置換
-    targetValue = targetValue.replace(/\r\n/g, '<>');
-    targetValue = targetValue.replace(/(\n|\r)/g, '<>');
-    // 全角空白の置換
-    targetValue = targetValue.replace(/　/g, ' ');
-    // 全角数字の置換
-    targetValue = targetValue.replace(/[０-９]/g, function(s) {
-      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-    });
-
-    // 連絡先情報を改行毎に区切る
-    var targets = targetValue.split('<>');
-    var targetsLen = targets.length;
-    var targetValues = [];
-    for (var index = 0; index < targetsLen; index++)
-    {
-      var target = targets[index];
-      // 連絡先1件を名前、電話番号、メールアドレスに分ける
-      var targetVals = target.split(' ');
-      targetValues.push(targetVals);
-    }
-
-    return targetValues;
-  }
-
-  // 件名入力チェック
-  // isNotEnterCheck: 未入力チェックを行う場合はtrue
-  function isValidCallTitle(sendType)
-  {
-    var callTitleLength = $.trim($('#callTitle').val()).length;
-    // 未入力チェックを行う場合
-    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
-    {
-      if (0 == callTitleLength)
-      {
-        alert('件名が入力されていません。');
-
-        return false;
-      }
-    }
-    // 文字数チェック
-    if (pCall.CALL_TITLE_LENGTH < callTitleLength)
-    {
-      alert('件名は' + pCall.CALL_TITLE_LENGTH + '文字以下で入力してください。');
-
-      return false;
-    }
-    return true;
-  }
-
-  // 本文入力チェック
-  // isNotEnterCheck: 未入力チェックを行う場合はtrue
-  function isValidCallBody(sendType)
-  {
-    var callBodyLength = $.trim($('#callBody').val()).length;
-    // 未入力チェックを行う場合
-    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
-    {
-      if (0 == callBodyLength)
-      {
-        alert('本文が入力されていません。');
-
-        return false;
-      }
-    }
-    // 文字数チェック
-    if (pCall.CALL_BODY_LENGTH < callBodyLength)
-    {
-      alert('本文は' + pCall.CALL_BODY_LENGTH + '文字以下で入力してください。');
-
-      return false;
-    }
-
-    return true;
-  }
-
-  // 自分宛にテスト発信画面での入力チェック
-  function isValidForDemo()
-  {
-    // テスト発信先電話番号
-    var demoTel = $.trim($('#demoCallTel').val());
-    // 全角数字の置換
-    demoTel = demoTel.replace(/[０-９]/g, function(s) {
-      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-    });
-    // テスト発信先メールアドレス
-    var demoMail = $.trim($('#demoCallMail').val());
-
-    // テスト発信先電話番号文字数チェック
-    if (0 == demoTel.length || pCall.TARGET_TEL_LENGTH < demoTel.length || !$.isNumeric(demoTel))
-    {
-      alert('テスト発信先電話番号はハイフン無し数字のみで入力してください。');
-
-      return false;
-    }
-
-    // テスト発信先メールアドレス文字数チェック
-    if (0 == demoMail.length || pCall.TARGET_MAIL_LENGTH < demoMail.length || (0 < demoMail.length && !demoMail.match(/.+@.+\..+/g)))
-    {
-      alert('テスト発信先メールアドレスを正しく入力してください。');
-
-      return false;
-    }
-
-    return true;
-  }
 
   // 現在の発信数の表示
   function showSendCount(){
@@ -604,7 +303,7 @@ $(document).ready(function(){
 
     // titleの文字列変換
     var titleText = '';
-    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
+    if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
     {
       titleText = $.trim($('#callTitle').val());
     }
@@ -619,7 +318,7 @@ $(document).ready(function(){
 
     // bodyの文字列変換
     var bodyText = '';
-    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
+    if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
     {
       bodyText = $.trim($('#callBody').val());
     }
@@ -633,7 +332,7 @@ $(document).ready(function(){
     sendTargetList['body'] = bodyText;
 
     // 本番の場合
-    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
+    if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
     {
       // ボタンをローディング中に変更
       $('#doCallButton').button('loading');
@@ -674,7 +373,7 @@ $(document).ready(function(){
         if ('success' == data['status'])
         {
           alert('発信手続きが完了しました。');
-          if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
+          if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
           {
             $('#doCallModal').modal('hide');
           }
@@ -687,7 +386,7 @@ $(document).ready(function(){
         {
           alert('発信手続きができませんでした。');
         }
-        if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
+        if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
         {
           $('#doCallButton').button('reset');
         }
@@ -698,7 +397,7 @@ $(document).ready(function(){
       },
       error: function(data){
         alert('発信手続きができませんでした。');
-        if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
+        if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
         {
           $('#doCallButton').button('reset');
         }

@@ -28,6 +28,7 @@ var openpne = '.$json.';
 <?php use_javascript('/opRenrakumouPlugin/js/bootstrap.js') ?>
 <?php use_javascript('/opRenrakumouPlugin/js/shortcut.js') ?>
 <?php use_javascript('/opRenrakumouPlugin/js/pcallutil.js') ?>
+<?php use_javascript('/opRenrakumouPlugin/js/pcallvalidator.js') ?>
 <?php use_javascript('/opRenrakumouPlugin/js/pcall.js') ?>
 <?php include_javascripts() ?>
 <?php echo $op_config->get('pc_html_head') ?>
