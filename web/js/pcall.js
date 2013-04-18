@@ -26,11 +26,22 @@ var pCall = {
   TARGET_MAIL_LENGTH: 255
 };
 
-$(document).ready(function(){
-
-  /* オブジェクトの初期化 */
-  var targetData = null;
+// 送信データオブジェクト
+var sendDataObject = function(){
+  // 送信タイプ(pCall.SEND_TYPE_DEMO, pCall.SEND_TYPE_TEL, pCall.SEND_TYPE_MAIL)
   var sendType = -1;
+  // 送信先リスト
+  var targetList = null;
+
+  return this;
+};
+
+$(document).ready(function(){
+  /* オブジェクトの初期化 */
+  // 送信オブジェクト
+  var sendData = sendDataObject();
+//  var targetData = null;
+//  var sendType = -1;
   var sendStatusList = null;
   var sendTargets = null;
 
@@ -47,8 +58,6 @@ $(document).ready(function(){
   $('.tooltip-target').tooltip();
   // 送信状況表示
   updateStatus();
-  // 送信数表示
-//  getCalledCount();
   // 初期表示ここまで----------------
 
   /* イベント定義 */
@@ -58,7 +67,7 @@ $(document).ready(function(){
 
   // 自分宛にテスト発信ボタン押下時
   $('#demoModalButton').on('click', function(){
-    sendType = pCall.SEND_TYPE_DEMO;
+    sendData.sendType = pCall.SEND_TYPE_DEMO;
   });
   // 自分宛にテスト発信ダイアログ表示時
   $('#demoCallModal').on('show', function(){
@@ -69,7 +78,7 @@ $(document).ready(function(){
   });
   // 自分宛にテスト発信ダイアログ表示後
   $('#demoCallModal').on('shown', function(){
-    var valid = isValid(false);
+    var valid = isValid(sendData.sendType);
     if (!valid)
     {
       return false;
@@ -91,11 +100,11 @@ $(document).ready(function(){
 
   // 電話・メール発信ボタン押下時
   $('#doTelModalButton').on('click', function(){
-    sendType = pCall.SEND_TYPE_TEL;
+    sendData.sendType = pCall.SEND_TYPE_TEL;
   });
   // メール発信ボタン押下時
   $('#doMailModalButton').on('click', function(){
-    sendType = pCall.SEND_TYPE_MAIL;
+    sendData.sendType = pCall.SEND_TYPE_MAIL;
   });
   // 発信の最終確認ダイアログ表示時
   $('#doCallModal').on('show', function(){
@@ -104,7 +113,7 @@ $(document).ready(function(){
   });
   // 発信の最終確認ダイアログ表示後
   $('#doCallModal').on('shown', function(){
-    var valid = isValid(true);
+    var valid = isValid(sendData.sendType);
     if (!valid)
     {
       $('#doCallModal').modal('hide');
@@ -138,24 +147,24 @@ $(document).ready(function(){
 
   // 入力チェック
   // isProd: デモの場合はfalse
-  function isValid(isProd)
+  function isValid(sendType)
   {
     // 連絡先
-    var isValidTarget = isValidDirectTarget(isProd);
+    var isValidTarget = isValidDirectTarget(sendType);
     if (!isValidTarget)
     {
       return false;
     }
 
     // 件名
-    var isValidTitle = isValidCallTitle(isProd);
+    var isValidTitle = isValidCallTitle(sendType);
     if (!isValidTitle)
     {
       return false;
     }
 
     // 本文
-    var isValidBody = isValidCallBody(isProd);
+    var isValidBody = isValidCallBody(sendType);
     if (!isValidBody)
     {
       return false;
@@ -166,13 +175,13 @@ $(document).ready(function(){
 
   // 連絡先のチェック
   // isNotEnterCheck: 未入力チェックを行う場合はtrue
-  function isValidDirectTarget(isNotEnterCheck)
+  function isValidDirectTarget(sendType)
   {
     var targetValue = $.trim($('#directTarget').val());
     if (0 == targetValue.length)
     {
       // 未入力チェックを行う場合
-      if (isNotEnterCheck)
+      if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
       {
         alert('連絡先が入力されていません。');
 
@@ -183,10 +192,10 @@ $(document).ready(function(){
     }
 
     // 連絡先リストの分解
-    targetData = parseTarget();
+    sendData.targetList = parseTarget();
 
     // 件数チェック
-    var targetDataLen = targetData.length;
+    var targetDataLen = sendData.targetList.length;
     if (0 == targetDataLen)
     {
       alert('連絡先が入力されていません。');
@@ -204,7 +213,7 @@ $(document).ready(function(){
     var isInvalid = false;
     for (var index = 0; index < targetDataLen; index++)
     {
-      var targetInfo = targetData[index];
+      var targetInfo = sendData.targetList[index];
       // 名前
       var targetName = 'undefined' == typeof(targetInfo[0]) ? '': targetInfo[0];
       // 電話番号
@@ -281,7 +290,7 @@ $(document).ready(function(){
     var sendMailCount = 0;
     for (var index = 0; index < targetDataLen; index++)
     {
-      var targetInfo = targetData[index];
+      var targetInfo = sendData.targetList[index];
       var info = {};
       // 名前
       info['name'] = 'undefined' == typeof(targetInfo[0]) ? '': targetInfo[0];
@@ -358,11 +367,11 @@ $(document).ready(function(){
 
   // 件名入力チェック
   // isNotEnterCheck: 未入力チェックを行う場合はtrue
-  function isValidCallTitle(isNotEnterCheck)
+  function isValidCallTitle(sendType)
   {
     var callTitleLength = $.trim($('#callTitle').val()).length;
     // 未入力チェックを行う場合
-    if (isNotEnterCheck)
+    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
     {
       if (0 == callTitleLength)
       {
@@ -383,11 +392,11 @@ $(document).ready(function(){
 
   // 本文入力チェック
   // isNotEnterCheck: 未入力チェックを行う場合はtrue
-  function isValidCallBody(isNotEnterCheck)
+  function isValidCallBody(sendType)
   {
     var callBodyLength = $.trim($('#callBody').val()).length;
     // 未入力チェックを行う場合
-    if (isNotEnterCheck)
+    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
     {
       if (0 == callBodyLength)
       {
@@ -403,6 +412,7 @@ $(document).ready(function(){
 
       return false;
     }
+
     return true;
   }
 
@@ -585,7 +595,7 @@ $(document).ready(function(){
   }
 
   // 送信処理
-  function send(isProd)
+  function send(sendType)
   {
     // 送信データの作成
     var sendTargetList = {};
@@ -594,7 +604,7 @@ $(document).ready(function(){
 
     // titleの文字列変換
     var titleText = '';
-    if (isProd)
+    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
     {
       titleText = $.trim($('#callTitle').val());
     }
@@ -609,7 +619,7 @@ $(document).ready(function(){
 
     // bodyの文字列変換
     var bodyText = '';
-    if (isProd)
+    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
     {
       bodyText = $.trim($('#callBody').val());
     }
@@ -623,7 +633,7 @@ $(document).ready(function(){
     sendTargetList['body'] = bodyText;
 
     // 本番の場合
-    if (isProd)
+    if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
     {
       // ボタンをローディング中に変更
       $('#doCallButton').button('loading');
@@ -664,7 +674,7 @@ $(document).ready(function(){
         if ('success' == data['status'])
         {
           alert('発信手続きが完了しました。');
-          if (isProd)
+          if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
           {
             $('#doCallModal').modal('hide');
           }
@@ -677,7 +687,7 @@ $(document).ready(function(){
         {
           alert('発信手続きができませんでした。');
         }
-        if (isProd)
+        if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
         {
           $('#doCallButton').button('reset');
         }
@@ -688,7 +698,7 @@ $(document).ready(function(){
       },
       error: function(data){
         alert('発信手続きができませんでした。');
-        if (isProd)
+        if (pCall.SEND_TYPE_TEL == sendType || pCall.SEND_TYPE_MAIL == sendType)
         {
           $('#doCallButton').button('reset');
         }
