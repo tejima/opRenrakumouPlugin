@@ -30,7 +30,8 @@ $(document).ready(function(){
   var sendTargets = null;
 
   // todo: 次バージョンでは最大電話送信数、最大メール送信数をサーバから取得するようにする。
-  var maxTelCount = 110;
+  // 無料通話は10回まで。無料メール送信は500回まで
+  var maxTelCount = 10;
   var maxMailCount = 500;
 
   var telCount = 0;
@@ -42,7 +43,7 @@ $(document).ready(function(){
   // 送信状況表示
   updateStatus();
   // 送信数表示
-  getCalledCount();
+//  getCalledCount();
   // 初期表示ここまで----------------
 
   /* イベント定義 */
@@ -467,6 +468,20 @@ $(document).ready(function(){
     // boundioステータスの更新
     updateBoundio();
     // 送信状況の取得
+    var sendStatus = getSendStatus();
+    // 送信状況の表示
+    if (null !== sendStatus){
+      $('#updateStatusBody > *').remove();
+      $('#tmplAccordion').tmpl({value: sendStatus}).appendTo('#updateStatusBody');
+      $('#collapse0').collapse('show');
+    }
+  }
+
+  // 送信状況の取得
+  function getSendStatus()
+  {
+    var sendStatus = null;
+    // 送信状況の取得
     $.ajax({
       type: 'GET',
       url: openpne.apiBase + 'call/status.json',
@@ -475,10 +490,7 @@ $(document).ready(function(){
       success: function(data){
         if ('success' == data['status'])
         {
-          sendStatusList = data['data'];
-          $('#updateStatusBody > *').remove();
-          $('#tmplAccordion').tmpl({value: sendStatusList}).appendTo('#updateStatusBody');
-          $('#collapse0').collapse('show');
+          sendStatus = data['data'];
         }
         else
         {
@@ -489,6 +501,8 @@ $(document).ready(function(){
         alert('送信状況が取得できませんでした。');
       }
     });
+
+    return sendStatus;
   }
 
   // 送信状況から各入力項目への値コピー
