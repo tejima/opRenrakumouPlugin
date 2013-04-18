@@ -1,40 +1,59 @@
-// 連絡網プラグインユーティリティ
+/**
+ * 連絡網プラグインユーティリティ
+ *
+ * @type {{replaceString: Function, parseTarget: Function}}
+ */
 var pCallUtil = {
-  replaceSpaceChar: function(text){
-    text = text.replace(/\r\n/g, '');
-    text = text.replace(/(\n|\r)/g, '');
-    text = text.replace(/　/g, '');
-    text = text.replace(/ /g, '');
+  /**
+   * 文字列の置換を行う
+   *
+   * @param text 置換元の文字列
+   * @param breakChar 改行コードの置換文字列
+   * @param spaceChar 空白の置換文字列
+   * @param isReplaceNumber 全角数字を半角数字に置換数場合はtrue
+   * @return {string} 置換結果の文字列
+   */
+  replaceString: function(text, breakChar, spaceChar, isReplaceNumber){
+    if (null == breakChar || 'undefined' == typeof(breakChar)){
+      breakChar = '';
+    }
+    if (null == spaceChar || 'undefined' == typeof(spaceChar)){
+      spaceChar = '';
+    }
+    text = text.replace(/\r\n/g, breakChar);
+    text = text.replace(/(\n|\r)/g, breakChar);
+    text = text.replace(/　/g, spaceChar);
+    text = text.replace(/ /g, spaceChar);
+
+    if (isReplaceNumber){
+      text = text.replace(/[０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+      });
+    }
 
     return text;
   },
 
-  // 連絡先リストの分解
-  parseTarget: function()
-  {
-    var targetValue = $.trim($('#directTarget').val());
-    // 改行コードの置換
-    targetValue = targetValue.replace(/\r\n/g, '<>');
-    targetValue = targetValue.replace(/(\n|\r)/g, '<>');
-    // 全角空白の置換
-    targetValue = targetValue.replace(/　/g, ' ');
-    // 全角数字の置換
-    targetValue = targetValue.replace(/[０-９]/g, function(s) {
-      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-    });
+  /**
+   * 入力された連絡先の分解
+   * @param targetText 入力された連絡先
+   * @returns {Array} 分解した連絡先
+   */
+  parseTarget: function(targetText){
+    // 入力された連絡先の改行コード等の置換
+    targetText = this.replaceString(targetText, '<>', ' ', true);
 
     // 連絡先情報を改行毎に区切る
-    var targets = targetValue.split('<>');
-    var targetsLen = targets.length;
-    var targetValues = [];
-    for (var index = 0; index < targetsLen; index++)
-    {
-      var target = targets[index];
+    var targetList = targetText.split('<>');
+    var len = targetList.length;
+    var targets = [];
+    for (var index = 0; index < len; index++){
+      var target = targetList[index];
       // 連絡先1件を名前、電話番号、メールアドレスに分ける
-      var targetVals = target.split(' ');
-      targetValues.push(targetVals);
+      var targetInfo = target.split(' ');
+      targets.push(targetInfo);
     }
 
-    return targetValues;
+    return targets;
   }
 };

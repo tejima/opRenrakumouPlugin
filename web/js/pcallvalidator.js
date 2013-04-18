@@ -1,27 +1,26 @@
 // 連絡網プラグインバリデータ
 var pCallValidator = {
-  // 入力チェック
-  // isProd: デモの場合はfalse
-  isValid: function(sendData)
-  {
+  /**
+   * 入力チェック
+   * @param sendData 送信データ
+   * @returns {boolean} 入力エラーがある場合はfalse
+   */
+  isValid: function(sendData){
     // 連絡先
     var isValidTarget = this.isValidDirectTarget(sendData);
-    if (!isValidTarget)
-    {
+    if (!isValidTarget){
       return false;
     }
 
     // 件名
     var isValidTitle = this.isValidCallTitle(sendData);
-    if (!isValidTitle)
-    {
+    if (!isValidTitle){
       return false;
     }
 
     // 本文
     var isValidBody = this.isValidCallBody(sendData);
-    if (!isValidBody)
-    {
+    if (!isValidBody){
       return false;
     }
 
@@ -47,7 +46,8 @@ var pCallValidator = {
     }
 
     // 連絡先リストの分解
-    sendData.targetList = pCallUtil.parseTarget();
+    var targetText = $.trim($('#directTarget').val());
+    sendData.targetList = pCallUtil.parseTarget(targetText);
 
     // 件数チェック
     var targetDataLen = sendData.targetList.length;
@@ -166,11 +166,15 @@ var pCallValidator = {
       }
       targets.push(info);
     }
-    sendTargets = targets;
+    sendData.targetList = targets;
 
     // 送信制限数チェック
-    // 現在の送信数の取得
-    showSendCount();
+    // 現在の発信数の取得
+    var sendCount = pCall.getCalledCount();
+    // 送信数表示
+    pCall.showSendCount(sendCount);
+    var mailCount = sendCount['mail'];
+    var telCount = sendCount['tel'];
     // メール送信の場合
     $('#doCallTargetTelNum').html(sendTelCount);
     $('#doCallTargetMailNum').html(sendMailCount);
