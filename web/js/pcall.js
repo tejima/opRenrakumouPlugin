@@ -301,7 +301,7 @@ $(document).ready(function(){
 
     // 送信制限数チェック
     // 現在の送信数の取得
-    getCalledCount();
+    showSendCount();
     // メール送信の場合
     $('#doCallTargetTelNum').html(sendTelCount);
     $('#doCallTargetMailNum').html(sendMailCount);
@@ -432,22 +432,33 @@ $(document).ready(function(){
     return true;
   }
 
+  // 現在の発信数の表示
+  function showSendCount(){
+    // 現在の発信数の取得
+    var sendCount = getCalledCount();
+    if (null != sendCount){
+      $('#telCount').html(sendCount['tel']);
+      $('#mailCount').html(sendCount['mail']);
+    }
+  }
+
   // 現在の発信数の取得
   function getCalledCount()
   {
+    var sendCount = null;
     // 送信状況の取得
     $.ajax({
       type: 'GET',
       url: openpne.apiBase + 'call/count.json',
       data:  {apiKey: openpne.apiKey},
       dataType: 'json',
+      async: false,
       success: function(data){
         if ('success' == data['status'])
         {
-          telCount = data['data']['tel_count'];
-          mailCount = data['data']['mail_count'];
-          $('#telCount').html(telCount);
-          $('#mailCount').html(mailCount);
+          sendCount = [];
+          sendCount['tel'] = data['data']['tel_count'];
+          sendCount['mail'] = data['data']['mail_count'];
         }
         else
         {
@@ -458,19 +469,21 @@ $(document).ready(function(){
         alert('送信数が取得できませんでした。');
       }
     });
+
+    return sendCount;
   }
 
   // 送信状況の表示
   function updateStatus()
   {
     // 送信数表示
-    getCalledCount();
+    showSendCount();
     // boundioステータスの更新
     updateBoundio();
     // 送信状況の取得
     var sendStatus = getSendStatus();
-    // 送信状況の表示
-    if (null !== sendStatus){
+    // 送信状況の表示　
+    if (null != sendStatus){
       $('#updateStatusBody > *').remove();
       $('#tmplAccordion').tmpl({value: sendStatus}).appendTo('#updateStatusBody');
       $('#collapse0').collapse('show');
@@ -487,6 +500,7 @@ $(document).ready(function(){
       url: openpne.apiBase + 'call/status.json',
       data:  {apiKey: openpne.apiKey},
       dataType: 'json',
+      async: false,
       success: function(data){
         if ('success' == data['status'])
         {
