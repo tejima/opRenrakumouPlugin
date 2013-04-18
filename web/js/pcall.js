@@ -36,12 +36,21 @@ var sendDataObject = function(){
   var sendType = -1;
   // 送信先リスト
   var targetList = null;
+  // 連絡先入力値
+  var targetText = '';
+  // 件名入力値
+  var titleText = '';
+  // 本文入力値
+  var bodyText = '';
 
   return this;
 };
 
-// 連絡網プラグインメソッド群オブジェクト
+// 関数定義
 var pCall = {
+  // 送信状況
+  sendStatusList: null,
+
   // 現在の発信数の表示
   showSendCount: function(sendCount){
     if (null != sendCount){
@@ -81,7 +90,7 @@ var pCall = {
   },
 
   // 送信状況の表示
-  updateStatus: function(){
+  showStatus: function(){
     // 現在の発信数の取得
     var sendCount = pCall.getCalledCount();
     // 送信数表示
@@ -126,58 +135,52 @@ var pCall = {
     return sendStatus;
   },
 
-  // 送信状況から各入力項目への値コピー
-  recreate: function(index, isOnlyError){
-    var statusList = sendStatusList[index].target;
+  /**
+   * 再作成
+   * @param sendData 送信データ
+   * @param index コピー元送信状況のインデックス
+   * @param isOnlyError
+   */
+  recreate: function(sendData, index, isOnlyError){
+    var statusList = this.sendStatusList[index].target;
     var str = '';
     for (var i = 0; i < statusList.length; i++) {
       var telStatus = statusList[i]['tel_status'];
       var mailStatus = statusList[i]['mail_status'];
-      if (isOnlyError)
-      {
+      if (isOnlyError){
         var isCopy = false;
         if ('FAIL' === telStatus
           && ('FAIL' === mailStatus
           || 'CALLED' === mailStatus
-          || 'NONE' === mailStatus))
-        {
+          || 'NONE' === mailStatus)){
           isCopy = true;
         }
         else if ('HUZAI' === telStatus
           && ('FAIL' === mailStatus
-          || 'NONE' === mailStatus))
-        {
+          || 'NONE' === mailStatus)){
           isCopy = true;
         }
         else if ('CALLED' === telStatus
           && ('FAIL' === mailStatus
-          || 'NONE' === mailStatus))
-        {
+          || 'NONE' === mailStatus)){
           isCopy = true;
         }
-        else if ('NONE' === telStatus && 'FAIL' === mailStatus)
-        {
+        else if ('NONE' === telStatus && 'FAIL' === mailStatus){
           isCopy = true;
         }
 
-        if (isCopy)
-        {
+        if (isCopy){
           str += statusList[i]['name'] + ' ' + statusList[i]['tel'] + ' ' +statusList[i]['mail'] + '\n';
         }
-      }
-      else
-      {
+      }else{
         str += statusList[i]['name'] + ' ' + statusList[i]['tel'] + ' ' +statusList[i]['mail'] + '\n';
       }
     }
-    if (str)
-    {
+    if (str){
       $('#directTarget').val(str);
-      $('#callTitle').val(sendStatusList[index].title);
-      $('#callBody').val(sendStatusList[index].body);
-    }
-    else
-    {
+      $('#callTitle').val(this.sendStatusList[index].title);
+      $('#callBody').val(this.sendStatusList[index].body);
+    }else{
       alert('再作成内容はありません。');
       $('#directTarget').val('');
       $('#callTitle').val('');
@@ -186,30 +189,25 @@ var pCall = {
   },
 
   // 送信処理
-  send: function(sendType){
+  send: function(sendData){
     // 送信データの作成
-    var sendTargetList = {};
-    sendTargetList['apiKey'] = openpne.apiKey;
-    sendTargetList['type'] = sendType;
+    sendData['apiKey'] = openpne.apiKey;
 
     // titleの文字列変換
     var titleText = '';
-    if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
-    {
+    if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType){
       titleText = $.trim($('#callTitle').val());
-    }
-    else
-    {
+    }else{
       titleText = $.trim($('#demoCallTitle').val());
     }
     // 改行コード、全角空白、半角空白の置換
     titleText = pCallUtil.replaceString(titleText);
 
-    sendTargetList['title'] = titleText;
+    sendData['title'] = titleText;
 
     // bodyの文字列変換
     var bodyText = '';
-    if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
+    if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType)
     {
       bodyText = $.trim($('#callBody').val());
     }
@@ -218,17 +216,17 @@ var pCall = {
       bodyText = $.trim($('#demoCallBody').val());
     }
     // 改行コード、全角空白、半角空白の置換
-    bodyText = pCallUtil.replaceSpaceChar(bodyText);
+    bodyText = pCallUtil.replaceString(bodyText);
 
-    sendTargetList['body'] = bodyText;
+    sendData['body'] = bodyText;
 
     // 本番の場合
-    if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
+    if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType)
     {
       // ボタンをローディング中に変更
       $('#doCallButton').button('loading');
       // 送信データの作成
-      sendTargetList['target'] = targetList;
+      sendData['target'] = targetList;
     }
     // デモの場合
     else
@@ -250,7 +248,7 @@ var pCall = {
       var targets = [];
       targets.push(target);
 
-      sendTargetList['target'] = targets;
+      sendData['target'] = targets;
     }
 
     // 送信
@@ -319,45 +317,49 @@ var pCall = {
 };
 
 $(document).ready(function(){
-  /* オブジェクトの初期化 */
-  // 送信オブジェクト
+  // 送信オブジェクトの生成
   var sendData = sendDataObject();
 
-  // 初期表示ここから----------------
+  // 初期表示
   // ツールチップテキストの表示
   $('.tooltip-target').tooltip();
   // 送信状況表示
-  pCall.updateStatus();
-  // 初期表示ここまで----------------
+  pCall.showStatus();
 
   /* イベント定義 */
-  // boundioステータス取得
+  // boundioステータスを一定間隔で取得
   var msec = pCallConst.TIMER_BOUNDIO_STATUS * 1000;
-  $('body').everyTime(msec, pCall.updateStatus);
+  $('body').everyTime(msec, pCall.showStatus);
 
   // 自分宛にテスト発信ボタン押下時
   $('#demoModalButton').on('click', function(){
     sendData.sendType = pCallConst.SEND_TYPE_DEMO;
   });
+
   // 自分宛にテスト発信ダイアログ表示時
-  $('#demoCallModal').on('show', function(){
+  var demoCallModal = $('#demoCallModal');
+  demoCallModal.on('show', function(){
     var callTitle = $('#callTitle');
     var callBody = $('#callBody');
-    $.trim($(callTitle).val()) ? $('#demoCallTitle').val($.trim($(callTitle).val())) : $('#demoCallTitle').val($.trim($(callTitle).attr('placeholder')));
-    $.trim(callBody.val()) ? $('#demoCallBody').val($.trim(callBody.val())) : $('#demoCallBody').val($.trim(callBody.attr('placeholder')));
+    var demoCallTitle = $('#demoCallTitle');
+    var demoCallBody = $('#demoCallBody');
+    $.trim($(callTitle).val()) ? demoCallTitle.val($.trim($(callTitle).val())) : demoCallTitle.val($.trim($(callTitle).attr('placeholder')));
+    $.trim(callBody.val()) ? demoCallBody.val($.trim(callBody.val())) : demoCallBody.val($.trim(callBody.attr('placeholder')));
   });
+
   // 自分宛にテスト発信ダイアログ表示後
-  $('#demoCallModal').on('shown', function(){
+  demoCallModal.on('shown', function(){
     var valid = pCallValidator.isValid(sendData);
-    if (!valid)
-    {
+    if (!valid){
       return false;
     }
   });
+
   // 自分宛にテスト発信ダイアログ非表示時
-  $('#demoCallModal').on('hide', function(){
+  demoCallModal.on('hide', function(){
     $('#demoCallButton').button('reset');
   });
+
   // 自分宛にテスト発信ダイアログ：発信ボタン押下時
   $('#demoCallButton').on('click', function(){
     // テスト発信先電話番号
@@ -370,8 +372,7 @@ $(document).ready(function(){
     var demoMail = $.trim($('#demoCallMail').val());
 
     var valid = pCallValidator.isValidForDemo(demoTel, demoMail);
-    if (!valid)
-    {
+    if (!valid){
       return false;
     }
     pCall.send(false);
@@ -381,28 +382,34 @@ $(document).ready(function(){
   $('#doTelModalButton').on('click', function(){
     sendData.sendType = pCallConst.SEND_TYPE_TEL;
   });
+
   // メール発信ボタン押下時
   $('#doMailModalButton').on('click', function(){
     sendData.sendType = pCallConst.SEND_TYPE_MAIL;
   });
+
   // 発信の最終確認ダイアログ表示時
-  $('#doCallModal').on('show', function(){
+  var doCallModal = $('#doCallModal');
+  doCallModal.on('show', function(){
     $('#doCallTitle').val($.trim($('#callTitle').val()));
     $('#doCallBody').val($.trim($('#callBody').val()));
   });
+
   // 発信の最終確認ダイアログ表示後
-  $('#doCallModal').on('shown', function(){
+  doCallModal.on('shown', function(){
     var valid = pCallValidator.isValid(sendData);
     if (!valid)
     {
-      $('#doCallModal').modal('hide');
+      doCallModal.modal('hide');
       return false;
     }
   });
+
   // 発信の最終確認ダイアログ非表示時
-  $('#doCallModal').on('hide', function(){
+  doCallModal.on('hide', function(){
     $('#doCallButton').button('reset');
   });
+
   // 発信の最終確認ダイアログ：発信ボタン押下時
   $('#doCallButton').on('click', function(){
     pCall.send(true);
@@ -410,17 +417,18 @@ $(document).ready(function(){
 
   // 更新ボタン押下時
   $('#updateStatus').on('click',function(){
-    pCall.updateStatus();
+    pCall.showStatus();
   });
 
   // 同じ内容でもう一度作成するボタン押下時
   $(document).on('click', '.recreateAll', function(){
     var index = $(this).attr('data-index');
-    pCall.recreate(index, false);
+    pCall.recreate(sendData, index, false);
   });
+
   // 送信できなかった送信先宛にもう一度作成するボタン押下時
   $(document).on('click', '.recreateError', function(){
     var index = $(this).attr('data-index');
-    pCall.recreate(index, true);
+    pCall.recreate(sendData, index, true);
   });
 });
