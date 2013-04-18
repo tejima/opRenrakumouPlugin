@@ -613,7 +613,7 @@ $(document).ready(function(){
       titleText = $.trim($('#demoCallTitle').val());
     }
     // 改行コード、全角空白、半角空白の置換
-    titleText = replaceSpaceChar(titleText);
+    titleText = pCallUtil.replaceSpaceChar(titleText);
 
     sendTargetList['title'] = titleText;
 
@@ -628,7 +628,7 @@ $(document).ready(function(){
       bodyText = $.trim($('#demoCallBody').val());
     }
     // 改行コード、全角空白、半角空白の置換
-    bodyText = replaceSpaceChar(bodyText);
+    bodyText = pCallUtil.replaceSpaceChar(bodyText);
 
     sendTargetList['body'] = bodyText;
 
@@ -726,14 +726,5 @@ $(document).ready(function(){
         // 何もしない
       }
     });
-  }
-
-  function replaceSpaceChar(text)
-  {
-    text = text.replace(/\r\n/g, '');
-    text = text.replace(/(\n|\r)/g, '');
-    text = text.replace(/　/g, '');
-    text = text.replace(/ /g, '');
-    return text;
   }
 });
