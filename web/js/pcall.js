@@ -188,10 +188,11 @@ var pCall = {
     }
   },
 
-  // 送信処理
-  send: function(sendData){
+  // 送信データ作成処理
+  makeSendData: function(sendData){
     // 送信データの作成
-    sendData['apiKey'] = openpne.apiKey;
+    var data = {};
+    data.apiKey = openpne.apiKey;
 
     // titleの文字列変換
     var titleText = '';
@@ -203,34 +204,28 @@ var pCall = {
     // 改行コード、全角空白、半角空白の置換
     titleText = pCallUtil.replaceString(titleText);
 
-    sendData['title'] = titleText;
+    data.title = titleText;
 
     // bodyの文字列変換
     var bodyText = '';
-    if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType)
-    {
+    if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType){
       bodyText = $.trim($('#callBody').val());
-    }
-    else
-    {
+    }else{
       bodyText = $.trim($('#demoCallBody').val());
     }
     // 改行コード、全角空白、半角空白の置換
     bodyText = pCallUtil.replaceString(bodyText);
 
-    sendData['body'] = bodyText;
+    data.body = bodyText;
 
     // 本番の場合
-    if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType)
-    {
+    if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType){
       // ボタンをローディング中に変更
       $('#doCallButton').button('loading');
       // 送信データの作成
-      sendData['target'] = targetList;
-    }
-    // デモの場合
-    else
-    {
+      data.target = sendData.targetList;
+    }else{
+      // デモの場合
       // ボタンをローディング中に変更
       $('#demoCallButton').button('loading');
       // 送信データの作成
@@ -248,50 +243,45 @@ var pCall = {
       var targets = [];
       targets.push(target);
 
-      sendData['target'] = targets;
+      data['target'] = targets;
     }
 
+    return data;
+  },
+
+  // 送信処理
+  send: function(sendData){
+    // 送信データの作成
+    var dataObj = this.makeSendData(sendData);
     // 送信
     $.ajax({
       type: 'POST',
       url: openpne.apiBase + 'call/send.json',
-      data: sendTargetList,
+      data: dataObj,
       cache: false,
       dataType: 'json',
       success: function(data){
-        if ('success' == data['status'])
-        {
+        if ('success' == data['status']){
           alert('発信手続きが完了しました。');
-          if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
-          {
+          if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType){
             $('#doCallModal').modal('hide');
-          }
-          else
-          {
+          }else{
             $('#demoCallModal').modal('hide');
           }
-        }
-        else
-        {
+        }else{
           alert('発信手続きができませんでした。');
         }
-        if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
-        {
+        if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType){
           $('#doCallButton').button('reset');
-        }
-        else
-        {
+        }else{
           $('#demoCallButton').button('reset');
         }
       },
       error: function(data){
         alert('発信手続きができませんでした。');
-        if (pCallConst.SEND_TYPE_TEL == sendType || pCallConst.SEND_TYPE_MAIL == sendType)
-        {
+        if (pCallConst.SEND_TYPE_TEL == sendData.sendType || pCallConst.SEND_TYPE_MAIL == sendData.sendType){
           $('#doCallButton').button('reset');
-        }
-        else
-        {
+        }else{
           $('#demoCallButton').button('reset');
         }
       }
