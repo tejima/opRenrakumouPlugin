@@ -28,11 +28,7 @@ class callActions extends opJsonApiActions
   // 現在の送信状況を取得する
   public function executeStatus(sfWebRequest $request)
   {
-    $max = 10;
-    if ($request->hasParameter('max'))
-    {
-      $max = $request['max'];
-    }
+    $max = $request->getParameter('max', 10);
 
     $renrakuBody = Doctrine::getTable('RenrakuBody')->getLatestRenrakuBody($max);
 
