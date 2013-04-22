@@ -193,6 +193,7 @@ var pCall = {
     // 送信データの作成
     var data = {};
     data.apiKey = openpne.apiKey;
+    data.type = sendData.sendType;
 
     // titleの文字列変換
     var titleText = '';
@@ -243,7 +244,7 @@ var pCall = {
       var targets = [];
       targets.push(target);
 
-      data['target'] = targets;
+      data.target = targets;
     }
 
     return data;
@@ -365,7 +366,7 @@ $(document).ready(function(){
     if (!valid){
       return false;
     }
-    pCall.send(false);
+    pCall.send(sendData);
   });
 
   // 電話・メール発信ボタン押下時
@@ -402,7 +403,7 @@ $(document).ready(function(){
 
   // 発信の最終確認ダイアログ：発信ボタン押下時
   $('#doCallButton').on('click', function(){
-    pCall.send(true);
+    pCall.send(sendData);
   });
 
   // 更新ボタン押下時
