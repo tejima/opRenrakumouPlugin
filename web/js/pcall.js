@@ -98,11 +98,11 @@ var pCall = {
     // boundioステータスの更新
     pCall.updateBoundio();
     // 送信状況の取得
-    var sendStatus = pCall.getSendStatus();
+    this.sendStatusList = pCall.getSendStatus();
     // 送信状況の表示　
-    if (null != sendStatus){
+    if (null != this.sendStatusList){
       $('#updateStatusBody > *').remove();
-      $('#tmplAccordion').tmpl({value: sendStatus}).appendTo('#updateStatusBody');
+      $('#tmplAccordion').tmpl({value: this.sendStatusList}).appendTo('#updateStatusBody');
       $('#collapse0').collapse('show');
     }
   },
