@@ -36,6 +36,7 @@ var pCallUtil = {
 
   /**
    * 入力された連絡先の分解
+   *
    * @param targetText 入力された連絡先
    * @returns {Array} 分解した連絡先
    */

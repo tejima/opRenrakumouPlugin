@@ -70,14 +70,11 @@ var pCall = {
       dataType: 'json',
       async: false,
       success: function(data){
-        if ('success' == data['status'])
-        {
+        if ('success' == data['status']){
           sendCount = [];
           sendCount['tel'] = data['data']['tel_count'];
           sendCount['mail'] = data['data']['mail_count'];
-        }
-        else
-        {
+        }else{
           alert('送信数が取得できませんでした。');
         }
       },
@@ -118,12 +115,9 @@ var pCall = {
       dataType: 'json',
       async: false,
       success: function(data){
-        if ('success' == data['status'])
-        {
+        if ('success' == data['status']){
           sendStatus = data['data'];
-        }
-        else
-        {
+        }else{
           alert('送信状況が取得できませんでした。');
         }
       },
@@ -389,8 +383,7 @@ $(document).ready(function(){
   // 発信の最終確認ダイアログ表示後
   doCallModal.on('shown', function(){
     var valid = pCallValidator.isValid(sendData);
-    if (!valid)
-    {
+    if (!valid){
       doCallModal.modal('hide');
       return false;
     }
