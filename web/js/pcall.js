@@ -334,7 +334,7 @@ $(document).ready(function(){
     var callBody = $('#callBody');
     var demoCallTitle = $('#demoCallTitle');
     var demoCallBody = $('#demoCallBody');
-    $.trim($(callTitle).val()) ? demoCallTitle.val($.trim($(callTitle).val())) : demoCallTitle.val($.trim($(callTitle).attr('placeholder')));
+    $.trim(callTitle.val()) ? demoCallTitle.val($.trim(callTitle.val())) : demoCallTitle.val($.trim(callTitle.attr('placeholder')));
     $.trim(callBody.val()) ? demoCallBody.val($.trim(callBody.val())) : demoCallBody.val($.trim(callBody.attr('placeholder')));
   });
 
