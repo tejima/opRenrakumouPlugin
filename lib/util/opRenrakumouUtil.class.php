@@ -56,7 +56,7 @@ class opRenrakumouUtil
         }
 
         $renrakuMember = Doctrine::getTable('RenrakuMember')->findOneByBoundioId($line['_id']);
-        if ('' !== $status && !is_null($renrakuMember))
+        if ('' !== $status && false !== $renrakuMember)
         {
           $renrakuMember['tel_status'] = $status;
           Doctrine::getTable('RenrakuMember')->updateStatus($renrakuMember);
