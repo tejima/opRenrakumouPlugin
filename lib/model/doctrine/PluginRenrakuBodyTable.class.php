@@ -27,12 +27,13 @@ class PluginRenrakuBodyTable extends Doctrine_Table
   public function insertRenrakuBody($renrakuBody = array())
   {
     $object = new RenrakuBody();
+    $titleAndBodyMaxLength = 200;
 
     if (isset($renrakuBody['body']))
     {
-      if (200 < mb_strlen($renrakuBody['body'], 'utf-8'))
+      if ($titleAndBodyMaxLength < mb_strlen($renrakuBody['body'], 'utf-8'))
       {
-        sfContext::getInstance()->getLogger()->err('body is should be 200 characters.', 'error');
+        sfContext::getInstance()->getLogger()->err('body can not be set in more than 200 characters.', 'error');
 
         return null;
       }
@@ -47,9 +48,9 @@ class PluginRenrakuBodyTable extends Doctrine_Table
 
     if (isset($renrakuBody['title']))
     {
-      if (200 < mb_strlen($renrakuBody['title'], 'utf-8'))
+      if ($titleAndBodyMaxLength < mb_strlen($renrakuBody['title'], 'utf-8'))
       {
-        sfContext::getInstance()->getLogger()->err('title is should be 200 characters.', 'error');
+        sfContext::getInstance()->getLogger()->err('title can not be set in more than 200 characters.', 'error');
 
         return null;
       }
