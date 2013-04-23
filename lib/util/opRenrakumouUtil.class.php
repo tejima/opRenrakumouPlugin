@@ -30,34 +30,37 @@ class opRenrakumouUtil
     foreach ($boundioList as $line)
     {
       $status = '';
-      if ('1' == (string)$line['_gather'])
+      if (isset($line['_gather']))
       {
-        $status = 'PUSH';
-      }
-      else
-      {
-        switch ($line['_status'])
+        if ('1' == (string)$line['_gather'])
         {
-          case '架電完了':
-            $status = 'CALLED';
-            break;
-          case '架電待機':
-            $status = 'CALLPROCESSING';
-            break;
-          case '不在':
-            $status = 'HUZAI';
-            break;
-          default :
-            $status = 'FAIL';
-            break;
+          $status = 'PUSH';
         }
-      }
+        else
+        {
+          switch ($line['_status'])
+          {
+            case '架電完了':
+              $status = 'CALLED';
+              break;
+            case '架電待機':
+              $status = 'CALLPROCESSING';
+              break;
+            case '不在':
+              $status = 'HUZAI';
+              break;
+            default :
+              $status = 'FAIL';
+              break;
+          }
+        }
 
-      $renrakuMember = Doctrine::getTable('RenrakuMember')->findOneByBoundioId($line['_id']);
-      if ('' !== $status)
-      {
-        $renrakuMember['tel_status'] = $status;
-        Doctrine::getTable('RenrakuMember')->updateStatus($renrakuMember);
+        $renrakuMember = Doctrine::getTable('RenrakuMember')->findOneByBoundioId($line['_id']);
+        if ('' !== $status && !is_null($renrakuMember))
+        {
+          $renrakuMember['tel_status'] = $status;
+          Doctrine::getTable('RenrakuMember')->updateStatus($renrakuMember);
+        }
       }
     }
 
