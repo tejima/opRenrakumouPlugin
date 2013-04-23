@@ -37,7 +37,7 @@ class PluginRenrakuBodyTable extends Doctrine_Table
 
         return null;
       }
-      $object->setBody($renrakuBody['body']);
+      $object->setBody(self::convertDoubleByteCharacter($renrakuBody['body']));
     }
     else
     {
@@ -65,5 +65,13 @@ class PluginRenrakuBodyTable extends Doctrine_Table
     $object->save();
 
     return $object;
+  }
+
+  private function convertDoubleByteCharacter($text)
+  {
+    $returnText = mb_convert_kana($text, 'A');
+    $returnText = str_replace('"', '', $returnText);
+    $returnText = str_replace("'", '', $returnText);
+    return $returnText;
   }
 }
