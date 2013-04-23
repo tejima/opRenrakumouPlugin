@@ -16,7 +16,7 @@
  */
 class opRenrakumouMail
 {
-  static function processMail()
+  public static function processMail()
   {
     $callWaitingList = Doctrine::getTable('RenrakuMember')->findByMailStatus('CALLWAITING');
     foreach ($callWaitingList as $line)
@@ -56,7 +56,7 @@ EOF;
     return true;
   }
 
-  static function awsSES($to, $from, $subject, $body, $smtpUserName, $smtpPassword)
+  public static function awsSES($to, $from, $subject, $body, $smtpUserName, $smtpPassword)
   {
     if (!$to)
     {

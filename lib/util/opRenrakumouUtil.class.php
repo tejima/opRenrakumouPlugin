@@ -17,7 +17,7 @@
  */
 class opRenrakumouUtil
 {
-  static function syncBoundio()
+  public static function syncBoundio()
   {
     $boundioList = opRenrakumouUtil::statusList(100, sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
     if (!$boundioList)
@@ -96,7 +96,7 @@ class opRenrakumouUtil
     return true;
   }
 
-  static function pushCall($tel = null, $text = null, $userSerialId, $appId, $authKey)
+  public static function pushCall($tel = null, $text = null, $userSerialId, $appId, $authKey)
   {
     Boundio::configure('userSerialId', $userSerialId);
     Boundio::configure('appId', $appId);
@@ -117,7 +117,7 @@ class opRenrakumouUtil
     }
   }
 
-  static function statusList($num = 100, $userSerialId, $appId, $authKey)
+  public static function statusList($num = 100, $userSerialId, $appId, $authKey)
   {
     Boundio::configure('userSerialId', $userSerialId);
     Boundio::configure('appId', $appId);
