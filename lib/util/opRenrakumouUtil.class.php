@@ -57,7 +57,11 @@ class opRenrakumouUtil
       if ('' !== $status && false !== $renrakuMember)
       {
         $renrakuMember['tel_status'] = $status;
-        Doctrine::getTable('RenrakuMember')->updateStatus($renrakuMember);
+        $updateStatusResult = Doctrine::getTable('RenrakuMember')->updateStatus($renrakuMember);
+        if (is_null($updateStatusResult))
+        {
+          return false;
+        }
       }
     }
 
@@ -81,8 +85,15 @@ class opRenrakumouUtil
         $line['tel_status'] = 'FAIL';
       }
       $line['mail_id'] = '';
-      Doctrine::getTable('RenrakuMember')->updateStatus($line);
+
+      $updateStatusResult = Doctrine::getTable('RenrakuMember')->updateStatus($line);
+      if (is_null($updateStatusResult))
+      {
+        return false;
+      }
     }
+
+    return true;
   }
 
   static function pushCall($tel = null, $text = null, $userSerialId, $appId, $authKey)

@@ -45,8 +45,15 @@ EOF;
       {
         $line['mail_status'] = 'FAIL';
       }
-      Doctrine::getTable('RenrakuMember')->updateStatus($line);
+
+      $updateStatusResult = Doctrine::getTable('RenrakuMember')->updateStatus($line);
+      if (is_null($updateStatusResult))
+      {
+        return false;
+      }
     }
+
+    return true;
   }
 
   static function awsSES($to, $from, $subject, $body, $smtpUserName, $smtpPassword)

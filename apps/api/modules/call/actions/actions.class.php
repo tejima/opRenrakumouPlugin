@@ -156,9 +156,18 @@ class callActions extends opJsonApiActions
 
     if (self::MAIL_ONLY !== $type)
     {
-      opRenrakumouUtil::processTel();
+      $processTelResult = opRenrakumouUtil::processTel();
+      if (!$processTelResult)
+      {
+        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'processTel Error')));
+      }
     }
-    opRenrakumouMail::processMail();
+
+    $processMailResult = opRenrakumouMail::processMail();
+    if (!$processMailResult)
+    {
+      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'processMail Error')));
+    }
 
     return $this->renderText(json_encode(array('status' => 'success', 'message' => 'executeSend DONE')));
   }

@@ -41,14 +41,23 @@ class PluginRenrakuMemberTable extends Doctrine_Table
 
   public function updateStatus($renrakuMember)
   {
-    $q = $this->createQuery()->update();
-    $q->set('boundio_id', '?', $renrakuMember['boundio_id']);
-    $q->set('mail_id', '?', $renrakuMember['mail_id']);
-    $q->set('mail_status', '?', $renrakuMember['mail_status']);
-    $q->set('tel_status', '?', $renrakuMember['tel_status']);
-    $q->where('id = ?', $renrakuMember['id']);
+    try
+    {
+      $q = $this->createQuery()->update();
+      $q->set('boundio_id', '?', $renrakuMember['boundio_id']);
+      $q->set('mail_id', '?', $renrakuMember['mail_id']);
+      $q->set('mail_status', '?', $renrakuMember['mail_status']);
+      $q->set('tel_status', '?', $renrakuMember['tel_status']);
+      $q->where('id = ?', $renrakuMember['id']);
 
-    return $q->execute();
+      return $q->execute();
+    }
+    catch (Exception $e)
+    {
+      sfContext::getInstance()->getLogger()->err('updateStatus()::'.$e, 'error');
+
+      return null;
+    }
   }
 
   public function insertRenrakuMember($renrakuMember = array())
@@ -148,8 +157,16 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     if ('CALLED' === $renrakuMember['mail_status'])
     {
       $renrakuMember['mail_status'] = 'PUSH';
-      Doctrine::getTable('RenrakuMember')->updateStatus($renrakuMember);
-      $result = true;
+
+      $updateStatusResult = Doctrine::getTable('RenrakuMember')->updateStatus($renrakuMember);
+      if (is_null($updateStatusResult))
+      {
+        $result = false;
+      }
+      else
+      {
+        $result = true;
+      }
     }
 
     return $result;
