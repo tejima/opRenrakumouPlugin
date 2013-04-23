@@ -61,7 +61,9 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     }
     else
     {
-      throw new LogicException('renraku_id is not specified.');
+      sfContext::getInstance()->getLogger()->err('renraku_id is not specified.', 'error');
+
+      return null;
     }
 
     if (isset($renrakuMember['boundio_id']))
@@ -70,7 +72,9 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     }
     else
     {
-      throw new LogicException('boundio_id is not specified.');
+      sfContext::getInstance()->getLogger()->err('boundio_id is not specified.', 'error');
+
+      return null;
     }
 
     if (isset($renrakuMember['name']))
@@ -79,7 +83,9 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     }
     else
     {
-      throw new LogicException('name is not specified.');
+      sfContext::getInstance()->getLogger()->err('name is not specified.', 'error');
+
+      return null;
     }
 
     if (isset($renrakuMember['mail']))
@@ -103,7 +109,9 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     }
     else
     {
-      throw new LogicException('tel is not specified.');
+      sfContext::getInstance()->getLogger()->err('tel is not specified.', 'error');
+
+      return null;
     }
 
     if (isset($renrakuMember['tel_status']))
