@@ -67,11 +67,12 @@ class PluginRenrakuBodyTable extends Doctrine_Table
     return $object;
   }
 
-  private function convertDoubleByteCharacter($text)
+  static private function convertDoubleByteCharacter($text)
   {
     $returnText = mb_convert_kana($text, 'A');
     $returnText = str_replace('"', '', $returnText);
     $returnText = str_replace("'", '', $returnText);
+
     return $returnText;
   }
 }
