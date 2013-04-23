@@ -137,7 +137,8 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     return $result;
   }
 
-  static public function isValidMail($mailaddress) {
+  static public function isValidMail($mailaddress)
+  {
       return preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/', $mailaddress);
   }
 }
