@@ -95,7 +95,17 @@ class PluginRenrakuMemberTable extends Doctrine_Table
 
     if (isset($renrakuMember['mail_id']))
     {
-      $object->setMailId($renrakuMember['mail_id']);
+      $presenceCheck = $this->findOneByMailId($renrakuMember['mail_id']);
+      if (false === $presenceCheck)
+      {
+        $object->setMailId($renrakuMember['mail_id']);
+      }
+      else
+      {
+        sfContext::getInstance()->getLogger()->err('mail_id is not unique.', 'error');
+
+        return null;
+      }
     }
 
     if (isset($renrakuMember['mail_status']))
