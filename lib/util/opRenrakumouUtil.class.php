@@ -68,7 +68,7 @@ class opRenrakumouUtil
     return true;
   }
 
-  static function processTel()
+  public static function processTel()
   {
     $callWaitingList = Doctrine::getTable('RenrakuMember')->findByTelStatus('CALLWAITING');
     foreach ($callWaitingList as $line)
