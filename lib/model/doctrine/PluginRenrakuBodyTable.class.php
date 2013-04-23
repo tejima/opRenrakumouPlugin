@@ -19,7 +19,7 @@ class PluginRenrakuBodyTable extends Doctrine_Table
   public function getLatestRenrakuBody($limit = 10)
   {
     return $this->createQuery()
-      ->orderBy('id desc')
+      ->orderBy('created_at desc')
       ->limit($limit)
       ->execute();
   }
