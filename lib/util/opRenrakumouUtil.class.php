@@ -107,7 +107,7 @@ class opRenrakumouUtil
 
     $result = Boundio::call($tel, $str);
     sfContext::getInstance()->getLogger()->debug('Boundio::call() :'.print_r($result, true));
-    if ('true' === $result['success'])
+    if (false !== $result && 'true' === $result['success'])
     {
       return $result['_id'];
     }
