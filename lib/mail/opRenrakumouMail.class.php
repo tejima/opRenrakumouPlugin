@@ -83,6 +83,7 @@ EOF;
     catch (Exception $e)
     {
       sfContext::getInstance()->getLogger()->err('failed to send mail', 'error');
+
       return false;
     }
   }
