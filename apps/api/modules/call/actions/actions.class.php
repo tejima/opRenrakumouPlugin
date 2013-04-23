@@ -94,9 +94,12 @@ class callActions extends opJsonApiActions
           return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
         }
 
-        if (false === PluginRenrakuMemberTable::isValidMail($renrakuMember['mail']))
+        if (!is_null($renrakuMember['mail']) || '' !== $renrakuMember['mail'])
         {
-          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
+          if (false === PluginRenrakuMemberTable::isValidMail($renrakuMember['mail']) || 0 === PluginRenrakuMemberTable::isValidMail($renrakuMember['mail']))
+          {
+            return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
+          }
         }
 
         if (!is_null($renrakuMember['mail']) && '' !== $renrakuMember['mail'])
