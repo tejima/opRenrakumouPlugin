@@ -127,7 +127,7 @@ class opRenrakumouUtil
     $result = Boundio::status(null, date('Ymd', strtotime('-2 days')), date('Ymd', strtotime('+1 days')), $num);
     sfContext::getInstance()->getLogger()->debug('Boundio::status() :'.print_r($result, true));
 
-    if (true == $result[0]['success'])
+    if (!is_null($result) && 'true' === $result[0]['success'])
     {
       return $result[0]['result'];
     }
