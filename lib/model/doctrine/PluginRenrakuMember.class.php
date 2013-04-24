@@ -11,7 +11,7 @@
 /**
  * PluginRenrakuMember
  *
- * @package    opRenrakumouPlugin
+ * @package    OpenPNE
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
 abstract class PluginRenrakuMember extends BaseRenrakuMember

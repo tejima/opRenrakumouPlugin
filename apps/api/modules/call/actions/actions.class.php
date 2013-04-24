@@ -11,7 +11,7 @@
 /**
  * call actions.
  *
- * @package    opRenrakumouPlugin
+ * @package    OpenPNE
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
 class callActions extends opJsonApiActions

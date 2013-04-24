@@ -11,7 +11,7 @@
 /**
  * PluginRenrakuBody
  *
- * @package    opRenrakumouPlugin
+ * @package    OpenPNE
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
 abstract class PluginRenrakuBody extends BaseRenrakuBody

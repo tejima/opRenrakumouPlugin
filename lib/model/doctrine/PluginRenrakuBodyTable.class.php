@@ -11,7 +11,7 @@
 /**
  * PluginRenrakuBodyTable
  *
- * @package    opRenrakumouPlugin
+ * @package    OpenPNE
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
 class PluginRenrakuBodyTable extends Doctrine_Table

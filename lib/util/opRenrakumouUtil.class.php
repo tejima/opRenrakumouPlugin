@@ -11,7 +11,7 @@
 /**
  * opRenrakumouUtil
  *
- * @package    opRenrakumouPlugin
+ * @package    OpenPNE
  * @author     Mamoru Tejima <tejima@tejimaya.com>
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */

@@ -11,7 +11,7 @@
 /**
  * oActions
  *
- * @package    opRenrakumouPlugin
+ * @package    OpenPNE
  * @author     Mamoru Tejima <tejima@tejimaya.com>
  */
 class oActions extends sfActions

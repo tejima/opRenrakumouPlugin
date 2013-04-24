@@ -11,7 +11,7 @@
 /**
  * PluginRenrakuMemberTable
  *
- * @package    opRenrakumouPlugin
+ * @package    OpenPNE
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
 class PluginRenrakuMemberTable extends Doctrine_Table

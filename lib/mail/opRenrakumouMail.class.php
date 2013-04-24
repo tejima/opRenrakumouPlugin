@@ -11,7 +11,7 @@
 /**
  * opRenrakumouMail
  *
- * @package    opRenrakumouPlugin
+ * @package    OpenPNE
  * @author     tatsuya ichikawa <ichikawa@tejimaya.com>
  */
 class opRenrakumouMail
