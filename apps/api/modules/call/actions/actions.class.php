@@ -77,6 +77,10 @@ class callActions extends opJsonApiActions
     {
       return $this->renderText(json_encode(array('status' => 'error', 'message' => 'type is not numeric.')));
     }
+    else
+    {
+      $type = (int)$type;
+    }
 
     $con = Doctrine::getTable('RenrakuBody')->getConnection();
     $con->beginTransaction();
