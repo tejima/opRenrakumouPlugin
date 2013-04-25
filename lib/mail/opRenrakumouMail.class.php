@@ -22,7 +22,13 @@ class opRenrakumouMail
     foreach ($callWaitingList as $line)
     {
       $renrakuBody = Doctrine::getTable('RenrakuBody')->find($line['renraku_id']);
-      $uniqid = uniqid(rand(), true);
+
+      $presenceCheck = true;
+      while (false !== $presenceCheck)
+      {
+        $uniqid = uniqid(rand(), true);
+        $presenceCheck = Doctrine::getTable('RenrakuMember')->findOneByMailId($uniqid);
+      }
       $rogerUrl = sfConfig::get('op_base_url').'/o/roger?id='.$uniqid;
       $body = <<< EOF
 ${renrakuBody['body']}

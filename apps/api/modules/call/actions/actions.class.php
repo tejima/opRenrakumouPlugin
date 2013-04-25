@@ -65,13 +65,18 @@ class callActions extends opJsonApiActions
     $this->forward400Unless($request['body'], 'body parameter not specified.');
     $this->forward400Unless($request['title'], 'title parameter not specified.');
     $this->forward400Unless($request['target'], 'target parameter not specified.');
-    $type = (int)$request['type'];
+    $type = $request['type'];
     $body = $request['body'];
     $title = $request['title'];
     $target = $request['target'];
     $titleAndBodyMaxLength = 200;
     $nameMaxLength = 64;
     $mailMaxLength = 255;
+
+    if (!is_numeric($type))
+    {
+      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'type is not numeric.')));
+    }
 
     $con = Doctrine::getTable('RenrakuBody')->getConnection();
     $con->beginTransaction();

@@ -30,7 +30,7 @@ class opRenrakumouUtil
     foreach ($boundioList as $line)
     {
       $status = '';
-      if (isset($line['_gather']) && '1' == (string)$line['_gather'])
+      if (isset($line['_gather']) && '1' === $line['_gather'])
       {
         $status = 'PUSH';
       }
