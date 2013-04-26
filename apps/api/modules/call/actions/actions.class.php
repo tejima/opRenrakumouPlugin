@@ -116,16 +116,16 @@ class callActions extends opJsonApiActions
         $renrakuMember->setName($line['name']);
 
         // mail & mail_status valid
-        if ($mailMaxLength < mb_strlen($line['mail']) || 6 > mb_strlen($line['mail']))
-        {
-          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail can not be set in more than '.$mailMaxLength.' characters.')));
-        }
-
-        if (!is_null($line['mail']) || '' !== $line['mail'])
+        if (isset($line['mail']) && !is_null($line['mail']) && '' !== trim($line['mail']))
         {
           if (false === PluginRenrakuMemberTable::isValidMail($line['mail']) || 0 === PluginRenrakuMemberTable::isValidMail($line['mail']))
           {
             return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
+          }
+
+          if ($mailMaxLength < mb_strlen($line['mail']) || 6 > mb_strlen($line['mail']))
+          {
+            return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail can not be set in more than '.$mailMaxLength.' characters.')));
           }
 
           $renrakuMember->setMail_status('CALLWAITING');
