@@ -105,8 +105,8 @@ class callActions extends opJsonApiActions
       foreach ($target as $line)
       {
         $renrakuMember = new RenrakuMember();;
-        $renrakuMember->setRenraku_id($renrakuBody['id']);
-        $renrakuMember->setBoundio_id('');
+        $renrakuMember->setRenrakuId($renrakuBody['id']);
+        $renrakuMember->setBoundioId('');
 
         // name valid
         if ($nameMaxLength < mb_strlen($line['name']) || 1 > mb_strlen($line['name']))
@@ -128,7 +128,7 @@ class callActions extends opJsonApiActions
             return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail can not be set in more than '.$mailMaxLength.' characters.')));
           }
 
-          $renrakuMember->setMail_status('CALLWAITING');
+          $renrakuMember->setMailStatus('CALLWAITING');
         }
         else
         {
@@ -137,7 +137,7 @@ class callActions extends opJsonApiActions
             return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
           }
 
-          $renrakuMember->setMail_status('NONE');
+          $renrakuMember->setMailStatus('NONE');
         }
         $renrakuMember->setMail($line['mail']);
 
@@ -155,11 +155,11 @@ class callActions extends opJsonApiActions
 
         if (self::TEL_AND_MAIL === $type || self::MY_SELF === $type)
         {
-          $renrakuMember->setTel_status('CALLWAITING');
+          $renrakuMember->setTelStatus('CALLWAITING');
         }
         else
         {
-          $renrakuMember->setTel_status('NONE');
+          $renrakuMember->setTelStatus('NONE');
         }
 
         if (isset($line['options']))
