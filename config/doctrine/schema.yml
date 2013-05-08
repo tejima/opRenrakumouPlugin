@@ -48,7 +48,3 @@ RenrakuMember:
       local: renraku_id
       foreign: id
       onDelete: cascade
-  indexes:
-    mail_id_UNIQUE:
-      fields: [mail_id]
-      type: unique
