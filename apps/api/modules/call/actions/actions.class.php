@@ -73,7 +73,7 @@ class callActions extends opJsonApiActions
     $nameMaxLength = 64;
     $mailMaxLength = 255;
 
-    if (!is_numeric($type))
+    if (!ctype_digit($type))
     {
       return $this->renderText(json_encode(array('status' => 'error', 'message' => 'type is not numeric.')));
     }
