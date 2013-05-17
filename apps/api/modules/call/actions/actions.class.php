@@ -84,100 +84,99 @@ class callActions extends opJsonApiActions
 
     $con = Doctrine::getTable('RenrakuBody')->getConnection();
     $con->beginTransaction();
-    try
+
+    $renrakuBody = new RenrakuBody();
+
+    if ($titleAndBodyMaxLength < mb_strlen($body, 'utf-8') || 1 > mb_strlen($body, 'utf-8'))
     {
-      $renrakuBody = new RenrakuBody();
-
-      if ($titleAndBodyMaxLength < mb_strlen($body, 'utf-8') || 1 > mb_strlen($body, 'utf-8'))
-      {
-        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'body can not be set in more than '.$titleAndBodyMaxLength.' characters.')));
-      }
-
-      if ($titleAndBodyMaxLength < mb_strlen($title, 'utf-8') || 1 > mb_strlen($title, 'utf-8'))
-      {
-        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'title can not be set in more than '.$titleAndBodyMaxLength.' characters.')));
-      }
-
-      $renrakuBody->setBody($this->convertDoubleByteCharacter($body));
-      $renrakuBody->setTitle($title);
-      $renrakuBody->save();
-
-      foreach ($target as $line)
-      {
-        $renrakuMember = new RenrakuMember();;
-        $renrakuMember->setRenrakuId($renrakuBody['id']);
-        $renrakuMember->setBoundioId('');
-
-        // name valid
-        if ($nameMaxLength < mb_strlen($line['name'], 'utf-8') || 1 > mb_strlen($line['name'], 'utf-8'))
-        {
-          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'name can not be set in more than '.$nameMaxLength.' characters.')));
-        }
-        $renrakuMember->setName($line['name']);
-
-        // mail & mail_status valid
-        if (isset($line['mail']) && !is_null($line['mail']) && '' !== trim($line['mail']))
-        {
-          if (!PluginRenrakuMemberTable::isValidMail($line['mail']))
-          {
-            return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
-          }
-
-          if ($mailMaxLength < mb_strlen($line['mail'], 'utf-8') || 6 > mb_strlen($line['mail'], 'utf-8'))
-          {
-            return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail can not be set in more than '.$mailMaxLength.' characters.')));
-          }
-
-          $renrakuMember->setMailStatus('CALLWAITING');
-        }
-        else
-        {
-          if (self::MAIL_ONLY === $type)
-          {
-            return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
-          }
-
-          $renrakuMember->setMailStatus('NONE');
-        }
-        $renrakuMember->setMail($line['mail']);
-
-        // tel valid
-        if (is_null($line['tel']) || '' == $line['tel'])
-        {
-          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not specified.')));
-        }
-
-        if (false === preg_match('/^0\d{9,10}$/', $line['tel']))
-        {
-          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not alphanumeric.')));
-        }
-        $renrakuMember->setTel($line['tel']);
-
-        if (self::TEL_AND_MAIL === $type || self::MY_SELF === $type)
-        {
-          $renrakuMember->setTelStatus('CALLWAITING');
-        }
-        else
-        {
-          $renrakuMember->setTelStatus('NONE');
-        }
-
-        if (isset($line['options']))
-        {
-          $renrakuMember->setOptions($line['options']);
-        }
-
-        $renrakuMember->save();
-      }
-      $con->commit();
+      $this->saveLogAndRollback('body can not be set in more than '.$titleAndBodyMaxLength.' characters.');
+      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'body can not be set in more than '.$titleAndBodyMaxLength.' characters.')));
     }
-    catch (Exception $e)
+
+    if ($titleAndBodyMaxLength < mb_strlen($title, 'utf-8') || 1 > mb_strlen($title, 'utf-8'))
     {
-      $con->rollback();
-      sfContext::getInstance()->getLogger()->err('executeSend');
-
-      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
+      $this->saveLogAndRollback('title can not be set in more than '.$titleAndBodyMaxLength.' characters.');
+      return $this->renderText(json_encode(array('status' => 'error', 'message' => 'title can not be set in more than '.$titleAndBodyMaxLength.' characters.')));
     }
+
+    $renrakuBody->setBody($this->convertDoubleByteCharacter($body));
+    $renrakuBody->setTitle($title);
+    $renrakuBody->save();
+
+    foreach ($target as $line)
+    {
+      $renrakuMember = new RenrakuMember();;
+      $renrakuMember->setRenrakuId($renrakuBody['id']);
+      $renrakuMember->setBoundioId('');
+
+      // name valid
+      if ($nameMaxLength < mb_strlen($line['name'], 'utf-8') || 1 > mb_strlen($line['name'], 'utf-8'))
+      {
+        $this->saveLogAndRollback('name can not be set in more than '.$nameMaxLength.'characters.', $con);
+        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'name can not be set in more than '.$nameMaxLength.' characters.')));
+      }
+      $renrakuMember->setName($line['name']);
+
+      // mail & mail_status valid
+      if (isset($line['mail']) && !is_null($line['mail']) && '' !== trim($line['mail']))
+      {
+        if (!PluginRenrakuMemberTable::isValidMail($line['mail']))
+        {
+          $this->saveLogAndRollback('mail parameter not alphanumeric.', $con);
+          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
+        }
+
+        if ($mailMaxLength < mb_strlen($line['mail'], 'utf-8') || 6 > mb_strlen($line['mail'], 'utf-8'))
+        {
+          $this->saveLogAndRollback('mail can not be set in more than '.$mailMaxLength.' characters.', $con);
+          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail can not be set in more than '.$mailMaxLength.' characters.')));
+        }
+
+        $renrakuMember->setMailStatus('CALLWAITING');
+      }
+      else
+      {
+        if (self::MAIL_ONLY === $type)
+        {
+          $this->saveLogAndRollback('mail parameter not specified.', $con);
+          return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
+        }
+
+        $renrakuMember->setMailStatus('NONE');
+      }
+      $renrakuMember->setMail($line['mail']);
+
+      // tel valid
+      if (is_null($line['tel']) || '' == $line['tel'])
+      {
+        $this->saveLogAndRollback('tel parameter not specified.', $con);
+        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not specified.')));
+      }
+
+      if (false === preg_match('/^0\d{9,10}$/', $line['tel']))
+      {
+        $this->saveLogAndRollback('tel parameter not alphanumeric.', $con);
+        return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not alphanumeric.')));
+      }
+      $renrakuMember->setTel($line['tel']);
+
+      if (self::TEL_AND_MAIL === $type || self::MY_SELF === $type)
+      {
+        $renrakuMember->setTelStatus('CALLWAITING');
+      }
+      else
+      {
+        $renrakuMember->setTelStatus('NONE');
+      }
+
+      if (isset($line['options']))
+      {
+        $renrakuMember->setOptions($line['options']);
+      }
+
+      $renrakuMember->save();
+    }
+    $con->commit();
 
     if (self::MAIL_ONLY !== $type)
     {
@@ -232,5 +231,18 @@ class callActions extends opJsonApiActions
     $returnText = str_replace("'", '’', $returnText);
 
     return $returnText;
+  }
+
+  private function saveLogAndRollback($message = '', $con = null)
+  {
+    if ('' !== $message)
+    {
+      sfContext::getInstance()->getLogger()->err($message);
+    }
+
+    if (!is_null($con))
+    {
+      $con->rollback();
+    }
   }
 }
