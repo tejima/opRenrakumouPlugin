@@ -90,12 +90,14 @@ class callActions extends opJsonApiActions
     if ($titleAndBodyMaxLength < mb_strlen($body, 'utf-8') || 1 > mb_strlen($body, 'utf-8'))
     {
       $this->saveLogAndRollback('body can not be set in more than '.$titleAndBodyMaxLength.' characters.');
+
       return $this->renderText(json_encode(array('status' => 'error', 'message' => 'body can not be set in more than '.$titleAndBodyMaxLength.' characters.')));
     }
 
     if ($titleAndBodyMaxLength < mb_strlen($title, 'utf-8') || 1 > mb_strlen($title, 'utf-8'))
     {
       $this->saveLogAndRollback('title can not be set in more than '.$titleAndBodyMaxLength.' characters.');
+
       return $this->renderText(json_encode(array('status' => 'error', 'message' => 'title can not be set in more than '.$titleAndBodyMaxLength.' characters.')));
     }
 
@@ -113,6 +115,7 @@ class callActions extends opJsonApiActions
       if ($nameMaxLength < mb_strlen($line['name'], 'utf-8') || 1 > mb_strlen($line['name'], 'utf-8'))
       {
         $this->saveLogAndRollback('name can not be set in more than '.$nameMaxLength.'characters.', $con);
+
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'name can not be set in more than '.$nameMaxLength.' characters.')));
       }
       $renrakuMember->setName($line['name']);
@@ -123,12 +126,14 @@ class callActions extends opJsonApiActions
         if (!PluginRenrakuMemberTable::isValidMail($line['mail']))
         {
           $this->saveLogAndRollback('mail parameter not alphanumeric.', $con);
+
           return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
         }
 
         if ($mailMaxLength < mb_strlen($line['mail'], 'utf-8') || 6 > mb_strlen($line['mail'], 'utf-8'))
         {
           $this->saveLogAndRollback('mail can not be set in more than '.$mailMaxLength.' characters.', $con);
+
           return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail can not be set in more than '.$mailMaxLength.' characters.')));
         }
 
@@ -139,6 +144,7 @@ class callActions extends opJsonApiActions
         if (self::MAIL_ONLY === $type)
         {
           $this->saveLogAndRollback('mail parameter not specified.', $con);
+
           return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not specified.')));
         }
 
@@ -150,12 +156,14 @@ class callActions extends opJsonApiActions
       if (is_null($line['tel']) || '' == $line['tel'])
       {
         $this->saveLogAndRollback('tel parameter not specified.', $con);
+
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not specified.')));
       }
 
       if (false === preg_match('/^0\d{9,10}$/', $line['tel']))
       {
         $this->saveLogAndRollback('tel parameter not alphanumeric.', $con);
+
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not alphanumeric.')));
       }
       $renrakuMember->setTel($line['tel']);
