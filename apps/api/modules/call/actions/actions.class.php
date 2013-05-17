@@ -160,7 +160,7 @@ class callActions extends opJsonApiActions
         return $this->renderText(json_encode(array('status' => 'error', 'message' => 'tel parameter not specified.')));
       }
 
-      if (false === preg_match('/^0\d{9,10}$/', $line['tel']))
+      if (false === preg_match('/^0\d{8,10}$/', $line['tel']) || 0 === preg_match('/^0\d{8,10}$/', $line['tel']))
       {
         $this->saveLogAndRollback('tel parameter not alphanumeric.', $con);
 
