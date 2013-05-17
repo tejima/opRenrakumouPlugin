@@ -22,7 +22,7 @@ class opRenrakumouUtil
     $boundioList = opRenrakumouUtil::statusList(100, sfConfig::get('op_userSerialId'), sfConfig::get('op_appId'), sfConfig::get('op_authKey'));
     if (!$boundioList)
     {
-      sfContext::getInstance()->getLogger()->err('boundioList empty', 'error');
+      sfContext::getInstance()->getLogger()->err('boundioList empty');
 
       return false;
     }

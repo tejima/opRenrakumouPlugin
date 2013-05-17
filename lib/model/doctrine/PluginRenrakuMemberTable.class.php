@@ -54,7 +54,7 @@ class PluginRenrakuMemberTable extends Doctrine_Table
     }
     catch (Exception $e)
     {
-      sfContext::getInstance()->getLogger()->err('updateStatus()::'.$e, 'error');
+      sfContext::getInstance()->getLogger()->err('updateStatus()::'.$e);
 
       return null;
     }

@@ -174,7 +174,7 @@ class callActions extends opJsonApiActions
     catch (Exception $e)
     {
       $con->rollback();
-      sfContext::getInstance()->getLogger()->err('executeSend', 'error');
+      sfContext::getInstance()->getLogger()->err('executeSend');
 
       return $this->renderText(json_encode(array('status' => 'error', 'message' => 'could not be stored.')));
     }

@@ -95,7 +95,7 @@ EOF;
     }
     catch (Exception $e)
     {
-      sfContext::getInstance()->getLogger()->err('failed to send mail', 'error');
+      sfContext::getInstance()->getLogger()->err('failed to send mail');
 
       return false;
     }
