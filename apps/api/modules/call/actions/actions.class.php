@@ -118,7 +118,7 @@ class callActions extends opJsonApiActions
         // mail & mail_status valid
         if (isset($line['mail']) && !is_null($line['mail']) && '' !== trim($line['mail']))
         {
-          if (PluginRenrakuMemberTable::isValidMail($line['mail']))
+          if (!PluginRenrakuMemberTable::isValidMail($line['mail']))
           {
             return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
           }
