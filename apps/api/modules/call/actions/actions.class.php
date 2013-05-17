@@ -109,7 +109,7 @@ class callActions extends opJsonApiActions
         $renrakuMember->setBoundioId('');
 
         // name valid
-        if ($nameMaxLength < mb_strlen($line['name']) || 1 > mb_strlen($line['name']))
+        if ($nameMaxLength < mb_strlen($line['name'], 'utf-8') || 1 > mb_strlen($line['name'], 'utf-8'))
         {
           return $this->renderText(json_encode(array('status' => 'error', 'message' => 'name can not be set in more than '.$nameMaxLength.' characters.')));
         }
@@ -123,7 +123,7 @@ class callActions extends opJsonApiActions
             return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail parameter not alphanumeric.')));
           }
 
-          if ($mailMaxLength < mb_strlen($line['mail']) || 6 > mb_strlen($line['mail']))
+          if ($mailMaxLength < mb_strlen($line['mail'], 'utf-8') || 6 > mb_strlen($line['mail'], 'utf-8'))
           {
             return $this->renderText(json_encode(array('status' => 'error', 'message' => 'mail can not be set in more than '.$mailMaxLength.' characters.')));
           }
